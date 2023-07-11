@@ -7,24 +7,24 @@ logging.basicConfig(level=logging.DEBUG)
 class Catalog(DETA):
     
     def __init__(self, name: str = ''):
-        self.key = name.replace(' ','_')
-        self.name = name
         super(Catalog, self).__init__(db="catalog_db")
         
-    def create_catalog(self):
-        if not self.name == '':
-            data = {
-                "key": self.key,
-                "name": self.name,
-                "is_active": False,
-                "item_list": []
-            }
-            try:
-                self.db.insert(data)
-                logging.info(f"{self.name} is successfully added.")
-                return f"{self.name} is successfully added."
-            except:
-                logging.warning(f"{self.name} is already in the database.")
+    def create_catalog(self, name: str):
+        self.key = name.replace(' ','_')
+        self.name = name
+        
+        data = {
+            "key": self.key,
+            "name": self.name,
+            "is_active": False,
+            "item_list": []
+        }
+        try:
+            self.db.insert(data)
+            logging.info(f"{self.name} is successfully added.")
+            return f"{self.name} is successfully added."
+        except:
+            logging.warning(f"{self.name} is already in the database.")
         return
         
     

@@ -3,7 +3,7 @@ import streamlit as st
 from io import BytesIO
 from base64 import b64decode
 
-from st_pages import Page, show_pages, hide_pages
+# from st_pages import Page, show_pages, hide_pages
 from streamlit_extras.buy_me_a_coffee import button
 from streamlit_extras.keyboard_url import keyboard_to_url
 from streamlit_extras.mention import mention
@@ -11,9 +11,7 @@ from streamlit_extras.mention import mention
 from frontend.footer import footer
 from frontend.sidebar import sidebar
 from frontend.subscription import subscription
-from backend.data.catalog import Catalog
 from backend.data.item import Item
-from backend.data.subscribe import Subscription
 
 
 # --- NAVIGATION BAR
@@ -23,13 +21,13 @@ st.set_page_config(
     page_icon=":books:"
 )
 
-show_pages(
-    [
-        Page("streamlit_app.py", "home"),
-        Page("pages/admin.py", "admin")
-    ]
-)
-hide_pages(["admin", "home"])
+# show_pages(
+#     [
+#         Page("streamlit_app.py", "home"),
+#         Page("pages/admin.py", "admin")
+#     ]
+# )
+# hide_pages(["admin", "home"])
 
 st.title('BestBuybyAI')
 # load_key_css()
@@ -49,7 +47,6 @@ with col1:
         for item in items:
             st.subheader(item['name'])
             
-            
             # --- ADD keyboard to URL
             key = item['name'][0]
             # keyboard_to_url(key=key, url=item['link'])        
@@ -57,16 +54,11 @@ with col1:
             #    f"""Now hit {key("S", False)} on your keyboard...!""",
             #     unsafe_allow_html=True
             # )
-            
-
-            
+        
             # IMAGE
             image_data = item['image_data']
             image = BytesIO(b64decode(image_data))
             st.image(image=image, caption=item['name'])
-            
-            
-            
             
             # Item Description
             st.markdown(item['description'])
@@ -80,12 +72,10 @@ with col1:
             # st.write(f"check out this [link]({item['link']})")
             
             st.divider()
-        
-# --- EMAIL SUBSCRIPTION
-subscription()
-
     
-
+    # --- EMAIL SUBSCRIPTION
+    subscription()
+        
     
 # --- ADVERTISEMENT
 with col2:
