@@ -1,9 +1,11 @@
 deta==1.1.0
-fastapi==0.100.0
 htbuilder==0.6.1
+matplotlib==3.7.0
+Pillow==9.4.0
 python-dotenv==1.0.0
 st_pages==0.4.3
 streamlit==1.24.0
 streamlit_authenticator==0.2.2
 streamlit_extras==0.2.7
 streamlit_option_menu==0.3.6
+streamlit_toggle==0.1.3

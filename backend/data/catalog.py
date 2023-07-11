@@ -7,6 +7,8 @@ logging.basicConfig(level=logging.DEBUG)
 class Catalog(DETA):
     
     def __init__(self, name: str = ''):
+        self.name = name
+        self.key = name.replace(' ','_')
         super(Catalog, self).__init__(db="catalog_db")
         
     def create_catalog(self, name: str):
@@ -32,7 +34,7 @@ class Catalog(DETA):
         if not self.name == '':
             catalog = self.db.get(self.key)
             if not catalog:
-                self.create_catalog()
+                self.create_catalog(name=self.name)
                 catalog = self.db.get(self.key)
             catalog['item_list'].extend(items)
             self.db.put(catalog)

@@ -14,12 +14,16 @@ class DETA:
     def __init__(self, db: str) -> None:
         self.deta = Deta(os.getenv("DETA_KEY"))
         self.db = self.deta.Base(db)
+        self.drive = self.deta.Drive('images_db')
         
     def fetch_records(self) -> list:
         return self.db.fetch().items
     
     def get_record(self, key: str) -> str:        
         return self.db.get(key)
+    
+    def get_image_data(self, name: str, catalog: str) -> str:        
+        return self.drive.get(f"/{catalog}/{name}").read()
     
     def get_record_by_catalog(self, catalog: str) -> list:
         records = self.fetch_records()
@@ -48,3 +52,10 @@ class DETA:
         self.db.delete(key)
         logging.info(f"{key} successfully deleted.")
         return f"{key} successfully deleted."
+
+
+if __name__ == '__main__':
+    pass
+    # deta = DETA('images_db')
+    # image = deta.get_image_data(name='Helix Midnight Luxe (Queen)', catalog='Mattress')
+    # print(type(image))

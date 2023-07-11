@@ -6,10 +6,10 @@ from backend.data.subscribe import Subscription
 logging.basicConfig(level=logging.DEBUG)
 
 def subscription():
-    with st.container():
+    with st.form('subscription_form'):
         email = st.text_input(label='Email to subscribe', key='subscribe', placeholder='Email to subscribe/unsubscribe', label_visibility='collapsed')      
-        subscribe_button = st.button(label='Subscribe')
-        unsubscribe_button = st.button(label='Unsubscribe')
+        subscribe_button = st.form_submit_button(label='Subscribe')
+        unsubscribe_button = st.form_submit_button(label='Unsubscribe')
     
         if subscribe_button:            
             try:
