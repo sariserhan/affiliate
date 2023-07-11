@@ -3,7 +3,6 @@ import streamlit as st
 from io import BytesIO
 from base64 import b64decode
 
-# from st_pages import Page, show_pages, hide_pages
 from streamlit_extras.buy_me_a_coffee import button
 from streamlit_extras.keyboard_url import keyboard_to_url
 from streamlit_extras.mention import mention
@@ -20,14 +19,6 @@ st.set_page_config(
     page_title="Multipage App",
     page_icon=":books:"
 )
-
-# show_pages(
-#     [
-#         Page("streamlit_app.py", "home"),
-#         Page("pages/admin.py", "admin")
-#     ]
-# )
-# hide_pages(["admin", "home"])
 
 st.title('BestBuybyAI')
 # load_key_css()

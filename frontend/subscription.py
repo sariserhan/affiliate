@@ -10,25 +10,28 @@ def subscription():
         email = st.text_input(label='Email to subscribe', key='subscribe', placeholder='Email to subscribe/unsubscribe', label_visibility='collapsed')      
         subscribe_button = st.button(label='Subscribe')
         unsubscribe_button = st.button(label='Unsubscribe')
-        
-        try:
-            subscription = Subscription(email=email)
-        except ValueError as e:
-            return st.error("Invalid email address")
     
         if subscribe_button:            
             try:
+                subscription = Subscription(email=email)
                 subscription.subscribe()
-                st.write(f'{email} Subscribed')
+                return st.success(f'{email} is subscribed')
+            except ValueError as e:
+                return st.error("Invalid email address!")
             except Exception as e:
                 logging.error(f'Error trying to subscribe {e}')
-                st.error(f'Error trying to subscribe {e}')
+                return st.error(f'Error trying to subscribe {e}')
             
         if unsubscribe_button:
-            try:
-                subscription.unsubscribe()
-                st.write(f'{email} Unsubscribed!')
+            try:                
+                subscription = Subscription(email=email)
+                if subscription.get_record(key=email):
+                    subscription.unsubscribe()
+                    return st.success(f'{email} is unsubscribed!')
+                else:
+                    return st.warning(f'{email} not previously subscribed!')
+            except ValueError as e:
+                return st.error("Invalid email address!")
             except Exception as e:
                 logging.error(f'Error trying to unsubscribe {e}')
-                st.error(f'Error trying to unsubscribe {e}')
-    return
+                return st.error(f'Error trying to unsubscribe {e}')
