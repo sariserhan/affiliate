@@ -37,6 +37,10 @@ hide_pages(["admin", "home"])
 
 st.title('BestBuybyAI')
 
+def number_to_words(number):
+    words = [":zero:", ":one:", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:", ":eight:", ":nine:"]
+    return " ".join(words[int(i)] for i in str(number))
+
 # --- CATALOG SIDE BAR
 selected = sidebar()
 
@@ -60,11 +64,11 @@ with col1:
             
             with st.form(f'{name}_form'):
                 # ADD mentions to the text         
-                mentions_list.append(mention(
+                mention_clicked = mention(
                     label=name,
                     icon="streamlit",  # Some icons are available... like Streamlit!
                     url=item['affiliate_link'],
-                ))
+                )
                 # card(
                 #     title="Hello Geeks!",
                 #     text="Click this card to redirect to GeeksforGeeks",
@@ -81,33 +85,40 @@ with col1:
                 # Item Description
                 st.markdown(description)
                 
+                # COUNTER
+                if name not in st.session_state:                    
+                    st.session_state.name = item['clicked'] + item['f_clicked']
+                    
+                counter_text = st.empty()
+                counter_text.write(f"The counter value is: {st.session_state.name}")
+                
                 # --- ADD keyboard to URL
-                print(item_index)
+                number = number_to_words(item_index)
                 keyboard_to_url(key=str(item_index), url=url)
-                st.write(
-                    f"""check out this [link]({url}) or hit {key(str(item_index), False)} on your keyboard...!""",
-                    unsafe_allow_html=True,
+                
+                def link_callback():
+                    st.session_state.name += 1
+                    
+                link = st.markdown(
+                    f"[Visit Site]({url}) or hit {key(number, False)} on your keyboard...!",
+                    # f"""[Visit Site]({url}) or hit {key(number, False)} on your keyboard...!""",
+                    unsafe_allow_html=True
                 )
                 
-                # COUNTER
-                if 'click_count' not in st.session_state:                    
-                    st.session_state.click_count = item['clicked'] + item['f_clicked']
-                                
-                # FORM SUBMIT BUTTON
-                if 'button_label' not in st.session_state:
-                    st.session_state.click_count += 1
-                    st.session_state.button_label = f"Clicked2 {st.session_state.click_count} times"
-                    webbrowser.open_new_tab(url)
+
                     
-                    
-                def submit_form():
-                    st.session_state.button_label = f"Clicked {st.session_state.click_count} times"
-                form_button = st.form_submit_button(label=f"{st.session_state.button_label}", on_click=submit_form)
+                # CHECK PRICE BUTTON
+                form_button = st.form_submit_button(label=f"Check Price")
+                
                 if form_button:
-                    st.session_state.click_count += 1
+                    print("YESSSS")
+                    st.session_state.name += 1
+                    
+                    # Update the counter text on the page
+                    counter_text.write(f"The counter value is: {st.session_state.name}")
                     webbrowser.open_new_tab(url)
                     
-                print(st.session_state.click_count)
+
             
     
 # --- EMAIL SUBSCRIPTION
