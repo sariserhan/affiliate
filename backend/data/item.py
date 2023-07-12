@@ -15,7 +15,7 @@ class Item(DETA):
     def __init__(self, name: str = ''):
         super(Item, self).__init__(db="items_db")
 
-    def create_item(self, name: str, description: str, image_path: str, image_name: str, affiliate_link: str, catalog_name: str, clicked: int = 0, f_clicked: int = 0):        
+    def create_item(self, name: str, description: str, image_path: str, image_name: str, affiliate_link: str, catalog_names: list, clicked: int = 0, f_clicked: int = 0):        
         key = name.replace(' ','_')  
         data = {
             "key": key,
@@ -25,7 +25,7 @@ class Item(DETA):
             "image_name": image_name,
             "clicked": clicked,
             "f_clicked": f_clicked,
-            "catalog": catalog_name
+            "catalog": catalog_names
         }
 
         try:
@@ -35,12 +35,13 @@ class Item(DETA):
             logging.warning(f"{name} is already in the database.")
             raise e
         
-        # Upload image in to image_db Drive
-        self.drive.put(f'{catalog_name}/{image_name}', image_path)
-    
-        # Add item into catalog
-        catalog = Catalog(catalog_name)
-        catalog.add_item(items=[name])     
+        for catalog_name in catalog_names:        
+            # Upload image in to image_db Drive
+            self.drive.put(f'{catalog_name}/{image_name}', image_path)
+
+            # Add item into catalog
+            catalog = Catalog(catalog_name)
+            catalog.add_item(items=[name])     
         
         logging.info(f"{name} is successfully added to the database.")
         return f"{name} is successfully added to the database."
@@ -58,7 +59,7 @@ class Item(DETA):
 if __name__ == '__main__':
     pass
     # item = Item()
-    # item.create_item(name='sonytv447', description='testttttt4', image_path='assets/findik.png', image_name='findik.png' ,affiliate_link='wasdsd', catalog_name='new-test-catalog')
+    # item.create_item(name='sonytv447', description='testttttt4', image_path='assets/findik.png', image_name='findik.png' ,affiliate_link='wasdsd', catalog_name=['new-test-catalog'])
     
     # item.change_record(key='sony_tv88', updates={'description': 'sari'})
     # print(item.get_record_by_catalog(catalog='TV_7'))

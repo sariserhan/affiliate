@@ -53,6 +53,7 @@ if authentication_status:
     with st.container():
         st.header('Create New Item')
         
+        # TOGGLE SWITCH FOR f_clicked
         f_clicked_toggle = st_toggle_switch(
             label="Enable f-clicked?",
             key="switch_1",
@@ -62,23 +63,28 @@ if authentication_status:
             active_color="#11567f",  # optional
             track_color="#29B5E8",  # optional
         )
+        
+        # GET CATALOG FROM DB
         catalog_list = []
         catalogs = Catalog().fetch_records()        
         for catalog in catalogs:
             catalog_list.append(catalog['name'])
         
-        catalog_list.append("Create New Catalog")
+        catalog_list.append("Add New Catalog")
         
         name = st.text_input(label='Item Name', key='item_name', placeholder='Name', label_visibility='collapsed')
         description = st.text_area(label='Item Description', height=50, key='description', placeholder='Description',label_visibility='collapsed')    
         affiliate_link = st.text_input(label='Item Affiliate Link', key='affiliate_link', placeholder='Affiliate Link',label_visibility='collapsed')
-        catalog_name = st.selectbox(label="Choose Category or Create New", options=catalog_list)
-        if catalog_name == "Create New Catalog":
-            catalog_name = st.text_input(label='Catalog Name', key='catalog_name', placeholder='Catalog Name', label_visibility='collapsed')
+        catalog_names = st.multiselect(label="Choose Category", options=catalog_list)
+        if "Add New Catalog" in catalog_names:
+            new_catalog_name = st.text_input(label='Add Catalog Name', key='catalog_name', placeholder='Catalog Name', label_visibility='collapsed')
+            catalog_names.append(new_catalog_name)        
+            catalog_names.remove('Add New Catalog')
+            
         clicked = st.number_input(label='Num of clicked to start', value=0, key='clicked')
         if f_clicked_toggle:
             random_num = random.randint(1000, 5000)
-            f_clicked = st.number_input(label='Num of f_clicked to start', value=random_num, key='f_clicked')
+            f_clicked_val = st.number_input(label='Num of f_clicked to start', value=random_num, key='f_clicked')
             
         uploaded_file = st.file_uploader("Choose a file")
         button = st.button(label='Submit')
@@ -86,19 +92,21 @@ if authentication_status:
         if uploaded_file is not None:
             image_val = uploaded_file.getvalue()
             image_name = uploaded_file.name
-            print(image_name)
         
             if button:                
                 try:
-                    item = Item()
-                    if f_clicked_toggle:
-                        item.create_item(name=name, description=description, image_path=image_val, image_name=image_name ,affiliate_link=affiliate_link, catalog_name=catalog_name, clicked=int(clicked), f_clicked=int(f_clicked))
-                    else:
-                        item.create_item(name=name, description=description, image_path=image_val, image_name=image_name, affiliate_link=affiliate_link, catalog_name=catalog_name, clicked=int(clicked))
+                    item = Item()                    
+                    item.create_item(
+                        name=name, 
+                        description=description,
+                        image_path=image_val,
+                        image_name=image_name,
+                        affiliate_link=affiliate_link,
+                        catalog_names=catalog_names,
+                        clicked=int(clicked),
+                        f_clicked=int(f_clicked_val) if f_clicked_toggle else 0
+                        )
                     st.success(name)
                 except Exception as e:
                     st.error("Something went wrong!")
                     logging.error(e)
-                    
-                    
-                
