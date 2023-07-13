@@ -15,27 +15,26 @@ class Item(DETA):
     def __init__(self, name: str = ''):
         super(Item, self).__init__(db="items_db")
 
-    def create_item(self, name: str, description: str, image_path: str, image_name: str, affiliate_link: str, catalog_names: list, clicked: int = 0, f_clicked: int = 0):        
-        key = name.replace(' ','_')  
-        data = {
-            "key": key,
-            "name": name,
-            "description": description,
-            "affiliate_link": affiliate_link,
-            "image_name": image_name,
-            "clicked": clicked,
-            "f_clicked": f_clicked,
-            "catalog": catalog_names
-        }
+    def create_item(self, name: str, description: str, image_path: str, image_name: str, affiliate_link: str, catalog_names: list, f_clicked: int = 0):        
+        for catalog_name in catalog_names:
+            key = name.replace(' ',f'_{catalog_name}')
+            data = {
+                "key": key,
+                "name": name,
+                "description": description,
+                "affiliate_link": affiliate_link,
+                "image_name": image_name,
+                "clicked": 0,
+                "f_clicked": f_clicked,
+                "catalog": catalog_name
+            }
 
-        try:
-            # Load data in to items_db Base
-            self.db.insert(data)
-        except Exception as e:
-            logging.warning(f"{name} is already in the database.")
-            raise e
-        
-        for catalog_name in catalog_names:        
+            try:
+                # Load data in to items_db Base
+                self.db.insert(data)
+            except:
+                logging.warning(f"{name} is already in the database.")        
+         
             # Upload image in to image_db Drive
             self.drive.put(f'{catalog_name}/{image_name}', image_path)
 
@@ -43,8 +42,8 @@ class Item(DETA):
             catalog = Catalog(catalog_name)
             catalog.add_item(items=[name])     
         
-        logging.info(f"{name} is successfully added to the database.")
-        return f"{name} is successfully added to the database."
+            logging.info(f"{name} is successfully added to the database.")
+            return f"{name} is successfully added to the database."
     
     @staticmethod
     def _process_data(data):

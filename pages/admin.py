@@ -81,7 +81,7 @@ if authentication_status:
             catalog_names.append(new_catalog_name)        
             catalog_names.remove('Add New Catalog')
             
-        clicked = st.number_input(label='Num of clicked to start', value=0, key='clicked')
+        # clicked = st.number_input(label='Num of clicked to start', value=0, key='clicked')
         if f_clicked_toggle:
             random_num = random.randint(1000, 5000)
             f_clicked_val = st.number_input(label='Num of f_clicked to start', value=random_num, key='f_clicked')
@@ -103,7 +103,6 @@ if authentication_status:
                         image_name=image_name,
                         affiliate_link=affiliate_link,
                         catalog_names=catalog_names,
-                        clicked=int(clicked),
                         f_clicked=int(f_clicked_val) if f_clicked_toggle else 0
                         )
                     st.success(name)

@@ -11,7 +11,7 @@ def subscription():
         subscribe_button = st.form_submit_button(label='Subscribe')
         unsubscribe_button = st.form_submit_button(label='Unsubscribe')
     
-        if subscribe_button:            
+        if subscribe_button:
             try:
                 subscription = Subscription(email=email)
                 subscription.subscribe()

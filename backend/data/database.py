@@ -58,4 +58,3 @@ if __name__ == '__main__':
     pass
     # deta = DETA('images_db')
     # image = deta.get_image_data(name='Helix Midnight Luxe (Queen)', catalog='Mattress')
-    # print(type(image))

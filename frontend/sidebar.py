@@ -9,7 +9,8 @@ def sidebar() -> str:
         catalog_list = get_catalog_list()
         
         sidebar = option_menu(
-            menu_title="AI-Picks",
+            # menu_title="AI-Picks",
+            menu_title=None,
             # menu_title=None,
             options=(catalog_list[::-1])
         )
