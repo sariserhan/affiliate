@@ -8,13 +8,13 @@ def sidebar() -> str:
     with st.sidebar:            
         catalog_list = get_catalog_list()
         
-        selected = option_menu(
-            menu_title="Best Ones by AI",
+        sidebar = option_menu(
+            menu_title="AI-Picks",
             # menu_title=None,
             options=(catalog_list[::-1])
         )
         
-    return selected
+    return sidebar
 
 def get_catalog_list() -> list:
     catalogs = Catalog().fetch_records()
