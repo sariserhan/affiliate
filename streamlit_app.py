@@ -38,7 +38,7 @@ show_pages(
 hide_pages(["admin", "home"])
 
 # --- CSS 
-with open('style.css') as f:
+with open('./styles/main.css') as f:
     st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
 # --- LOGO
@@ -49,8 +49,14 @@ selected_catalog = sidebar()
 
 # --- HEADER
 colored_header(
-    label=f'Best products AI thinks - {selected_catalog}',
-    description="We asked AI and here are the ones it thinks are the best!",
+    label=f'AI-Powered Picks: Unleashing the Future of Smart Shopping!',
+    description="""
+                    Welcome to AI-BestGoods, where cutting-edge artificial intelligence technology revolutionizes your shopping experience.
+                    Powered by state-of-the-art artificial intelligence, we bring you a handpicked collection of the absolute best goods on the market.
+                    Our AI-powered recommendation engine analyzes vast amounts of data, user insights, and emerging trends, to deliver recommendations.
+                    From cutting-edge technology to trendy fashion and everything in between, AI-BestGoods ensures you make informed choices with confidence. 
+                    Experience the future of shopping with AI-BestGoods – where intelligence meets excellence.
+                """,
     color_name="red-70",
 )
 
@@ -79,8 +85,10 @@ with col2:
         selected_catalog=selected_catalog
     )
     
+st.divider()
+    
 # --- EMAIL SUBSCRIPTION
-subscription()
+# subscription()
 
 # --- BUY ME A COFFEE
 button(username="serhansari", floating=True, width=221)

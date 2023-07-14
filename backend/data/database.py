@@ -1,6 +1,7 @@
-import logging
 import os
+import logging
 
+from streamlit import secrets
 from deta import Deta
 from dotenv import load_dotenv
 
@@ -12,7 +13,7 @@ load_dotenv()
 class DETA:
     
     def __init__(self, db: str) -> None:
-        self.deta = Deta(os.getenv("DETA_KEY"))
+        self.deta = Deta(os.getenv("DETA_KEY") or secrets("DETA_KEY"))
         self.db = self.deta.Base(db)
         self.drive = self.deta.Drive('images_db')
         
@@ -57,4 +58,3 @@ class DETA:
 if __name__ == '__main__':
     pass
     # deta = DETA('images_db')
-    # image = deta.get_image_data(name='Helix Midnight Luxe (Queen)', catalog='Mattress')
