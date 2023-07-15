@@ -21,9 +21,14 @@ div.css-79elbk.e1akgbir10 {
     right: -2%;
 }
 
-#stVerticalBlock {
+/* div.css-tw2vp1.esravye0 {
     background-color: aliceblue;
+} */
+
+[data-testid="stVerticalBlock"] {
+    margin-top: 0px; /* Adjust the value as needed */
 }
+  
 
 /* CONTROLS --> ENTIRE PAGE EXCEPT SIDEBAR */
 /* div.block-container.css-z5fcl4.e1g8pov64 {

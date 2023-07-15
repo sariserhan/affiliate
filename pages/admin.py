@@ -3,7 +3,6 @@ import logging
 import streamlit as st
 import streamlit_authenticator as stauth
 
-from streamlit_toggle import st_toggle_switch
 from backend.data.admin import Admin
 from backend.data.item import Item
 from backend.data.catalog import Catalog
@@ -53,16 +52,22 @@ if authentication_status:
     with st.container():
         st.header('Create New Item')
         
-        # TOGGLE SWITCH FOR f_clicked
-        f_clicked_toggle = st_toggle_switch(
-            label="Enable f-clicked?",
-            key="switch_1",
-            default_value=False,
-            label_after=False,
-            inactive_color="#D3D3D3",  # optional
-            active_color="#11567f",  # optional
-            track_color="#29B5E8",  # optional
-        )
+        f_clicked_toggle = None
+        
+        try:
+            from streamlit_toggle import st_toggle_switch
+            # TOGGLE SWITCH FOR f_clicked
+            f_clicked_toggle = st_toggle_switch(
+                label="Enable f-clicked?",
+                key="switch_1",
+                default_value=False,
+                label_after=False,
+                inactive_color="#D3D3D3",  # optional
+                active_color="#11567f",  # optional
+                track_color="#29B5E8",  # optional
+            )
+        except:
+            logging.warning('Toggle Switch in not available')
         
         # GET CATALOG FROM DB
         catalog_list = []
@@ -81,7 +86,6 @@ if authentication_status:
             catalog_names.append(new_catalog_name)        
             catalog_names.remove('Add New Catalog')
             
-        # clicked = st.number_input(label='Num of clicked to start', value=0, key='clicked')
         if f_clicked_toggle:
             random_num = random.randint(1000, 5000)
             f_clicked_val = st.number_input(label='Num of f_clicked to start', value=random_num, key='f_clicked')

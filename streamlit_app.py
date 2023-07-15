@@ -32,10 +32,11 @@ st.set_page_config(
 show_pages(
     [
         Page("streamlit_app.py", "home"),
+        Page("pages/unsubscribe.py", "unsubscribe"),
         Page("pages/admin.py", "admin")
     ]
 )
-hide_pages(["admin", "home"])
+hide_pages(["admin", "home", "unsubscribe"])
 
 # --- CSS 
 with open('./styles/main.css') as f:
