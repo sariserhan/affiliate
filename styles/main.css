@@ -28,6 +28,11 @@ div.css-79elbk.e1akgbir10 {
 [data-testid="stVerticalBlock"] {
     margin-top: 0px; /* Adjust the value as needed */
 }
+
+[data-testid="block-container"] {
+    padding-bottom: 0px;
+    padding-top: 10px;
+}
   
 
 /* CONTROLS --> ENTIRE PAGE EXCEPT SIDEBAR */

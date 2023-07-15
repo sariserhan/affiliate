@@ -57,4 +57,3 @@ class DETA:
 
 if __name__ == '__main__':
     pass
-    # deta = DETA('images_db')

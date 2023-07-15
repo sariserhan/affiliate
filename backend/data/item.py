@@ -26,7 +26,8 @@ class Item(DETA):
                 "image_name": image_name,
                 "clicked": 0,
                 "f_clicked": f_clicked,
-                "catalog": catalog_name
+                "catalog": catalog_name,
+                "sent": False
             }
 
             try:
@@ -57,12 +58,4 @@ class Item(DETA):
 
 if __name__ == '__main__':
     pass
-    # item = Item()
-    # item.create_item(name='sonytv447', description='testttttt4', image_path='assets/findik.png', image_name='findik.png' ,affiliate_link='wasdsd', catalog_name=['new-test-catalog'])
-    
-    # item.change_record(key='sony_tv88', updates={'description': 'sari'})
-    # print(item.get_record_by_catalog(catalog='TV_7'))
-    # print(item.fetch_records())
-    # print(item.get_record(key='sony_tv'))
-    
     

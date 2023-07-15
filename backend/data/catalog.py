@@ -47,10 +47,4 @@ class Catalog(DETA):
         
 if __name__ == '__main__':
     pass
-    # new_catalog = Catalog(name='catalog test3')
-    # new_catalog.create_catalog()
-    # new_catalog.change_catalog({'name': 'TV 88', 'is_active': True, 'asas':1})
-    # new_catalog.add_item(items=['new_item4', 'asd'])
-    # print(new_catalog.fetch_items())
-    # new_catalog.delete_item(new_catalog.key)
     

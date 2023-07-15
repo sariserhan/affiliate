@@ -1,5 +1,5 @@
+import logging
 import streamlit as st
-import webbrowser
 
 from io import BytesIO
 from PIL import Image
@@ -7,8 +7,11 @@ from PIL import Image
 from streamlit_extras.keyboard_url import keyboard_to_url
 from streamlit_extras.keyboard_text import key
 from streamlit_extras.mention import mention
+from bokeh.models.widgets import Div
+
 from backend.data.item import Item
 
+logging.basicConfig(level=logging.DEBUG)
 
 def number_to_words(number):
     words = [":one:", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:", ":eight:", ":nine:"]
@@ -59,7 +62,7 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
                 st.session_state.name = clicked+ f_clicked
                 
             counter_text = st.empty()
-            counter_text.markdown(f'**:red[{st.session_state.name}]** times visited!', unsafe_allow_html=True)                             
+            counter_text.markdown(f'**:red[{st.session_state.name}]** times visited!', unsafe_allow_html=True)                                         
             
             # CHECK PRICE BUTTON
             form_button = st.form_submit_button(label="Check Price")
@@ -69,5 +72,9 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
                 Item().change_record(key=item_key, updates={'clicked':st.session_state.name})                    
                                     
                 # Update the counter text on the page
-                counter_text.markdown(f"**:red[{st.session_state.name}]** times visited!")
-                webbrowser.open_new_tab(url)
+                counter_text.markdown(f"**:red[{st.session_state.name}]** times visited!")                
+
+                js = f"window.open('{url}')"  # New tab or window
+                html = '<img src onerror="{}">'.format(js)
+                div = Div(text=html)
+                st.bokeh_chart(div)

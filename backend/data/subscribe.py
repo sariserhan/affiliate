@@ -29,7 +29,4 @@ class Subscription(DETA):
         return re.match(pattern, email) is not None
     
 if __name__ == '__main__':
-    new_user = Subscription(email='seray2@yahoo.com')
-    # new_user.subscribe()
-    # print(new_user.fetch_items())
-    # new_user.unsubscribe()
+    pass
