@@ -48,18 +48,38 @@ add_logo("./assets/logo.png", height=100)
 # --- CATALOG SIDE BAR
 selected_catalog = sidebar()
 
-# --- HEADER
-colored_header(
-    label=f'AI-Powered Picks: Unleashing the Future of Smart Shopping!',
-    description="""
-                    Welcome to AI-BestGoods, where cutting-edge artificial intelligence technology revolutionizes your shopping experience.
-                    Powered by state-of-the-art artificial intelligence, we bring you a handpicked collection of the absolute best goods on the market.
-                    Our AI-powered recommendation engine analyzes vast amounts of data, user insights, and emerging trends, to deliver recommendations.
-                    From cutting-edge technology to trendy fashion and everything in between, AI-BestGoods ensures you make informed choices with confidence. 
-                    Experience the future of shopping with AI-BestGoods – where intelligence meets excellence.
-                """,
-    color_name="red-70",
-)
+# JavaScript code to retrieve the user-agent
+st.markdown("""
+                <script type="text/javascript">
+                    var userAgent = navigator.userAgent || navigator.vendor || window.opera;
+                    document.getElementById("user-agent").value = userAgent;
+                </script>
+                """
+                , unsafe_allow_html=True
+            )
+
+# Retrieve the user agent string using a hidden input element
+user_agent_string = st.experimental_get_query_params().get("user_agent", [""])[0]
+
+# Detect the device type
+if "Mobile" in user_agent_string:
+    logging.info("User accessed by Mobile device!")
+elif "Tablet" in user_agent_string:
+    logging.info("User accessed by Tablet device!")
+else:
+    logging.info("User accessed by Computer!")
+    # --- HEADER
+    colored_header(
+        label=f'AI-Powered Picks: Unleashing the Future of Smart Shopping!',
+        description="""
+                        Welcome to AI-BestGoods, where cutting-edge artificial intelligence technology revolutionizes your shopping experience.
+                        Powered by state-of-the-art artificial intelligence, we bring you a handpicked collection of the absolute best goods on the market.
+                        Our AI-powered recommendation engine analyzes vast amounts of data, user insights, and emerging trends, to deliver recommendations.
+                        From cutting-edge technology to trendy fashion and everything in between, AI-BestGoods ensures you make informed choices with confidence. 
+                        Experience the future of shopping with AI-BestGoods – where intelligence meets excellence.
+                    """,
+        color_name="red-70",    
+        )
 
 # --- POST LIST
 col1,col2,_ = st.columns([4,4,2], gap='small')
