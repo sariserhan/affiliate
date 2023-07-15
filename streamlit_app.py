@@ -8,7 +8,6 @@ from streamlit_extras.app_logo import add_logo
 from streamlit_extras.colored_header import colored_header
 from st_pages import Page, hide_pages, show_pages
 
-from frontend.footer import footer
 from frontend.sidebar import sidebar
 from frontend.subscription import subscription
 from frontend.column_setup import set_form
@@ -72,11 +71,8 @@ else:
     colored_header(
         label=f'AI-Powered Picks: Unleashing the Future of Smart Shopping!',
         description="""
-                        Welcome to AI-BestGoods, where cutting-edge artificial intelligence technology revolutionizes your shopping experience.
-                        Powered by state-of-the-art artificial intelligence, we bring you a handpicked collection of the absolute best goods on the market.
-                        Our AI-powered recommendation engine analyzes vast amounts of data, user insights, and emerging trends, to deliver recommendations.
-                        From cutting-edge technology to trendy fashion and everything in between, AI-BestGoods ensures you make informed choices with confidence. 
-                        Experience the future of shopping with AI-BestGoods – where intelligence meets excellence.
+                        Our recommendation engine analyzes data and trends for informed choices. From tech to fashion, AI-BestGoods ensures confident shopping.
+                        Discover handpicked, top-quality goods powered by state-of-the-art AI. Experience the future of intelligent shopping with AI-BestGoods.
                     """,
         color_name="red-70",    
         )
@@ -114,5 +110,16 @@ st.divider()
 # --- BUY ME A COFFEE
 button(username="serhansari", floating=True, width=221)
     
-# --- FOOTER 
-footer()
+# --- FOOTER
+st.write(
+    """
+    <div id="footer"> 
+        <p>
+            © 2023 AI-BestGoods. All rights reserved. 
+            <a href='https://www.instagram.com/serhansari/' target='_blank'>@serhansari</a>
+        </p>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
