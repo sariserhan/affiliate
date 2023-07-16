@@ -71,8 +71,7 @@ else:
     colored_header(
         label=f'AI-Powered Picks: Unleashing the Future of Smart Shopping!',
         description="""
-                        Our recommendation engine analyzes data and trends for informed choices. From tech to fashion, AI-BestGoods ensures confident shopping.
-                        Discover handpicked, top-quality goods powered by state-of-the-art AI. Experience the future of intelligent shopping with AI-BestGoods.
+                        Our recommendation engine analyzes data and trends for informed choices. Experience the future of intelligent shopping with AI-BestGoods.
                     """,
         color_name="red-70",    
         )
