@@ -13,6 +13,7 @@ from backend.data.item import Item
 
 logging.basicConfig(level=logging.DEBUG)
 
+@st.cache_resource
 def number_to_words(number):
     words = [":one:", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:", ":eight:", ":nine:"]
     return " ".join(words[int(i)] for i in str(number))
@@ -78,3 +79,4 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
                 html = '<img src onerror="{}">'.format(js)
                 div = Div(text=html)
                 st.bokeh_chart(div)
+                logging.info(f"{name} is clicked")

@@ -1,5 +1,8 @@
+import os
 import logging
+
 import streamlit as st
+import streamlit_analytics
 
 from PIL import Image
 
@@ -11,11 +14,16 @@ from st_pages import Page, hide_pages, show_pages
 from frontend.sidebar import sidebar
 from frontend.subscription import subscription
 from frontend.column_setup import set_form
+from frontend.google_analytics import google_analytics_setup
 from backend.data.item import Item
 
-# Disable DEBUG level logging for the PIL module
-logging.getLogger("PIL").setLevel(logging.INFO)
+from dotenv import load_dotenv
 
+# Load environment variables from .env file
+load_dotenv()
+
+# Disable DEBUG level logging for the PIL module
+logging.basicConfig(level=logging.DEBUG)
 
 # --- ICON
 icon = Image.open("./assets/icon.png")
@@ -26,6 +34,9 @@ st.set_page_config(
     page_icon=icon,
     page_title="AI-BestGoods"
 )
+
+# --- GOOGLE ANALYTICS SETUP
+google_analytics_setup()
 
 # --- MAKE PAGES & HIDE
 show_pages(
@@ -44,18 +55,10 @@ with open('./styles/main.css') as f:
 # --- LOGO
 add_logo("./assets/logo.png", height=100)
 
+streamlit_analytics.start_tracking()
+
 # --- CATALOG SIDE BAR
 selected_catalog = sidebar()
-
-# JavaScript code to retrieve the user-agent
-st.markdown("""
-                <script type="text/javascript">
-                    var userAgent = navigator.userAgent || navigator.vendor || window.opera;
-                    document.getElementById("user-agent").value = userAgent;
-                </script>
-                """
-                , unsafe_allow_html=True
-            )
 
 # Retrieve the user agent string using a hidden input element
 user_agent_string = st.experimental_get_query_params().get("user_agent", [""])[0]
@@ -77,7 +80,7 @@ else:
         )
 
 # --- POST LIST
-col1,col2,_ = st.columns([4,4,2], gap='small')
+col1,col2,col3 = st.columns([4,4,2], gap='small')
 
 # --- ITEM LIST
 items = Item().get_record_by_catalog(catalog=selected_catalog)
@@ -101,6 +104,10 @@ with col2:
         selected_catalog=selected_catalog
     )
     
+# --- COLUMN-3
+with col3:
+    pass
+
 st.divider()
     
 # --- EMAIL SUBSCRIPTION
@@ -122,3 +129,4 @@ st.write(
     unsafe_allow_html=True
 )
 
+streamlit_analytics.stop_tracking(unsafe_password=os.getenv("STREAMLIT_ANALYTICS"))

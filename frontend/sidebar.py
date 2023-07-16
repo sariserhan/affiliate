@@ -5,7 +5,7 @@ from streamlit_option_menu import option_menu
 from backend.data.catalog import Catalog
 
 def sidebar() -> str:
-    with st.sidebar:            
+    with st.sidebar:
         catalog_list = get_catalog_list()
         
         sidebar = option_menu(
@@ -17,8 +17,8 @@ def sidebar() -> str:
         
     return sidebar
 
-def get_catalog_list() -> list:
-    catalogs = Catalog().fetch_records()
+@st.cache_data(show_spinner=False)
+def get_catalog_list(catalogs=Catalog().fetch_records()) -> list:
     catalog_list = []
     for catalog in catalogs:
         catalog_list.append(catalog['name'])
