@@ -45,10 +45,11 @@ show_pages(
     [
         Page("streamlit_app.py", "home"),
         Page("pages/unsubscribe.py", "unsubscribe"),
-        Page("pages/admin.py", "admin")
+        Page("pages/admin.py", "admin"),
+        Page("pages/privacy.py", "privacy")
     ]
 )
-hide_pages(["admin", "home", "unsubscribe"])
+hide_pages(["admin", "home", "unsubscribe", "privacy"])
 
 # --- CSS 
 with open('./styles/main.css') as f:
