@@ -15,6 +15,7 @@ from frontend.sidebar import sidebar
 from frontend.subscription import subscription
 from frontend.column_setup import set_form
 from frontend.google_analytics import google_analytics_setup
+from frontend.google_adsense import google_adsense_setup
 from backend.data.item import Item
 
 from dotenv import load_dotenv
@@ -37,6 +38,7 @@ st.set_page_config(
 
 # --- GOOGLE ANALYTICS SETUP
 google_analytics_setup()
+google_adsense_setup()
 
 # --- MAKE PAGES & HIDE
 show_pages(
@@ -104,7 +106,7 @@ with col2:
         selected_catalog=selected_catalog
     )
     
-# --- COLUMN-3
+# --- COLUMN-3 for ADS
 with col3:
     pass
 
