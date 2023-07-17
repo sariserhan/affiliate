@@ -16,6 +16,7 @@ from frontend.subscription import subscription
 from frontend.column_setup import set_form
 from frontend.google_analytics import google_analytics_setup
 from frontend.google_adsense import google_adsense_setup
+from frontend.vertical_ad import add_vertical_ad
 from backend.data.item import Item
 
 from dotenv import load_dotenv
@@ -108,8 +109,8 @@ with col2:
     )
     
 # --- COLUMN-3 for ADS
-with col3:
-    pass
+with col3:        
+    st.markdown(add_vertical_ad(), unsafe_allow_html=True)    
 
 st.divider()
     
