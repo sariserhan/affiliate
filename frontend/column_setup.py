@@ -29,7 +29,7 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
         f_clicked = items[item_index]["f_clicked"]
         
         with st.form(f'{name}_{col_name}', clear_on_submit=False):            
-            # -- SUB-HEADER  
+            # --- SUB-HEADER  
             st.markdown(f"<h2 style='text-align: center;'>{name}</h2>", unsafe_allow_html=True)
             
             # --- ADD keyboard to URL
@@ -38,15 +38,24 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
             
             # --- ADD mentions to the text         
             inline_mention = mention(
-                label=f"**_Visit Site:_ :red[{name}]**",
+                label=f"**_Visit Site:_ :green[{name}]**",
                 icon=":arrow_right:",
                 url=url,
                 write=False
             )
             
+            # --- ADD mentions to the text for ad..
+            inline_ad_mention = mention(
+                label="but don't click :red[THIS]",
+                icon=':exclamation:',
+                url="https://www.google.com",
+                write=False
+            )
+            # NOTE: Add ad link here
+            keyboard_to_url(key="a", url="https://www.google.com")
             # --- URL AND KEYBOARD TO URL
             st.write(
-                f'{inline_mention} or hit {key(number, False)} on your keyboard...!',
+                f'{inline_mention} or hit {key(number, False)} on your keyboard {inline_ad_mention} nor hit {key(":a:", False)} :exclamation:',
                 unsafe_allow_html=True,
             )     
                         

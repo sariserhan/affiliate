@@ -18,5 +18,5 @@ def add_vertical_ad():
                     data-full-width-responsive="true"></ins>
                 <script>'''
     end = "(adsbygoogle = window.adsbygoogle || []).push({});</script>"
-    print(begin + end)
+
     return begin + end

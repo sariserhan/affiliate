@@ -11,13 +11,16 @@ from streamlit_extras.app_logo import add_logo
 from streamlit_extras.colored_header import colored_header
 from st_pages import Page, hide_pages, show_pages
 
+from backend.data.item import Item
+
 from frontend.sidebar import sidebar
 from frontend.subscription import subscription
 from frontend.column_setup import set_form
+
 from frontend.google_analytics import google_analytics_setup
 from frontend.google_adsense import google_adsense_setup
+from frontend.impact_com import impact_setup
 from frontend.vertical_ad import add_vertical_ad
-from backend.data.item import Item
 
 from dotenv import load_dotenv
 
@@ -34,12 +37,17 @@ icon = Image.open("./assets/icon.png")
 st.set_page_config(
     layout='wide',
     page_icon=icon,
-    page_title="AI-BestGoods"
+    page_title="AIBestGoods"
 )
+
+# --- IMPACT.COM SETUP
+impact_setup()
+
+# --- GOOGLE ADSENSE SETUP
+google_adsense_setup()
 
 # --- GOOGLE ANALYTICS SETUP
 google_analytics_setup()
-google_adsense_setup()
 
 # --- MAKE PAGES & HIDE
 show_pages(
@@ -110,7 +118,18 @@ with col2:
     
 # --- COLUMN-3 for ADS
 with col3:        
-    st.markdown(add_vertical_ad(), unsafe_allow_html=True)    
+        # Insert your <iframe> code here
+    # Insert the Markdown code here
+    markdown_code = '''
+    ## Amazon Ad
+    
+    ![Amazon Ad](https://rcm-na.amazon-adsystem.com/e/cm?o=1&p=14&l=ur1&category=pets&banner=0PWM0V5BSTZ88X5JPHG2&f=ifr&linkID=45c647400575280018d9af566548c2f9&t=aibestgoods-20&tracking_id=aibestgoods-20)
+    '''
+    
+    # Display the Markdown code using st.markdown
+    st.markdown(markdown_code, unsafe_allow_html=True)
+    # st.markdown(add_vertical_ad(), unsafe_allow_html=True)   
+    
 
 st.divider()
     
