@@ -180,3 +180,5 @@ pyrightconfig.json
 
 backend/email_service/
 .space
+
+app_test.py

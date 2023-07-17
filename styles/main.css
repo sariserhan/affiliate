@@ -3,6 +3,11 @@
     
 } */
 
+h2 {
+    font-size: x-large;
+    padding-bottom: 0px;
+}
+
 /* CONTROLS --> Description part of colored_header() */
 div.css-1wncz92.eqr7zpz4 > p {
     white-space: pre-line;

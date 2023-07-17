@@ -49,10 +49,28 @@ class DETA:
         logging.info(f"{key} successfully changed record.")
         return f"{key} successfully changed record."
     
-    def delete_item(self, key: str) -> str:
-        self.db.delete(key)
-        logging.info(f"{key} successfully deleted.")
-        return f"{key} successfully deleted."
+    def delete_item(self, key: str):
+        name = key
+        key = key.replace(' ','_')
+        try:
+            catalog_name = self.get_record(key)['catalog']
+            catalog_base = self.deta.Base("catalog_db")
+            catalog_record = catalog_base.get(key=catalog_name)
+            for item in catalog_record['item_list']:
+                if item == name:
+                    catalog_record['item_list'].remove(item)
+                    break
+            catalog_base.put(catalog_record)
+            logging.info(f"{name} successfully removed from catalog.")
+        except Exception as e:
+            logging.error(f'Error in removing {name} fron catalog ---> {e}')
+        try:
+            self.db.delete(key)
+            logging.info(f"{name} successfully deleted.")
+            return True
+        except Exception as e:
+            logging.error(f'Error in deleting {name} ---> {e}')
+            return False
 
 
 if __name__ == '__main__':

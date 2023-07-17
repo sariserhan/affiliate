@@ -13,10 +13,16 @@ from backend.data.item import Item
 
 logging.basicConfig(level=logging.DEBUG)
 
-@st.cache_resource
+
 def number_to_words(number):
     words = [":one:", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:", ":eight:", ":nine:"]
     return " ".join(words[int(i)] for i in str(number))
+
+@st.cache_data(show_spinner=False)
+def get_image(image_name, selected_catalog) -> Image:
+    image_data = Item().get_image_data(name=image_name, catalog=selected_catalog)
+    return Image.open(BytesIO(image_data))
+    
 
 def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: str):
     for item_index in range(start, end):
@@ -34,7 +40,7 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
             
             # --- ADD keyboard to URL
             number = number_to_words(item_index)
-            keyboard_to_url(key=str(item_index), url=url)
+            keyboard_to_url(key=str(item_index+1), url=url)
             
             # --- ADD mentions to the text         
             inline_mention = mention(
@@ -43,7 +49,7 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
                 url=url,
                 write=False
             )
-            
+
             # --- ADD mentions to the text for ad..
             inline_ad_mention = mention(
                 label="but don't click :red[THIS]",
@@ -52,17 +58,22 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
                 write=False
             )
             # NOTE: Add ad link here
-            keyboard_to_url(key="a", url="https://www.google.com")
+            # keyboard_to_url(key="a", url="https://www.google.com")            
+            # st.write(
+            #     f'{inline_mention} or hit {key(number, False)} on your keyboard {inline_ad_mention} nor hit {key(":a:", False)} :exclamation:',
+            #     unsafe_allow_html=True,
+            # )     
             # --- URL AND KEYBOARD TO URL
             st.write(
-                f'{inline_mention} or hit {key(number, False)} on your keyboard {inline_ad_mention} nor hit {key(":a:", False)} :exclamation:',
-                unsafe_allow_html=True,
-            )     
+                f'{inline_mention} or hit {key(number, False)} on your keyboard', unsafe_allow_html=True
+            )
                         
             # --- IMAGE
-            image_data = Item().get_image_data(name=image_name, catalog=selected_catalog)
-            image = Image.open(BytesIO(image_data))
-            st.image(image=image, caption=name, use_column_width=True)               
+            try:
+                image = get_image(image_name, selected_catalog)
+                st.image(image=image, caption=name, use_column_width=True)
+            except Exception as e:
+                logging.error(f'Error for item: {name} ---> {e}')
             
             # --- DESCRIPTION
             st.markdown(description)
