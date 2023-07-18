@@ -4,7 +4,6 @@ import logging
 
 import streamlit as st
 import streamlit_analytics
-import streamlit.components.v1 as components
 
 from PIL import Image
 
@@ -32,20 +31,6 @@ load_dotenv()
 # Disable DEBUG level logging for the PIL module
 logging.basicConfig(level=logging.DEBUG)
 
-
-def change_button_color(widget_label, font_color, background_color='transparent'):
-    htmlstr = f"""
-        <script>
-            var elements = window.parent.document.querySelectorAll('button');
-            for (var i = 0; i < elements.length; ++i) {{ 
-                if (elements[i].innerText == '{widget_label}') {{ 
-                    elements[i].style.color ='{font_color}';
-                    elements[i].style.background = '{background_color}'
-                }}
-            }}
-        </script>
-        """
-    components.html(f"{htmlstr}", height=0, width=0)
 
 def get_base64_of_bin_file(bin_file):
     with open(bin_file, 'rb') as f:
@@ -77,7 +62,7 @@ def init():
     impact_setup()
 
     # --- GOOGLE ADSENSE SETUP
-    google_adsense_setup()
+    # google_adsense_setup()
 
     # --- GOOGLE ANALYTICS SETUP
     google_analytics_setup()
@@ -94,8 +79,7 @@ def init():
     hide_pages(["admin", "home", "unsubscribe", "privacy"])
 
     # --- CSS 
-    local_css('./styles/main.css')        
-    change_button_color('unsubscribe_button', 'red', 'blue')
+    local_css('./styles/main.css')            
  
     # --- LOGO
     add_logo("./assets/logo.png", height=100)
@@ -131,7 +115,7 @@ def main():
         col3 = None
     else:
         if len(items) == 1:
-            col1 = st.columns(1)
+            _, col1, _ = st.columns([0.1,1,0.1])
             col1_start, col1_end = 0, len(items)
             col2 = None
             col3 = None
@@ -184,7 +168,7 @@ def main():
     st.divider()
         
     # --- EMAIL SUBSCRIPTION
-    subscription()
+    # subscription()
 
     # --- BUY ME A COFFEE
     button(username=os.getenv("buy_me_coffee"), floating=False, width=220)

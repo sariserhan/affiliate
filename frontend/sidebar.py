@@ -19,6 +19,7 @@ def sidebar() -> str:
 def get_catalog_list(catalogs=Catalog().fetch_records()) -> list:
     catalog_list = []
     for catalog in catalogs:
-        catalog_list.append(catalog['name'])
+        if catalog['is_active']:
+            catalog_list.append(catalog['name'])
         
     return catalog_list

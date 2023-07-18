@@ -18,7 +18,7 @@ class Catalog(DETA):
         data = {
             "key": self.key,
             "name": self.name,
-            "is_active": False,
+            "is_active": True,
             "item_list": []
         }
         try:

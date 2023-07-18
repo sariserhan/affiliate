@@ -5,7 +5,6 @@ from backend.data.subscribe import Subscription
 
 logging.basicConfig(level=logging.DEBUG)
 
-@st.cache_data(show_spinner=False)
 def subscription():
     with st.form('subscription_form'):
         email = st.text_input(label='Email to subscribe', key='subscribe', placeholder='Email to subscribe/unsubscribe', label_visibility='collapsed')      
@@ -18,7 +17,6 @@ def subscription():
         if unsubscribe_button:
             unsubscribe(email)
             
-@st.cache_data(show_spinner=False)
 def subscribe(email: str):
     try:
         subscription = Subscription(email=email)
@@ -30,7 +28,6 @@ def subscribe(email: str):
         logging.error(f'Error trying to subscribe {e}')
         return st.error(f'Error trying to subscribe {e}')
             
-@st.cache_data(show_spinner=False)
 def unsubscribe(email: str):
     try:                
         subscription = Subscription(email=email)
