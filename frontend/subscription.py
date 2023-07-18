@@ -1,5 +1,5 @@
-import streamlit as st
 import logging
+import streamlit as st
 
 from backend.data.subscribe import Subscription
 

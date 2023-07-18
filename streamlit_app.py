@@ -4,6 +4,7 @@ import logging
 
 import streamlit as st
 import streamlit_analytics
+import streamlit.components.v1 as components
 
 from PIL import Image
 
@@ -32,6 +33,20 @@ load_dotenv()
 logging.basicConfig(level=logging.DEBUG)
 
 
+def change_button_color(widget_label, font_color, background_color='transparent'):
+    htmlstr = f"""
+        <script>
+            var elements = window.parent.document.querySelectorAll('button');
+            for (var i = 0; i < elements.length; ++i) {{ 
+                if (elements[i].innerText == '{widget_label}') {{ 
+                    elements[i].style.color ='{font_color}';
+                    elements[i].style.background = '{background_color}'
+                }}
+            }}
+        </script>
+        """
+    components.html(f"{htmlstr}", height=0, width=0)
+
 def get_base64_of_bin_file(bin_file):
     with open(bin_file, 'rb') as f:
         data = f.read()
@@ -42,6 +57,10 @@ def get_img_with_href(local_img_path, context):
     bin_str = get_base64_of_bin_file(local_img_path)
     html_code = f'<img src="data:image/{img_format};base64,{bin_str}" alt="{context}" height="25" />'
     return html_code
+
+def local_css(file_name):
+    with open(file_name) as f:
+        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
 
 def init():
     # --- ICON
@@ -75,32 +94,22 @@ def init():
     hide_pages(["admin", "home", "unsubscribe", "privacy"])
 
     # --- CSS 
-    with open('./styles/main.css') as f:
-        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
-
+    local_css('./styles/main.css')        
+    change_button_color('unsubscribe_button', 'red', 'blue')
+ 
     # --- LOGO
     add_logo("./assets/logo.png", height=100)
 
     streamlit_analytics.start_tracking()
 
-    # Retrieve the user agent string using a hidden input element
-    user_agent_string = st.experimental_get_query_params().get("user_agent", [""])[0]
-
-    # Detect the device type
-    if "Mobile" in user_agent_string:
-        logging.info("User accessed by Mobile device!")
-    elif "Tablet" in user_agent_string:
-        logging.info("User accessed by Tablet device!")
-    else:
-        logging.info("User accessed by Computer!")
-        # --- HEADER
-        colored_header(
-            label=f'AI-Powered Picks: Unleashing the Future of Smart Shopping!',
-            description="""
-                            Our recommendation engine analyzes data and trends for informed choices. Experience the future of intelligent shopping with AI-BestGoods.
-                        """,
-            color_name="red-70",    
-            )
+    # --- HEADER
+    colored_header(
+        label='AI-Powered Picks: Unleashing the Future of Smart Shopping:exclamation:',
+        description="""
+                        Our recommendation engine analyzes data and trends for informed choices. Experience the future of intelligent shopping with AI-BestGoods.
+                    """,
+        color_name="red-70"
+        )
 
 def main():
     # --- CATALOG SIDE BAR
@@ -175,7 +184,7 @@ def main():
     st.divider()
         
     # --- EMAIL SUBSCRIPTION
-    # subscription()
+    subscription()
 
     # --- BUY ME A COFFEE
     button(username=os.getenv("buy_me_coffee"), floating=False, width=220)

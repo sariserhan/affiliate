@@ -20,11 +20,41 @@ div.css-1wncz92.eqr7zpz4 > p {
     top: 10px;
 } */
 
+div.css-nahz7x.eqr7zpz4 > p {
+    /* position: relative; */
+    /* background-color: aliceblue; */
+    /* left: 100px; */
+}
+
 /* CONTROLS --> LOGO AREA */
 div.css-79elbk.e1akgbir10 {
     padding: 0px;
     right: -2%;
 }
+
+
+
+
+/* CONTROLS MOBILE CSS */
+@media only screen and (max-width: 76px) {
+
+    /* div.css-nahz7x.eqr7zpz4 > p {
+        /* position: relative; */
+        /* background-color: aliceblue; */
+        /* left: 100px; */
+    /* }  */
+}
+
+
+/* div.stButton > button:nth-child(1) {
+    background-color: aliceblue;
+} */
+
+/* button.css-19rxjzo.e1ewe7hr5 {
+    position: relative;
+    left: 150px;
+    bottom: 50px;;
+} */
 
 /* div.css-tw2vp1.esravye0 {
     background-color: aliceblue;
@@ -38,6 +68,8 @@ div.css-79elbk.e1akgbir10 {
     padding-bottom: 0px;
     padding-top: 10px;
 }
+
+
   
 
 /* CONTROLS --> ENTIRE PAGE EXCEPT SIDEBAR */
