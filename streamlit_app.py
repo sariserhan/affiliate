@@ -1,4 +1,5 @@
 import os
+import time
 import logging
 
 import streamlit as st
@@ -30,126 +31,159 @@ load_dotenv()
 # Disable DEBUG level logging for the PIL module
 logging.basicConfig(level=logging.DEBUG)
 
-# --- ICON
-icon = Image.open("./assets/icon.png")
+def init():
+    # --- ICON
+    icon = Image.open("./assets/icon.png")
 
-# --- NAVIGATION BAR
-st.set_page_config(
-    layout='wide',
-    page_icon=icon,
-    page_title="AIBestGoods"
-)
+    # --- NAVIGATION BAR
+    st.set_page_config(
+        layout='wide',
+        page_icon=icon,
+        page_title="AIBestGoods"
+    )
 
-# --- IMPACT.COM SETUP
-impact_setup()
+    # --- IMPACT.COM SETUP
+    impact_setup()
 
-# --- GOOGLE ADSENSE SETUP
-google_adsense_setup()
+    # --- GOOGLE ADSENSE SETUP
+    google_adsense_setup()
 
-# --- GOOGLE ANALYTICS SETUP
-google_analytics_setup()
+    # --- GOOGLE ANALYTICS SETUP
+    google_analytics_setup()
 
-# --- MAKE PAGES & HIDE
-show_pages(
-    [
-        Page("streamlit_app.py", "home"),
-        Page("pages/unsubscribe.py", "unsubscribe"),
-        Page("pages/admin.py", "admin"),
-        Page("pages/privacy.py", "privacy")
-    ]
-)
-hide_pages(["admin", "home", "unsubscribe", "privacy"])
+    # --- MAKE PAGES & HIDE
+    show_pages(
+        [
+            Page("streamlit_app.py", "home"),
+            Page("pages/unsubscribe.py", "unsubscribe"),
+            Page("pages/admin.py", "admin"),
+            Page("pages/privacy.py", "privacy")
+        ]
+    )
+    hide_pages(["admin", "home", "unsubscribe", "privacy"])
 
-# --- CSS 
-with open('./styles/main.css') as f:
-    st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
+    # --- CSS 
+    with open('./styles/main.css') as f:
+        st.markdown(f"<style>{f.read()}</style>", unsafe_allow_html=True)
 
-# --- LOGO
-add_logo("./assets/logo.png", height=100)
+    # --- LOGO
+    add_logo("./assets/logo.png", height=100)
 
-streamlit_analytics.start_tracking()
+    streamlit_analytics.start_tracking()
 
-# --- CATALOG SIDE BAR
-selected_catalog = sidebar()
+    # Retrieve the user agent string using a hidden input element
+    user_agent_string = st.experimental_get_query_params().get("user_agent", [""])[0]
 
-# Retrieve the user agent string using a hidden input element
-user_agent_string = st.experimental_get_query_params().get("user_agent", [""])[0]
+    # Detect the device type
+    if "Mobile" in user_agent_string:
+        logging.info("User accessed by Mobile device!")
+    elif "Tablet" in user_agent_string:
+        logging.info("User accessed by Tablet device!")
+    else:
+        logging.info("User accessed by Computer!")
+        # --- HEADER
+        colored_header(
+            label=f'AI-Powered Picks: Unleashing the Future of Smart Shopping!',
+            description="""
+                            Our recommendation engine analyzes data and trends for informed choices. Experience the future of intelligent shopping with AI-BestGoods.
+                        """,
+            color_name="red-70",    
+            )
 
-# Detect the device type
-if "Mobile" in user_agent_string:
-    logging.info("User accessed by Mobile device!")
-elif "Tablet" in user_agent_string:
-    logging.info("User accessed by Tablet device!")
-else:
-    logging.info("User accessed by Computer!")
-    # --- HEADER
-    colored_header(
-        label=f'AI-Powered Picks: Unleashing the Future of Smart Shopping!',
-        description="""
-                        Our recommendation engine analyzes data and trends for informed choices. Experience the future of intelligent shopping with AI-BestGoods.
-                    """,
-        color_name="red-70",    
+def main():
+    # --- CATALOG SIDE BAR
+    selected_catalog = sidebar()
+
+    # --- ITEM LIST
+    items = Item().get_record_by_catalog(catalog=selected_catalog)
+    
+    # --- POST LIST
+    if len(items) % 3 == 0:        
+        col1, col2, col3 = st.columns([4,4,4], gap='small')
+        col1_start, col1_end = 0, len(items)//3
+        col2_start, col2_end = len(items)//3, (len(items)//3)*2
+        col3_start, col3_end = (len(items)//3)*2, len(items)
+    elif len(items) % 2 == 0:
+        _, col1, col2, _ = st.columns([0.3,4,4,0.3], gap='large')
+        col1_start, col1_end = 0, len(items)//2
+        col2_start, col2_end = len(items)//2, len(items)
+        col3 = None
+    else:
+        if len(items) == 1:
+            col1 = st.columns(1)
+            col1_start, col1_end = 0, len(items)
+            col2 = None
+            col3 = None
+        elif len(items) == 5:
+            col1, col2 = st.columns([4,4], gap='small')
+            col1_start, col1_end = 0, 3
+            col2_start, col2_end = 3, len(items)
+            col3 = None
+        elif len(items) == 7:
+            col1, col2, col3 = st.columns([4,4,4], gap='small')
+            col1_start, col1_end = 0, 3
+            col2_start, col2_end = 3, 6
+            col3_start, col3_end = 6, len(items)
+        else:
+            logging.warning(f'This should not happen: {len(items)}')
+    
+    # --- COLUMN-1
+    with col1:        
+        set_form(
+            items=items, 
+            start=col1_start, 
+            end=col1_end, 
+            col_name='col1', 
+            selected_catalog=selected_catalog
         )
+        
+    # --- COLUMN-2
+    if col2:
+        with col2:
+            set_form(
+                items=items, 
+                start=col2_start,
+                end=col2_end,
+                col_name='col2', 
+                selected_catalog=selected_catalog
+            )
+        
+    # --- COLUMN-3
+    if col3:
+        with col3:        
+            set_form(
+                items=items, 
+                start=col3_start,
+                end=col3_end,
+                col_name='col3', 
+                selected_catalog=selected_catalog
+            )
+        
 
-# --- POST LIST
-col1,col2,col3 = st.columns([4,4,2], gap='small')
+    st.divider()
+        
+    # --- EMAIL SUBSCRIPTION
+    # subscription()
 
-# --- ITEM LIST
-items = Item().get_record_by_catalog(catalog=selected_catalog)
-    
-# --- COLUMN-1
-with col1:        
-    set_form(
-        items=items, 
-        start=0, end=len(items) // 2, 
-        col_name='col1', 
-        selected_catalog=selected_catalog
+    # --- BUY ME A COFFEE
+    button(username=os.getenv("buy_me_coffee"), floating=False, width=220)
+        
+    # --- FOOTER
+    st.write(
+        """
+        <div id="footer"> 
+            <p>
+                © 2023 AI-BestGoods. All rights reserved. 
+                <a href='https://www.instagram.com/serhansari/' target='_blank'>@serhansari</a>
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True
     )
-    
-# --- COLUMN-2
-with col2:
-    set_form(
-        items=items, 
-        start=len(items) // 2,
-        end=len(items) if len(items) % 2 == 0 else len(items)-1,
-        col_name='col2', 
-        selected_catalog=selected_catalog
-    )
-    
-# --- COLUMN-3 for ADS
-with col3:        
-        # Insert your <iframe> code here
-    # Insert the Markdown code here
-    markdown_code = '''
-    ## Amazon Ad
-    
-    ![Amazon Ad](https://rcm-na.amazon-adsystem.com/e/cm?o=1&p=14&l=ur1&category=pets&banner=0PWM0V5BSTZ88X5JPHG2&f=ifr&linkID=45c647400575280018d9af566548c2f9&t=aibestgoods-20&tracking_id=aibestgoods-20)
-    '''
-    
-    # Display the Markdown code using st.markdown
-    st.markdown(markdown_code, unsafe_allow_html=True)
-    # st.markdown(add_vertical_ad(), unsafe_allow_html=True)   
-    
 
-st.divider()
+    streamlit_analytics.stop_tracking(unsafe_password=os.getenv("STREAMLIT_ANALYTICS"))
     
-# --- EMAIL SUBSCRIPTION
-# subscription()
-
-# --- BUY ME A COFFEE
-button(username="serhansari", floating=True, width=221)
     
-# --- FOOTER
-st.write(
-    """
-    <div id="footer"> 
-        <p>
-            © 2023 AI-BestGoods. All rights reserved. 
-            <a href='https://www.instagram.com/serhansari/' target='_blank'>@serhansari</a>
-        </p>
-    </div>
-    """,
-    unsafe_allow_html=True
-)
-
-streamlit_analytics.stop_tracking(unsafe_password=os.getenv("STREAMLIT_ANALYTICS"))
+if __name__ == "__main__":
+    init()
+    main()

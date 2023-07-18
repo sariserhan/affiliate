@@ -3,11 +3,11 @@ import streamlit as st
 
 from io import BytesIO
 from PIL import Image
+from bokeh.models.widgets import Div
 
 from streamlit_extras.keyboard_url import keyboard_to_url
 from streamlit_extras.keyboard_text import key
 from streamlit_extras.mention import mention
-from bokeh.models.widgets import Div
 
 from backend.data.item import Item
 
@@ -19,7 +19,7 @@ def number_to_words(number):
     return " ".join(words[int(i)] for i in str(number))
 
 @st.cache_data(show_spinner=False)
-def get_image(image_name, selected_catalog) -> Image:
+def get_image(image_name, selected_catalog):
     image_data = Item().get_image_data(name=image_name, catalog=selected_catalog)
     return Image.open(BytesIO(image_data))
     
@@ -82,8 +82,8 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
             if name not in st.session_state:
                 st.session_state.name = clicked+ f_clicked
                 
-            counter_text = st.empty()
-            counter_text.markdown(f'**:red[{st.session_state.name}]** times visited!', unsafe_allow_html=True)                                         
+            counter_text = st.empty()            
+            counter_text.markdown(f'**:red[{st.session_state.name}]** times visited!', unsafe_allow_html=True)          
             
             # CHECK PRICE BUTTON
             form_button = st.form_submit_button(label="Check Price")
@@ -93,10 +93,11 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
                 Item().change_record(key=item_key, updates={'clicked':st.session_state.name})                    
                                     
                 # Update the counter text on the page
-                counter_text.markdown(f"**:red[{st.session_state.name}]** times visited!")                
+                counter_text.markdown(f"**:red[{st.session_state.name}]** times visited!")
 
                 js = f"window.open('{url}')"  # New tab or window
                 html = '<img src onerror="{}">'.format(js)
                 div = Div(text=html)
                 st.bokeh_chart(div)
-                logging.info(f"{name} is clicked")
+                logging.info(f"{name} is clicked by {st.experimental_user.email}")
+                

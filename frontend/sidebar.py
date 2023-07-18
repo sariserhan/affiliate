@@ -7,7 +7,6 @@ from backend.data.catalog import Catalog
 def sidebar() -> str:
     with st.sidebar:
         catalog_list = get_catalog_list()
-        print(catalog_list)
         
         sidebar = option_menu(
             menu_title=None,

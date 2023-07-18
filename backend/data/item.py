@@ -14,6 +14,7 @@ class Item(DETA):
 
     def create_item(self, name: str, description: str, image_path: str, image_name: str, affiliate_link: str, affiliate_partner: str, catalog_names: list, f_clicked: int = 0):        
         for catalog_name in catalog_names:
+            name = name.strip()
             key = name.replace(' ',f'_')
             data = {
                 "key": key,
