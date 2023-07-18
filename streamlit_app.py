@@ -1,5 +1,5 @@
 import os
-import time
+import base64
 import logging
 
 import streamlit as st
@@ -30,6 +30,18 @@ load_dotenv()
 
 # Disable DEBUG level logging for the PIL module
 logging.basicConfig(level=logging.DEBUG)
+
+
+def get_base64_of_bin_file(bin_file):
+    with open(bin_file, 'rb') as f:
+        data = f.read()
+    return base64.b64encode(data).decode()
+
+def get_img_with_href(local_img_path, context):
+    img_format = os.path.splitext(local_img_path)[-1].replace('.', '')
+    bin_str = get_base64_of_bin_file(local_img_path)
+    html_code = f'<img src="data:image/{img_format};base64,{bin_str}" alt="{context}" height="25" />'
+    return html_code
 
 def init():
     # --- ICON
@@ -168,14 +180,25 @@ def main():
     # --- BUY ME A COFFEE
     button(username=os.getenv("buy_me_coffee"), floating=False, width=220)
         
-    # --- FOOTER
-    st.write(
-        """
+    # --- FOOTER    
+    instagram_icon = get_img_with_href("./assets/instagram.png", "Instagram")
+    twitter_icon = get_img_with_href("./assets/twitter.png", "Twitter")
+    gmail_icon = get_img_with_href("./assets/gmail.png", "Gmail")
+    st.markdown(
+        f"""
         <div id="footer"> 
-            <p>
-                © 2023 AI-BestGoods. All rights reserved. 
-                <a href='https://www.instagram.com/serhansari/' target='_blank'>@serhansari</a>
+            <p>                
+                <a href='https://twitter.com/{os.getenv("buy_me_coffee")}_/' target='_blank' rel="noopener noreferrer">                    
+                    {twitter_icon}
+                </a>   
+                <a href='https://www.instagram.com/{os.getenv("buy_me_coffee")}/' target='_blank' rel="noopener noreferrer">                    
+                    {instagram_icon}
+                </a>                
+                <a href = "mailto: serhan.sari83@gmail.com">                    
+                    {gmail_icon}
+                </a>
             </p>
+            © 2023 AIBestGoods. All rights reserved. 
         </div>
         """,
         unsafe_allow_html=True

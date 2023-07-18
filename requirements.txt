@@ -2,7 +2,6 @@ bokeh==2.4.3
 deta==1.1.0
 Pillow==9.4.0
 python-dotenv==1.0.0
-schedule==1.2.0
 st_pages==0.4.3
 streamlit==1.24.0
 streamlit_analytics==0.4.1
