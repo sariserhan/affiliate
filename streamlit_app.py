@@ -57,9 +57,12 @@ def init():
         page_icon=icon,
         page_title="AIBestGoods"
     )
+    
+    if "state_dict" not in st.session_state:
+        st.session_state.state_dict = {}
 
     # --- IMPACT.COM SETUP
-    impact_setup()
+    # impact_setup()
 
     # --- GOOGLE ADSENSE SETUP
     # google_adsense_setup()

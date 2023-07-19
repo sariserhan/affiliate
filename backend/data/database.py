@@ -37,6 +37,14 @@ class DETA:
                 records_list.append(record)
         return records_list
     
+    def update_record(self, key:str, updates: dict) -> str:
+        record = self.db.get(key)
+        for k, v in updates.items():
+            if k in record:
+                record[k] = v
+                
+        self.db.put(record)
+    
     def change_record(self, key: str, updates: dict) -> str:
         record = self.db.get(key)
         for k, v in updates.items():
@@ -66,7 +74,7 @@ class DETA:
             catalog_base.put(catalog_record)
             logging.info(f"{name} successfully removed from catalog.")
         except Exception as e:
-            logging.error(f'Error in removing {name} fron catalog ---> {e}')
+            logging.error(f'Error in removing {name} from catalog ---> {e}')
         try:
             self.db.delete(key)
             logging.info(f"{name} successfully deleted.")

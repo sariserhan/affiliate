@@ -1,6 +1,7 @@
 import os
 import re
 import logging
+import in_place
 import streamlit as st
 
 logging.basicConfig(level=logging.DEBUG)
@@ -42,3 +43,13 @@ def index_html_add_to_head(context: str, add_head: str, add_body: str = ''):
             pass
                     
     return
+
+def alter_index_html(old_val: str, new_val: str):
+    index_file=os.path.dirname(st.__file__)+'/static/index.html'
+    
+    with in_place.InPlace(index_file) as file:
+        for line in file:
+            line = line.replace(old_val, new_val)
+            file.write(line)
+        file.close()
+        
