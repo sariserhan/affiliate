@@ -7,6 +7,9 @@ from backend.data.admin import Admin
 from backend.data.item import Item
 from backend.data.catalog import Catalog
 from backend.data.affiliate_partner import Affiliate_Partner
+from backend.email.send_email import EmailService
+
+from frontend.column_setup import get_image
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -48,9 +51,18 @@ if authentication_status:
     authenticator.login("Logout", "sidebar")
     st.sidebar.title('Welcome *%s*' % (user_name))
 
-# --- CREATE ITEM
     with st.container():
-        tab1, tab2 = st.tabs(["Create", "Delete"])
+        tab1, tab2, tab3 = st.tabs(["Add New Item", "Delete Item", "Send Email"])
+        
+        # --- SHARED AREA
+        catalog_list = []
+        catalogs = Catalog().fetch_records()
+        for catalog in catalogs:
+            catalog_list.append(catalog['name'])
+            
+        item_obj = Item()
+        
+        # --- ADD ITEM
         with tab1:
             # with st.form(key="create-form", clear_on_submit=True):
             st.header('Create New Item')
@@ -71,12 +83,6 @@ if authentication_status:
                 )
             except:
                 logging.warning('Toggle Switch in not available')
-            
-            # GET CATALOG FROM DB
-            catalog_list = []
-            catalogs = Catalog().fetch_records()        
-            for catalog in catalogs:
-                catalog_list.append(catalog['name'])
                 
             catalog_list.append("Add New Catalog")
                 
@@ -91,13 +97,13 @@ if authentication_status:
             name = st.text_input(label='Item Name', key='item_name', placeholder='Name', label_visibility='collapsed')
             description = st.text_area(label='Item Description', height=50, key='description', placeholder='Description',label_visibility='collapsed')    
             affiliate_link = st.text_input(label='Item Affiliate Link', key='affiliate_link', placeholder='Affiliate Link',label_visibility='collapsed')
-            catalog_names = st.multiselect(label="Choose Category or Add New", options=catalog_list)
+            catalog_names = st.multiselect(label="Choose Category or Add New", options=catalog_list[::-1])
             if "Add New Catalog" in catalog_names:
                 new_catalog_name = st.text_input(label='Add Catalog Name', key='catalog_name', placeholder='Catalog Name', label_visibility='collapsed')
                 catalog_names.append(new_catalog_name)        
                 catalog_names.remove('Add New Catalog')
                 
-            affiliate_partner = st.selectbox(label="Choose Affiliate Partner or Add New", options=affiliate_partner_list)
+            affiliate_partner = st.selectbox(label="Choose Affiliate Partner or Add New", options=affiliate_partner_list[::-1])
             if "Add New Partner" == affiliate_partner:
                 affiliate_partner = st.text_input(label='Add Partner Name', key='partner_name', placeholder='Partner Name', label_visibility='collapsed')
                 
@@ -114,8 +120,7 @@ if authentication_status:
             
                 if button:                
                     try:
-                        item = Item()                    
-                        item.create_item(
+                        item_obj.create_item(
                             name=name, 
                             description=description,
                             image_path=image_val,
@@ -129,7 +134,8 @@ if authentication_status:
                     except Exception as e:
                         st.error("Something went wrong!")
                         logging.error(e)
-
+                        
+        # --- DELETE ITEM
         with tab2:
             # with st.form(key="delete-form", clear_on_submit=True):
             st.header('Delete an Item')
@@ -139,10 +145,63 @@ if authentication_status:
             
             button = st.button(label='Delete')
             if button:
-                item_key = Item().get_record(key)['key']
+                item_key = item_obj.get_record(key)['key']
                 if key == item_key:
-                    if Item().delete_item(key=key, name=name):
+                    if item_obj.delete_item(key=key, name=name):
                         st.success(f'Item is deleted {name}')
                     else:
                         st.error('Error in deleting item')
+                        
+        # --- SEND EMAIL
+        with tab3:
+            item_list = []
+            image_list= []
+            image_name = None
+            def selectbox_on_change():
+                image_name = None
+                selected_catalog = st.selectbox(label="Choose Category", options=catalog_list)
+                if selected_catalog:
+                    for item in item_obj.fetch_records():
+                        if item['catalog'] == selected_catalog and not item['email_sent']:
+                            item_list.append(item['name'])
+                            image_list.append(item['image_name'])
+                    for image_name_in_list in image_list:
+                        if selected_item in image_name_in_list:
+                            image_name = image_name_in_list
+                            break
+                
+                if image_name:
+                    image = get_image(image_name=image_name, selected_catalog=selected_catalog)
+                    st.image(image=image, caption=name, use_column_width=True)
+            
+            selected_catalog = st.selectbox(label="Choose Category", options=catalog_list)
+            if selected_catalog:
+                for item in item_obj.fetch_records():
+                    if item['catalog'] == selected_catalog and not item['email_sent']:
+                        item_list.append(item['name'])
+                        image_list.append(item['image_name'])
+                        
+            selected_item = st.selectbox(label="Choose Item to Send", options=item_list, on_change=selectbox_on_change)
+            for image_name_in_list in image_list:
+                if selected_item in image_name_in_list:
+                    image_name = image_name_in_list
+                    break
+            if image_name:
+                image = get_image(image_name=image_name, selected_catalog=selected_catalog)
+                st.image(image=image, caption=name, use_column_width=True)
+            button = st.button(label='Send')
+            
+            if button:
+                email_obj = EmailService()
+                emails_to_send = email_obj.get_subscription_list()
+                
+                item_dict = email_obj.get_item(selected_item)
+                for email in emails_to_send:
+                    if not item_dict['email_sent']:
+                        try:
+                            email_obj.send_email(recipient_email=email, item_dict=item_dict)
+                            st.success(f'Email sent to {email}')
+                        except Exception as e:
+                            st.error(f'Error sending email --> {e}')
+            
                 
