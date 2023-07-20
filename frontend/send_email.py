@@ -35,22 +35,57 @@ def send_email(item_obj, catalog_list):
         st.warning("No Product to send in this category")
     st.write('---')
 
-    button = st.button(label='Send')
+    col1, col2, col3, _ = st.columns([1.2,1,1.5,1.1])
+    email_obj = EmailService()
+    item_dict = email_obj.get_item(selected_item)
+    
+    success = False
+    warning = False
+    error, error_e = False, ''
+    email_sending_to = ''
+    
+    with col1:
+        button = st.button(label='Send to Subscribers')
 
-    if button:
-        email_obj = EmailService()
-        emails_to_send = email_obj.get_subscription_list()
-        
-        item_dict = email_obj.get_item(selected_item)
-        for email in emails_to_send:
-            if not item_dict['email_sent']:
-                try:
-                    email_obj.send_email(recipient_email=email, item_dict=item_dict)
-                    st.success(f'Email sent to {email}')
+        if button:            
+            emails_to_send = email_obj.get_subscription_list()
+                        
+            for email in emails_to_send:
+                if not item_dict['email_sent']:
                     try:
-                        item_obj.update_record(key=item_dict['key'], updates={'email_sent': True})
-                        logging.info(f"{item_dict['name']} updated in DB")
+                        email_obj.send_email(recipient_email=email, item_dict=item_dict)
+                        email_sending_to = email
+                        success = True                        
+                        try:
+                            item_obj.update_record(key=item_dict['key'], updates={'email_sent': True})
+                            logging.info(f"{item_dict['name']} updated in DB")
+                        except Exception as e:
+                            logging.error(f"Error in updating {item_dict['name']} in DB {e}")
                     except Exception as e:
-                        logging.error(f"Error in updating {item_dict['name']} in DB {e}")
+                        logging.error(f'Error sending email --> {e}')                           
+                        error, error_e = True, e
+
+    with col3:
+        test_email_to_send = st.text_input(label='Email', key='email', placeholder='Email', label_visibility='collapsed')
+                        
+    with col2:
+        button = st.button(label='Send Test Email')
+
+        if button:
+            if test_email_to_send:
+                try:
+                    email_obj.send_email(recipient_email=test_email_to_send, item_dict=item_dict)
+                    success = True
+                    email_sending_to = test_email_to_send
                 except Exception as e:
-                    st.error(f'Error sending email --> {e}')   
+                    logging.error(f"Error in updating {item_dict['name']} in DB {e}")
+            else:                
+                warning = True
+                
+                
+    if success:
+        st.success(f'Email sent to {email_sending_to}')
+    if warning:
+        st.warning('Please enter email to send!')
+    if error:
+        st.error(f'Error sending email --> {error_e}')

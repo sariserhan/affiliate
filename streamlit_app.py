@@ -171,7 +171,8 @@ def main():
     st.divider()
         
     # --- EMAIL SUBSCRIPTION
-    # subscription()
+    subscription()
+    st.write('---')
 
     # --- BUY ME A COFFEE
     button(username=os.getenv("buy_me_coffee"), floating=False, width=220)
