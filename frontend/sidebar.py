@@ -10,7 +10,7 @@ def sidebar() -> str:
         
         sidebar = option_menu(
             menu_title=None,
-            options=(catalog_list[::-1])
+            options=(catalog_list)
         )
     
     return sidebar

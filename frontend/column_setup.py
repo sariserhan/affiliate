@@ -22,7 +22,6 @@ def number_to_words(number):
 def get_image(image_name, selected_catalog):
     image_data = Item().get_image_data(name=image_name, catalog=selected_catalog)
     return Image.open(BytesIO(image_data))
-    
 
 def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: str):
     for item_index in range(start, end):
@@ -33,6 +32,7 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
         image_name = items[item_index]['image_name']
         clicked = items[item_index]["clicked"]
         f_clicked = items[item_index]["f_clicked"]
+        viewed = clicked + f_clicked
         
         with st.form(f'{name}_{col_name}', clear_on_submit=False):            
             # --- SUB-HEADER  
@@ -49,7 +49,8 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
                 url=url,
                 write=False
             )
-
+            # -------------------------------------
+            # THIS IS FOR AD
             # --- ADD mentions to the text for ad..
             # inline_ad_mention = mention(
             #     label="but don't click :red[THIS]",
@@ -63,6 +64,7 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
             #     f'{inline_mention} or hit {key(number, False)} on your keyboard {inline_ad_mention} nor hit {key(":a:", False)} :exclamation:',
             #     unsafe_allow_html=True,
             # )     
+            # -------------------------------------
             # --- URL AND KEYBOARD TO URL
             st.write(
                 f'{inline_mention} or hit {key(number, False)} on your keyboard', unsafe_allow_html=True
@@ -77,23 +79,23 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
             
             # --- DESCRIPTION
             st.markdown(description)
+                                        
+            col1, col2 = st.columns([1,2.5])
             
-            # --- COUNTER
-            if name not in st.session_state:
-                st.session_state.name = clicked+ f_clicked
-                
-            counter_text = st.empty()            
-            counter_text.markdown(f'**:green[{st.session_state.name}]** times visited!', unsafe_allow_html=True)          
+            with col2:
+                counter_text = st.empty()
+                counter_text.markdown(f'**:green[{viewed}]** times visited!', unsafe_allow_html=True)          
             
-            # CHECK PRICE BUTTON
-            form_button = st.form_submit_button(label="Check Price")
+            with col1:
+                # CHECK PRICE BUTTON
+                form_button = st.form_submit_button(label="Check Price")
             
             if form_button:
-                st.session_state.name += 1
-                Item().change_record(key=item_key, updates={'clicked':st.session_state.name})                    
-                                    
-                # Update the counter text on the page
-                counter_text.markdown(f"**:red[{st.session_state.name}]** times visited!")
+                Item().update_record(key=item_key, updates={'clicked':clicked+1})
+                                
+                with col2:
+                    # Update the counter text on the page
+                    counter_text.markdown(f"**:red[{viewed+1}]** times visited!")
 
                 js = f"window.open('{url}')"  # New tab or window
                 html = '<img src onerror="{}">'.format(js)
