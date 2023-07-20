@@ -34,8 +34,11 @@ def auth():
 
     if authentication_status == False:
         st.error("Username/password combination incorrect. Please try again.")
+        return False
     if authentication_status == None:
         st.warning("Please enter username and password to login.")
+        return False
     if authentication_status:
         authenticator.login("Logout", "sidebar")
         st.sidebar.title('Welcome *%s*' % (user_name))
+        return True

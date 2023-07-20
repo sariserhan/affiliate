@@ -17,27 +17,26 @@ if "state_dict" not in st.session_state:
     st.session_state.state_dict = {}
     
 # --- ADMIN AUTHENTICATION
-auth()
+if auth():
+    with st.container():
+        tab1, tab2, tab3 = st.tabs(["Add New Item", "Delete Item", "Send Email"])
 
-with st.container():
-    tab1, tab2, tab3 = st.tabs(["Add New Item", "Delete Item", "Send Email"])
-    
-    # --- SHARED AREA
-    catalog_list = []
-    catalogs = Catalog().fetch_records()
-    for catalog in catalogs:
-        catalog_list.append(catalog['name'])
-        
-    item_obj = Item()
-    
-    # --- ADD ITEM
-    with tab1:
-        add_item(item_obj, catalog_list)
-                    
-    # --- DELETE ITEM
-    with tab2:
-        delete_item(item_obj)
-                    
-    # --- SEND EMAIL
-    with tab3:
-        send_email(item_obj, catalog_list)                     
+        # --- SHARED AREA
+        catalog_list = []
+        catalogs = Catalog().fetch_records()
+        for catalog in catalogs:
+            catalog_list.append(catalog['name'])
+            
+        item_obj = Item()
+
+        # --- ADD ITEM
+        with tab1:
+            add_item(item_obj, catalog_list)
+                        
+        # --- DELETE ITEM
+        with tab2:
+            delete_item(item_obj)
+                        
+        # --- SEND EMAIL
+        with tab3:
+            send_email(item_obj, catalog_list)                     
