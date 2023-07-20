@@ -75,8 +75,8 @@ def send_email(item_obj, catalog_list):
             if test_email_to_send:
                 try:
                     email_obj.send_email(recipient_email=test_email_to_send, item_dict=item_dict)
-                    success = f'Email sent to {email_sending_to}'
                     email_sending_to = test_email_to_send
+                    success = f'Email sent to {email_sending_to}'                    
                 except Exception as e:
                     logging.error(f"Error in updating {item_dict['name']} in DB {e}")
             else:                

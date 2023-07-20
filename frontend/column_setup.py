@@ -51,12 +51,12 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
             )
 
             # --- ADD mentions to the text for ad..
-            inline_ad_mention = mention(
-                label="but don't click :red[THIS]",
-                icon=':exclamation:',
-                url="https://www.google.com",
-                write=False
-            )
+            # inline_ad_mention = mention(
+            #     label="but don't click :red[THIS]",
+            #     icon=':exclamation:',
+            #     url="https://www.google.com",
+            #     write=False
+            # )
             # NOTE: Add ad link here
             # keyboard_to_url(key="a", url="https://www.google.com")            
             # st.write(
@@ -83,7 +83,7 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
                 st.session_state.name = clicked+ f_clicked
                 
             counter_text = st.empty()            
-            counter_text.markdown(f'**:red[{st.session_state.name}]** times visited!', unsafe_allow_html=True)          
+            counter_text.markdown(f'**:green[{st.session_state.name}]** times visited!', unsafe_allow_html=True)          
             
             # CHECK PRICE BUTTON
             form_button = st.form_submit_button(label="Check Price")

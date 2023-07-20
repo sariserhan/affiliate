@@ -58,7 +58,7 @@ class EmailService():
             item_description = item_dict['description']
             item_link = item_dict['affiliate_link']
             item_image_name = item_dict['image_name']
-            item_viewed = item_dict['clicked']
+            item_viewed = item_dict['clicked'] + item_dict['f_clicked']
         
             # Create the email message
             subject = item_name          
@@ -77,7 +77,7 @@ class EmailService():
                             .replace("ITEM_LINK", item_link)\
                             .replace("IMAGE_DATA", image_base64)\
                             .replace("IMAGE_ALT", item_image_name)\
-                            .replace("ITEM_VIEWED", f'✅ {item_viewed} times viewed')\
+                            .replace("ITEM_VIEWED", f'✅ {item_viewed}')\
                             .replace("ITEM_DESCRIPTION", item_description)
                         
             msg.attach(MIMEText(html_content, 'html'))
