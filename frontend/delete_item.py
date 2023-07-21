@@ -5,7 +5,6 @@ logging.basicConfig(level=logging.DEBUG)
 
 def delete_item(item_obj):
     with st.form(key="delete-form", clear_on_submit=True):
-        st.header('Delete an Item')
         item_dict = {}
 
         for item in item_obj.fetch_records():
