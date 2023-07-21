@@ -80,9 +80,9 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
             # --- DESCRIPTION
             st.markdown(description)
                                         
-            col1, col2 = st.columns([1,2.5])
+            col1, col2, col3 = st.columns([1,1,1.2])
             
-            with col2:
+            with col3:
                 counter_text = st.empty()
                 counter_text.markdown(f'**:green[{viewed}]** times visited!', unsafe_allow_html=True)          
             
@@ -93,7 +93,7 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
             if form_button:
                 Item().update_record(key=item_key, updates={'clicked':clicked+1})
                                 
-                with col2:
+                with col3:
                     # Update the counter text on the page
                     counter_text.markdown(f"**:red[{viewed+1}]** times visited!")
 

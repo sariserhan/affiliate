@@ -166,8 +166,7 @@ def main():
                 col_name='col3', 
                 selected_catalog=selected_catalog
             )
-        
-
+    
     st.divider()
         
     # --- EMAIL SUBSCRIPTION

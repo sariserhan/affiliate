@@ -61,6 +61,7 @@ class DETA:
         return f"{key} successfully changed record."
     
     def delete_item(self, key: str):
+        print("--------------------------------------------------------------------")
         name = key
         key = key.replace(' ','_')
         try:
@@ -82,7 +83,22 @@ class DETA:
         except Exception as e:
             logging.error(f'Error in deleting {name} ---> {e}')
             return False
-
+        
+    def migrate_database(self, target_database: str):        
+        target = self.deta.Base(target_database)        
+        
+        for item in self.db.fetch().items:
+            if item['key'].startswith('Corsair'):
+                pass
+            else:
+                try:
+                    target.insert(item)
+                    logging.info(f'{item["key"]} is migrated!')
+                except Exception as e:
+                    logging.error(f'Error migrating {item["key"]} --> {e}')
+                    raise e
+        return
+                
 
 if __name__ == '__main__':
-    pass
+    DETA('item_db').migrate_database(target_database='items_db2')
