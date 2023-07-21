@@ -21,5 +21,12 @@ def get_catalog_list(catalogs=Catalog().fetch_records()) -> list:
     for catalog in catalogs:
         if catalog['is_active']:
             catalog_list.append(catalog['name'])
+    
+    # Make default Catalog
+    default_catalog = 'Camera'
+    for index, catalog in enumerate(catalog_list):
+        if catalog == default_catalog:
+            catalog_list[0], catalog_list[index] = catalog_list[index], catalog_list[0]
+            break
         
     return catalog_list
