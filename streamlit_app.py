@@ -202,7 +202,6 @@ def main():
 
     streamlit_analytics.stop_tracking(unsafe_password=os.getenv("STREAMLIT_ANALYTICS"))
     
-    
 if __name__ == "__main__":
     init()
     main()

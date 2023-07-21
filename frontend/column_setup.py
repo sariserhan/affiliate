@@ -1,4 +1,5 @@
 import logging
+import webbrowser
 import streamlit as st
 
 from io import BytesIO
@@ -80,11 +81,11 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
             # --- DESCRIPTION
             st.markdown(description)
                                         
-            col1, col2, col3 = st.columns([1,1,1.2])
+            col1, col2, col3 = st.columns([1, 1, 1.2])
             
             with col3:
                 counter_text = st.empty()
-                counter_text.markdown(f'**:green[{viewed}]** times visited!', unsafe_allow_html=True)          
+                counter_text.markdown(f'**:green[{viewed}]** times visited!', unsafe_allow_html=True)   
             
             with col1:
                 # CHECK PRICE BUTTON
@@ -96,10 +97,11 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
                 with col3:
                     # Update the counter text on the page
                     counter_text.markdown(f"**:red[{viewed+1}]** times visited!")
-
-                js = f"window.open('{url}')"  # New tab or window
-                html = '<img src onerror="{}">'.format(js)
-                div = Div(text=html)
-                st.bokeh_chart(div)
-                logging.info(f"{name} is clicked by {st.experimental_user.email}")
                 
+                # js = f"window.open('{url}')"  # New tab or window
+                # html = '<img src onerror="{}">'.format(js)
+                # div = Div(text=html)
+                # st.bokeh_chart(div)
+                webbrowser.open(url)
+                logging.info(f"{name} is clicked by {st.experimental_user.email} --> {url}")
+
