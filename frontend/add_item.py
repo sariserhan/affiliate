@@ -1,3 +1,4 @@
+import re
 import random
 import logging
 import streamlit as st
@@ -36,15 +37,21 @@ def add_item(item_obj, catalog_list):
     
     affiliate_partner_list.append("Add New Partner")
     
+    regex = re.compile('[@_!#$%^&*()<>?/\|}{~:]')
+    
     name = st.text_input(label='Item Name', key='item_name', placeholder='Name', label_visibility='collapsed')
+    if(regex.search(name) == None):
+        pass
+    else:
+        st.warning(f"Special characters are not allowed in the name section: {name}")
+        st.stop()
+        
     description = st.text_area(label='Item Description', height=50, key='description', placeholder='Description',label_visibility='collapsed')    
     affiliate_link = st.text_input(label='Item Affiliate Link', key='affiliate_link', placeholder='Affiliate Link',label_visibility='collapsed')
     
-    catalog_names = st.multiselect(label="Choose Category or Add New", options=catalog_list[::-1])
-    if "Add New Catalog" in catalog_names:
-        new_catalog_name = st.text_input(label='Add Catalog Name', key='catalog_name', placeholder='Catalog Name', label_visibility='collapsed')
-        catalog_names.append(new_catalog_name)        
-        catalog_names.remove('Add New Catalog')
+    catalog_name = st.selectbox(label="Choose Category or Add New", options=catalog_list)
+    if "Add New Catalog" in catalog_name:        
+        catalog_name = st.text_input(label='Add Catalog Name', key='catalog_name', placeholder='Catalog Name', label_visibility='collapsed')    
         
     affiliate_partner = st.selectbox(label="Choose Affiliate Partner or Add New", options=affiliate_partner_list)
     if "Add New Partner" == affiliate_partner:
@@ -56,25 +63,27 @@ def add_item(item_obj, catalog_list):
         
     uploaded_file = st.file_uploader("Choose a file")
     st.write('---')
-    button = st.button(label='Create')
     
-    if uploaded_file is not None:
+    disable_button = True    
+    
+    if uploaded_file and affiliate_partner and catalog_name and affiliate_link and description and name:
         image_val = uploaded_file.getvalue()
         image_name = uploaded_file.name
+        disable_button = False            
     
-        if button:                
-            try:
-                item_obj.create_item(
-                    name=name, 
-                    description=description,
-                    image_path=image_val,
-                    image_name=image_name,
-                    affiliate_link=affiliate_link,
-                    affiliate_partner=affiliate_partner,
-                    catalog_names=catalog_names,
-                    f_clicked=int(f_clicked_val) if f_clicked_toggle else 0
-                    )
-                st.success(f'Item added into DB: {name}')
-            except Exception as e:
-                st.error("Something went wrong!")
-                logging.error(e)
+    if st.button(label='Create', disabled=disable_button):                    
+        try:
+            item_obj.create_item(
+                name=name, 
+                description=description,
+                image_path=image_val,
+                image_name=image_name,
+                affiliate_link=affiliate_link,
+                affiliate_partner=affiliate_partner,
+                catalog_names=catalog_name,
+                f_clicked=int(f_clicked_val) if f_clicked_toggle else 0
+                )
+            st.success(f'Item added into DB: {name}')
+        except Exception as e:
+            st.error("Something went wrong!")
+            logging.error(e)
