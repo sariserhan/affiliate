@@ -1,5 +1,5 @@
 import logging
-import webbrowser
+import base64
 import streamlit as st
 
 from io import BytesIO
@@ -20,9 +20,18 @@ def number_to_words(number):
     return " ".join(words[int(i)] for i in str(number))
 
 @st.cache_data(show_spinner=False)
-def get_image(image_name, selected_catalog):
+def get_image(image_name, selected_catalog, resize = None):
     image_data = Item().get_image_data(name=image_name, catalog=selected_catalog)
-    return Image.open(BytesIO(image_data))
+    image = Image.open(BytesIO(image_data))
+    if resize:
+        return image.resize((resize[0], resize[1]), Image.ANTIALIAS)
+    return image
+
+# Function to convert image to base64 encoding
+def pil_image_to_base64(image):
+    img_buffer = BytesIO()
+    image.save(img_buffer, format="PNG")  # You can change the format to JPEG if needed
+    return base64.b64encode(img_buffer.getvalue()).decode()
 
 def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: str):
     for item_index in range(start, end):
@@ -35,7 +44,7 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
         f_clicked = items[item_index]["f_clicked"]
         viewed = clicked + f_clicked
         
-        with st.form(f'{name}_{col_name}', clear_on_submit=False):            
+        with st.form(f'{name}_{col_name}', clear_on_submit=False):  
             # --- SUB-HEADER  
             st.markdown(f"<h2 style='text-align: center;'>{name}</h2>", unsafe_allow_html=True)
             
@@ -50,6 +59,7 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
                 url=url,
                 write=False
             )
+            
             # -------------------------------------
             # THIS IS FOR AD
             # --- ADD mentions to the text for ad..
@@ -66,11 +76,12 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
             #     unsafe_allow_html=True,
             # )     
             # -------------------------------------
-            # --- URL AND KEYBOARD TO URL
+            
+            # --- URL AND KEYBOARD TO URL            
             st.write(
                 f'{inline_mention} or hit {key(number, False)} on your keyboard', unsafe_allow_html=True
             )
-                        
+
             # --- IMAGE
             try:
                 image = get_image(image_name, selected_catalog)
@@ -81,27 +92,19 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
             # --- DESCRIPTION
             st.markdown(description)
                                         
-            col1, col2, col3 = st.columns([1, 1, 1.2])
-            
-            with col3:
-                counter_text = st.empty()
-                counter_text.markdown(f'**:green[{viewed}]** times visited!', unsafe_allow_html=True)   
-            
-            with col1:
-                # CHECK PRICE BUTTON
-                form_button = st.form_submit_button(label="Check Price")
+            # CHECK PRICE BUTTON
+            counter_text = st.empty()
+            form_button = st.form_submit_button(label="Check Price")            
+            counter_text.markdown(f'**:green[{viewed}]** times visited :exclamation:', unsafe_allow_html=True)   
             
             if form_button:
                 Item().update_record(key=item_key, updates={'clicked':clicked+1})
                                 
-                with col3:
-                    # Update the counter text on the page
-                    counter_text.markdown(f"**:red[{viewed+1}]** times visited!")
+                # Update the counter text on the page
+                counter_text.markdown(f"**:red[{viewed+1}]** times visited :white_check_mark:")
                 
-                # js = f"window.open('{url}')"  # New tab or window
-                # html = '<img src onerror="{}">'.format(js)
-                # div = Div(text=html)
-                # st.bokeh_chart(div)
-                webbrowser.open(url)
+                js = f"window.open('{url}')"  # New tab or window
+                html = '<img src onerror="{}">'.format(js)
+                div = Div(text=html)
+                st.bokeh_chart(div)
                 logging.info(f"{name} is clicked by {st.experimental_user.email} --> {url}")
-

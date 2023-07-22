@@ -1,27 +1,30 @@
 import os
 import base64
+import random
 import logging
 
 import streamlit as st
 import streamlit_analytics
 
 from PIL import Image
+from bokeh.models.widgets import Div
 
 from streamlit_extras.buy_me_a_coffee import button
 from streamlit_extras.app_logo import add_logo
+from streamlit_extras.mention import mention
 from streamlit_extras.colored_header import colored_header
+
 from st_pages import Page, hide_pages, show_pages
 
 from backend.data.item import Item
 
 from frontend.sidebar import sidebar
 from frontend.subscription import subscription
-from frontend.column_setup import set_form
+from frontend.column_setup import set_form, get_image
 
 from frontend.google_analytics import google_analytics_setup
 from frontend.google_adsense import google_adsense_setup
 from frontend.impact_com import impact_setup
-from frontend.vertical_ad import add_vertical_ad
 
 from dotenv import load_dotenv
 
@@ -37,15 +40,24 @@ def get_base64_of_bin_file(bin_file):
         data = f.read()
     return base64.b64encode(data).decode()
 
-def get_img_with_href(local_img_path, context):
+def get_img_with_href(local_img_path, context, target_url = None):
     img_format = os.path.splitext(local_img_path)[-1].replace('.', '')
     bin_str = get_base64_of_bin_file(local_img_path)
-    html_code = f'<img src="data:image/{img_format};base64,{bin_str}" alt="{context}" height="25" />'
+    if target_url:
+        html_code = f'''
+                        <a href="{target_url}">
+                            <img src="data:image/{img_format};base64,{bin_str}" alt="{context}"/>
+                        </a>
+                    '''
+    else:
+        html_code = f'<img src="data:image/{img_format};base64,{bin_str}" alt="{context}" height="25" />'
+        
     return html_code
 
 def local_css(file_name):
     with open(file_name) as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+        
 
 def init():
     # --- ICON
@@ -82,8 +94,8 @@ def init():
     hide_pages(["admin", "home", "unsubscribe", "privacy"])
 
     # --- CSS 
-    local_css('./styles/main.css')            
- 
+    local_css('./styles/main.css')   
+    
     # --- LOGO
     add_logo("./assets/logo.png", height=100)
 
@@ -101,23 +113,74 @@ def init():
 def main():
     # --- CATALOG SIDE BAR
     selected_catalog = sidebar()
-
-    # --- ITEM LIST
-    items = Item().get_record_by_catalog(catalog=selected_catalog)
     
-    # --- POST LIST
-    if len(items) % 3 == 0:        
-        col1, col2, col3 = st.columns([4,4,4], gap='small')
-        col1_start, col1_end = 0, len(items)//3
-        col2_start, col2_end = len(items)//3, (len(items)//3)*2
-        col3_start, col3_end = (len(items)//3)*2, len(items)
-    elif len(items) % 2 == 0:
-        _, col1, col2, _ = st.columns([0.3,4,4,0.3], gap='large')
-        col1_start, col1_end = 0, len(items)//2
-        col2_start, col2_end = len(items)//2, len(items)
-        col3 = None
+    # --- ITEM LIST
+    if selected_catalog == "All Items":
+        logging.info("ALL ITEMS SELECTED")
+        col1, col2, col3 = st.columns([1,4,1])
+        items = Item().fetch_records()
+        random.shuffle(items)
+        for item in items:
+            logging.info(f"{item['name']} is processing...")
+            image = get_image(item['image_name'], item['catalog'])
+            item_key = item["key"]
+            name = item["name"]
+            url = item['affiliate_link']
+            description = item['description']
+            clicked = item["clicked"]
+            f_clicked = item["f_clicked"]
+            viewed = clicked + f_clicked
+            with col2:
+                with st.form(item['name']):
+                    st.markdown(f"<h2 style='text-align: center;'>{name}</h2>", unsafe_allow_html=True)
+                    
+                    # --- ADD mentions to the text         
+                    inline_mention = mention(
+                        label=f"**_Visit Site:_ :green[{name}]**",
+                        icon=":arrow_right:",
+                        url=url,
+                        write=False
+                    )
+                    st.image(image=image, caption=name, use_column_width=True)
+                    st.markdown(description)
+                    
+                    # --- URL AND KEYBOARD TO URL            
+                    st.write(
+                        inline_mention, unsafe_allow_html=True
+                    )
+                    # CHECK PRICE BUTTON
+                    counter_text = st.empty()
+                    form_button = st.form_submit_button(label="Check Price")
+                    
+                    counter_text.markdown(f'**:green[{viewed}]** times visited :exclamation:', unsafe_allow_html=True)
+                    if form_button:
+                        Item().update_record(key=item_key, updates={'clicked':clicked+1})
+                                        
+                        # Update the counter text on the page
+                        counter_text.markdown(f"**:red[{viewed+1}]** times visited :white_check_mark:")
+                        
+                        js = f"window.open('{url}')"  # New tab or window
+                        html = '<img src onerror="{}">'.format(js)
+                        div = Div(text=html)
+                        st.bokeh_chart(div)
+                        logging.info(f"{name} is clicked by {st.experimental_user.email} --> {url}")
+        
     else:
-        if len(items) == 1:
+        print("SERHAN")
+        items = Item().get_record_by_catalog(catalog=selected_catalog)
+    
+        # --- POST LIST
+        if len(items) % 3 == 0:        
+            col1, col2, col3 = st.columns([4,4,4], gap='small')
+            col1_start, col1_end = 0, len(items)//3
+            col2_start, col2_end = len(items)//3, (len(items)//3)*2
+            col3_start, col3_end = (len(items)//3)*2, len(items)
+        elif len(items) % 2 == 0:
+            _, col1, col2, _ = st.columns([0.3,4,4,0.3], gap='large')
+            col1_start, col1_end = 0, len(items)//2
+            col2_start, col2_end = len(items)//2, len(items)
+            col3 = None
+        elif len(items) == 1:
             _, col1, _ = st.columns([0.1,1,0.1])
             col1_start, col1_end = 0, len(items)
             col2 = None
@@ -134,41 +197,42 @@ def main():
             col3_start, col3_end = 6, len(items)
         else:
             logging.warning(f'This should not happen: {len(items)}')
-    
-    # --- COLUMN-1
-    with col1:        
-        set_form(
-            items=items, 
-            start=col1_start, 
-            end=col1_end, 
-            col_name='col1', 
-            selected_catalog=selected_catalog
-        )
         
-    # --- COLUMN-2
-    if col2:
-        with col2:
+        # --- COLUMN-1
+        with col1:        
             set_form(
                 items=items, 
-                start=col2_start,
-                end=col2_end,
-                col_name='col2', 
+                start=col1_start, 
+                end=col1_end, 
+                col_name='col1', 
                 selected_catalog=selected_catalog
             )
-        
-    # --- COLUMN-3
-    if col3:
-        with col3:        
-            set_form(
-                items=items, 
-                start=col3_start,
-                end=col3_end,
-                col_name='col3', 
-                selected_catalog=selected_catalog
-            )
+            
+        # --- COLUMN-2
+        if col2:
+            with col2:
+                set_form(
+                    items=items, 
+                    start=col2_start,
+                    end=col2_end,
+                    col_name='col2', 
+                    selected_catalog=selected_catalog
+                )
+            
+        # --- COLUMN-3
+        if col3:
+            with col3:        
+                set_form(
+                    items=items, 
+                    start=col3_start,
+                    end=col3_end,
+                    col_name='col3', 
+                    selected_catalog=selected_catalog
+                )
     
     st.divider()
         
+
     # --- EMAIL SUBSCRIPTION
     subscription()
     st.write('---')
@@ -176,7 +240,7 @@ def main():
     # --- BUY ME A COFFEE
     button(username=os.getenv("buy_me_coffee"), floating=False, width=220)
         
-    # --- FOOTER    
+    # --- FOOTER
     instagram_icon = get_img_with_href("./assets/instagram.png", "Instagram")
     twitter_icon = get_img_with_href("./assets/twitter.png", "Twitter")
     gmail_icon = get_img_with_href("./assets/gmail.png", "Gmail")

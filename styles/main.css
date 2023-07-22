@@ -73,9 +73,9 @@ div.css-79elbk.e1akgbir10 {
   
 
 /* CONTROLS --> ENTIRE PAGE EXCEPT SIDEBAR */
-/* div.block-container.css-z5fcl4.e1g8pov64 {
-    background-color: aqua;
-} */
+ /* div.block-container.css-z5fcl4.e1g8pov64 {
+    background-color: aqua; 
+}*/
 
 [id="footer"] {
     text-align: center;
@@ -86,6 +86,6 @@ div.css-79elbk.e1akgbir10 {
 }
 
 
-#MainMenu {visibility: hidden;}
+MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 header {visibility: hidden;}

@@ -61,7 +61,6 @@ class DETA:
         return f"{key} successfully changed record."
     
     def delete_item(self, key: str):
-        print("--------------------------------------------------------------------")
         name = key
         key = key.replace(' ','_')
         try:

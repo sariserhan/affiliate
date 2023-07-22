@@ -6,21 +6,22 @@ from backend.email.send_email import EmailService
 
 logging.basicConfig(level=logging.DEBUG)
 
-def subscription():
-    st.text('Subscribe to receive weekly email newsletter')
+def subscription():    
     result = None
     with st.form('subscription_form'):
-        col1, col2, col3, _ = st.columns([1.9,0.8,0.9,5.5])
+        col1, col2, col3, col4 = st.columns([1.6,3,0.6,0.7])
         with col1:
-            email = st.text_input(label='Email to subscribe', key='subscribe', placeholder='Email to subscribe/unsubscribe', label_visibility='collapsed')
+            st.write('Subscribe to receive weekly email newsletter')
         with col2:
+            email = st.text_input(label='Email to subscribe', key='subscribe', placeholder='Email to subscribe/unsubscribe', label_visibility='collapsed')
+        with col3:
             subscribe_button = st.form_submit_button(label='Subscribe')
             if subscribe_button:                
                 result, message = subscribe(email)
-        with col3:
+        with col4:
             unsubscribe_button = st.form_submit_button(label='Unsubscribe')
             if unsubscribe_button:                
-                result, message = unsubscribe(email)       
+                result, message = unsubscribe(email)                       
                 
     if result == 'error':
         st.error(message)
