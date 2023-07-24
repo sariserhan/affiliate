@@ -18,6 +18,7 @@ from st_pages import Page, hide_pages, show_pages
 
 from backend.data.item import Item
 
+from frontend.ads import get_ads
 from frontend.sidebar import sidebar
 from frontend.subscription import subscription
 from frontend.column_setup import set_form, get_image, open_page
@@ -103,7 +104,7 @@ def init():
     
     night_mode = st_toggle_switch(
         label=None,
-        key="switch_1",
+        key="theme_switch",
         default_value=True,
         label_after=False,
         inactive_color="#D3D3D3",  # optional
@@ -136,10 +137,26 @@ def main():
     # --- ITEM LIST
     if selected_catalog == "All Items":
         logging.info("-------- ALL ITEMS SELECTED ----------")
-        
-        ad_on_off = st_toggle_switch(
+                
+    ad_col_left, ad_col_right = st.columns(2)
+    
+    # Google Adsense
+    with ad_col_right:         
+        right_ad_on = st_toggle_switch(
             label=None,
-            key="switch_2",
+            key="google_adsense_switch",
+            default_value=False,
+            label_after=False,
+            inactive_color="#D3D3D3",  # optional
+            active_color="#11567f",  # optional
+            track_color="#29B5E8",  # optional
+        )
+        
+    # Amazon Ads
+    with ad_col_left:        
+        left_ad_on = st_toggle_switch(
+            label=None,
+            key="amazon_ad_switch",
             default_value=False,
             label_after=True,
             inactive_color="#D3D3D3",  # optional
@@ -147,58 +164,69 @@ def main():
             track_color="#29B5E8",  # optional
         )
         
-        col1, col2, col3 = st.columns([1,1.8,1])
-        items = Item().fetch_records()
-        random.shuffle(items)
-        if not ad_on_off:
-            logging.info(f"Add is turned-off by {st.experimental_user.email}")
-            with col1:
-                col1_1, col2_2 = st.columns(2)
+    col1, col2, col3 = st.columns([1,1.8,1])
+    items = Item().fetch_records()
+    random.shuffle(items)        
+    if left_ad_on:
+        logging.info(f"Add is turned-off by {st.experimental_user.email}")
+        with col1:
+            col1_1, col2_2 = st.columns(2)
+            ads_list = get_ads()
+            for i in range(0, len(ads_list), 4):
                 with col1_1:
-                    st.markdown("""<a href="https://www.amazon.com/August-Wi-Fi-Smart-Generation-Matte/dp/B082VXK9CK?pd_rd_w=XcoxR&content-id=amzn1.sym.0250fb24-4363-44d0-b635-ac15f859c3b5%3Aamzn1.symc.40e6a10e-cbc4-4fa5-81e3-4435ff64d03b&pf_rd_p=0250fb24-4363-44d0-b635-ac15f859c3b5&pf_rd_r=136KVHXG8QGSTF8FFQGQ&pd_rd_wg=FISbC&pd_rd_r=f0cc4124-6b7d-4fe5-8eb1-19c647f5fb6c&pd_rd_i=B082VXRND2&th=1&linkCode=li2&tag=aibestgoods-20&linkId=17b158ee626a9e9bcaf26a9f6cc71bbc&language=en_US&ref_=as_li_ss_il" target="_blank"><img border="0" src="//ws-na.amazon-adsystem.com/widgets/q?_encoding=UTF8&ASIN=B082VXK9CK&Format=_SL160_&ID=AsinImage&MarketPlace=US&ServiceVersion=20070822&WS=1&tag=aibestgoods-20&language=en_US" ></a><img src="https://ir-na.amazon-adsystem.com/e/ir?t=aibestgoods-20&language=en_US&l=li2&o=1&a=B082VXK9CK" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />""", unsafe_allow_html=True)
+                    ads = ads_list[i:i+4]                        
+                    if len(ads) != 4:
+                        break
+                    st.markdown(ads[0], unsafe_allow_html=True)
+                    st.markdown(ads[1], unsafe_allow_html=True)                        
                 with col2_2:
-                    st.markdown("""<a href="https://www.amazon.com/August-Wi-Fi-Smart-Generation-Matte/dp/B082VXRND2?pd_rd_w=XcoxR&content-id=amzn1.sym.0250fb24-4363-44d0-b635-ac15f859c3b5%3Aamzn1.symc.40e6a10e-cbc4-4fa5-81e3-4435ff64d03b&pf_rd_p=0250fb24-4363-44d0-b635-ac15f859c3b5&pf_rd_r=136KVHXG8QGSTF8FFQGQ&pd_rd_wg=FISbC&pd_rd_r=f0cc4124-6b7d-4fe5-8eb1-19c647f5fb6c&pd_rd_i=B082VXRND2&linkCode=li2&tag=aibestgoods-20&linkId=f6aaaba1f173001c5fb494528702487d&language=en_US&ref_=as_li_ss_il" target="_blank"><img border="0" src="//ws-na.amazon-adsystem.com/widgets/q?_encoding=UTF8&ASIN=B082VXRND2&Format=_SL160_&ID=AsinImage&MarketPlace=US&ServiceVersion=20070822&WS=1&tag=aibestgoods-20&language=en_US" ></a><img src="https://ir-na.amazon-adsystem.com/e/ir?t=aibestgoods-20&language=en_US&l=li2&o=1&a=B082VXRND2" width="1" height="1" border="0" alt="" style="border:none !important; margin:0px !important;" />""", unsafe_allow_html=True)
-        for item in items:
-            logging.info(f"{item['name']} is processing...")
-            image = get_image(item['image_name'], item['catalog'])
-            item_key = item["key"]
-            name = item["name"]
-            url = item['affiliate_link']
-            description = item['description']
-            clicked = item["clicked"]
-            f_clicked = item["f_clicked"]
-            viewed = clicked + f_clicked
-            with col2:
-                with st.form(item['name']):
-                    st.write(f"<h2 style='text-align: center; color: black;'><a href={url}>{name}</a></h2>", unsafe_allow_html=True)
-                    st.write('---')
-                    
-                    # --- ADD mentions to the text         
-                    inline_mention = mention(
-                        label=f"**_Visit Site:_ :green[{name}]**",
-                        icon=":arrow_right:",
-                        url=url,
-                        write=False
-                    )
-                    st.image(image=image, caption=name, use_column_width=True)
-                    st.markdown(description)
-                    
-                    # --- URL AND KEYBOARD TO URL            
-                    st.write(
-                        inline_mention, unsafe_allow_html=True
-                    )
-                    # CHECK PRICE BUTTON
-                    counter_text = st.empty()
-                    
-                    form_button = st.form_submit_button(label='Check Price', on_click=open_page, args=(url,))
-                    
-                    counter_text.markdown(f'**:green[{viewed}]** times visited :exclamation:', unsafe_allow_html=True)
-                    if form_button:
-                        Item().update_record(key=item_key, updates={'clicked':clicked+1})
-                                        
-                        # Update the counter text on the page
-                        counter_text.markdown(f"**:red[{viewed+1}]** times visited :white_check_mark:")
-                        logging.info(f"{name} is clicked by {st.experimental_user.email} --> {url}")
+                    st.markdown(ads[2], unsafe_allow_html=True)
+                    st.markdown(ads[3], unsafe_allow_html=True)                    
+            
+    if right_ad_on:
+        pass
+    
+    for item in items:
+        logging.info(f"{item['name']} is processing...")
+        image = get_image(item['image_name'], item['catalog'])
+        item_key = item["key"]
+        name = item["name"]
+        url = item['affiliate_link']
+        description = item['description']
+        clicked = item["clicked"]
+        f_clicked = item["f_clicked"]
+        viewed = clicked + f_clicked
+        with col2:
+            with st.form(item['name']):
+                st.write(f"<h2 style='text-align: center; color: black;'><a href={url}>{name}</a></h2>", unsafe_allow_html=True)
+                st.write('---')
+                
+                # --- ADD mentions to the text         
+                inline_mention = mention(
+                    label=f"**_Visit Site:_ :green[{name}]**",
+                    icon=":arrow_right:",
+                    url=url,
+                    write=False
+                )
+                st.image(image=image, caption=name, use_column_width=True)
+                st.markdown(description)
+                
+                # --- URL AND KEYBOARD TO URL            
+                st.write(
+                    inline_mention, unsafe_allow_html=True
+                )
+                # CHECK PRICE BUTTON
+                counter_text = st.empty()
+                
+                form_button = st.form_submit_button(label='Check Price', on_click=open_page, args=(url,))
+                
+                counter_text.markdown(f'**:green[{viewed}]** times visited :exclamation:', unsafe_allow_html=True)
+                if form_button:
+                    Item().update_record(key=item_key, updates={'clicked':clicked+1})
+                                    
+                    # Update the counter text on the page
+                    counter_text.markdown(f"**:red[{viewed+1}]** times visited :white_check_mark:")
+                    logging.info(f"{name} is clicked by {st.experimental_user.email} --> {url}")
         
     else:
         items = Item().get_record_by_catalog(catalog=selected_catalog)
