@@ -4,11 +4,11 @@ import streamlit as st
 
 from io import BytesIO
 from PIL import Image
-from bokeh.models.widgets import Div
 
 from streamlit_extras.keyboard_url import keyboard_to_url
 from streamlit_extras.keyboard_text import key
 from streamlit_extras.mention import mention
+from streamlit.components.v1 import html
 
 from backend.data.item import Item
 
@@ -32,6 +32,22 @@ def pil_image_to_base64(image):
     img_buffer = BytesIO()
     image.save(img_buffer, format="PNG")  # You can change the format to JPEG if needed
     return base64.b64encode(img_buffer.getvalue()).decode()
+
+# Navigates in the new page
+def open_page(url):
+    open_script= """
+        <script type="text/javascript">
+            window.open('%s', '_blank').focus();
+        </script>
+    """ % (url)
+    html(open_script)
+    
+# Navigates in the same page
+def nav_to(url): 
+    nav_script = """
+                    <meta http-equiv="refresh" content="0; url='%s'" target="_blank">                    
+                 """ % (url)
+    st.write(nav_script, unsafe_allow_html=True)
 
 def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: str):
     for item_index in range(start, end):
@@ -94,7 +110,7 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
                                         
             # CHECK PRICE BUTTON
             counter_text = st.empty()
-            form_button = st.form_submit_button(label="Check Price")            
+            form_button = st.form_submit_button(label='[Check Price', on_click=open_page, args=(url,))     
             counter_text.markdown(f'**:green[{viewed}]** times visited :exclamation:', unsafe_allow_html=True)   
             
             if form_button:
@@ -102,9 +118,4 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
                                 
                 # Update the counter text on the page
                 counter_text.markdown(f"**:red[{viewed+1}]** times visited :white_check_mark:")
-                
-                js = f"window.open('{url}')"  # New tab or window
-                html = '<img src onerror="{}">'.format(js)
-                div = Div(text=html)
-                st.bokeh_chart(div)
                 logging.info(f"{name} is clicked by {st.experimental_user.email} --> {url}")

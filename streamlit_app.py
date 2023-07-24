@@ -7,7 +7,6 @@ import streamlit as st
 import streamlit_analytics
 
 from PIL import Image
-from bokeh.models.widgets import Div
 
 from streamlit_extras.buy_me_a_coffee import button
 from streamlit_extras.app_logo import add_logo
@@ -20,7 +19,7 @@ from backend.data.item import Item
 
 from frontend.sidebar import sidebar
 from frontend.subscription import subscription
-from frontend.column_setup import set_form, get_image
+from frontend.column_setup import set_form, get_image, open_page
 
 from frontend.google_analytics import google_analytics_setup
 from frontend.google_adsense import google_adsense_setup
@@ -150,7 +149,8 @@ def main():
                     )
                     # CHECK PRICE BUTTON
                     counter_text = st.empty()
-                    form_button = st.form_submit_button(label="Check Price")
+                    
+                    form_button = st.form_submit_button(label='[Check Price', on_click=open_page, args=(url,))
                     
                     counter_text.markdown(f'**:green[{viewed}]** times visited :exclamation:', unsafe_allow_html=True)
                     if form_button:
@@ -158,15 +158,9 @@ def main():
                                         
                         # Update the counter text on the page
                         counter_text.markdown(f"**:red[{viewed+1}]** times visited :white_check_mark:")
-                        
-                        js = f"window.open('{url}')"  # New tab or window
-                        html = '<img src onerror="{}">'.format(js)
-                        div = Div(text=html)
-                        st.bokeh_chart(div)
                         logging.info(f"{name} is clicked by {st.experimental_user.email} --> {url}")
         
     else:
-        print("SERHAN")
         items = Item().get_record_by_catalog(catalog=selected_catalog)
     
         # --- POST LIST
