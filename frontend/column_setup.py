@@ -63,7 +63,7 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
         with st.form(f'{name}_{col_name}', clear_on_submit=False):  
             
             # --- SUB-HEADER  
-            st.markdown(f"<h2 style='text-align: center;'><a href={url}>{name}</a></h2>", unsafe_allow_html=True)
+            st.markdown(f"<h2 class='element'><a href={url}>{name}</a></h2>", unsafe_allow_html=True)
             st.write('---')
             
             # --- ADD keyboard to URL

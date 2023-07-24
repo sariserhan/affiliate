@@ -105,7 +105,7 @@ def init():
     night_mode = st_toggle_switch(
         label=None,
         key="theme_switch",
-        default_value=True,
+        default_value=False,
         label_after=False,
         inactive_color="#D3D3D3",  # optional
         active_color="#11567f",  # optional
@@ -137,96 +137,100 @@ def main():
     # --- ITEM LIST
     if selected_catalog == "All Items":
         logging.info("-------- ALL ITEMS SELECTED ----------")
+        
+        user_agent = st.experimental_get_query_params().get("user_agent", [None])[0]
+        if "Mobile" in user_agent or "Android" in user_agent or "iPhone" in user_agent:
                 
-    ad_col_left, ad_col_right = st.columns(2)
-    
-    # Google Adsense
-    with ad_col_right:         
-        right_ad_on = st_toggle_switch(
-            label=None,
-            key="google_adsense_switch",
-            default_value=False,
-            label_after=False,
-            inactive_color="#D3D3D3",  # optional
-            active_color="#11567f",  # optional
-            track_color="#29B5E8",  # optional
-        )
-        
-    # Amazon Ads
-    with ad_col_left:        
-        left_ad_on = st_toggle_switch(
-            label=None,
-            key="amazon_ad_switch",
-            default_value=False,
-            label_after=True,
-            inactive_color="#D3D3D3",  # optional
-            active_color="#11567f",  # optional
-            track_color="#29B5E8",  # optional
-        )
-        
-    col1, col2, col3 = st.columns([1,1.8,1])
-    items = Item().fetch_records()
-    random.shuffle(items)        
-    if left_ad_on:
-        logging.info(f"Add is turned-off by {st.experimental_user.email}")
-        with col1:
-            col1_1, col2_2 = st.columns(2)
-            ads_list = get_ads()
-            for i in range(0, len(ads_list), 4):
-                with col1_1:
-                    ads = ads_list[i:i+4]                        
-                    if len(ads) != 4:
-                        break
-                    st.markdown(ads[0], unsafe_allow_html=True)
-                    st.markdown(ads[1], unsafe_allow_html=True)                        
-                with col2_2:
-                    st.markdown(ads[2], unsafe_allow_html=True)
-                    st.markdown(ads[3], unsafe_allow_html=True)                    
+            ad_col_left, ad_col_right = st.columns(2)
             
-    if right_ad_on:
-        pass
+            # Google Adsense
+            with ad_col_right:         
+                right_ad_on = st_toggle_switch(
+                    label=None,
+                    key="google_adsense_switch",
+                    default_value=False,
+                    label_after=False,
+                    inactive_color="#D3D3D3",  # optional
+                    active_color="#11567f",  # optional
+                    track_color="#29B5E8",  # optional
+                )
+                
+            # Amazon Ads
+            with ad_col_left:        
+                left_ad_on = st_toggle_switch(
+                    label=None,
+                    key="amazon_ad_switch",
+                    default_value=False,
+                    label_after=True,
+                    inactive_color="#D3D3D3",  # optional
+                    active_color="#11567f",  # optional
+                    track_color="#29B5E8",  # optional
+                )
+                
+            col1, col2, col3 = st.columns([1,1.8,1])
+            items = Item().fetch_records()
+            random.shuffle(items)        
+            if left_ad_on:
+                logging.info(f"Add is turned-off by {st.experimental_user.email}")
+                with col1:
+                    col1_1, col2_2 = st.columns(2)
+                    ads_list = get_ads()
+                    for i in range(0, len(ads_list), 4):
+                        ads = ads_list[i:i+4]                        
+                        if len(ads) != 4:
+                            break
+                        
+                        with col1_1:
+                            st.markdown(ads[0], unsafe_allow_html=True)
+                            st.markdown(ads[1], unsafe_allow_html=True)                        
+                        with col2_2:
+                            st.markdown(ads[2], unsafe_allow_html=True)
+                            st.markdown(ads[3], unsafe_allow_html=True)                    
+                    
+            if right_ad_on:
+                pass
     
-    for item in items:
-        logging.info(f"{item['name']} is processing...")
-        image = get_image(item['image_name'], item['catalog'])
-        item_key = item["key"]
-        name = item["name"]
-        url = item['affiliate_link']
-        description = item['description']
-        clicked = item["clicked"]
-        f_clicked = item["f_clicked"]
-        viewed = clicked + f_clicked
-        with col2:
-            with st.form(item['name']):
-                st.write(f"<h2 style='text-align: center; color: black;'><a href={url}>{name}</a></h2>", unsafe_allow_html=True)
-                st.write('---')
-                
-                # --- ADD mentions to the text         
-                inline_mention = mention(
-                    label=f"**_Visit Site:_ :green[{name}]**",
-                    icon=":arrow_right:",
-                    url=url,
-                    write=False
-                )
-                st.image(image=image, caption=name, use_column_width=True)
-                st.markdown(description)
-                
-                # --- URL AND KEYBOARD TO URL            
-                st.write(
-                    inline_mention, unsafe_allow_html=True
-                )
-                # CHECK PRICE BUTTON
-                counter_text = st.empty()
-                
-                form_button = st.form_submit_button(label='Check Price', on_click=open_page, args=(url,))
-                
-                counter_text.markdown(f'**:green[{viewed}]** times visited :exclamation:', unsafe_allow_html=True)
-                if form_button:
-                    Item().update_record(key=item_key, updates={'clicked':clicked+1})
-                                    
-                    # Update the counter text on the page
-                    counter_text.markdown(f"**:red[{viewed+1}]** times visited :white_check_mark:")
-                    logging.info(f"{name} is clicked by {st.experimental_user.email} --> {url}")
+        for item in items:
+            logging.info(f"{item['name']} is processing...")
+            image = get_image(item['image_name'], item['catalog'])
+            item_key = item["key"]
+            name = item["name"]
+            url = item['affiliate_link']
+            description = item['description']
+            clicked = item["clicked"]
+            f_clicked = item["f_clicked"]
+            viewed = clicked + f_clicked
+            with col2:
+                with st.form(item['name']):
+                    st.write(f"<h2 class='element'><a href={url}>{name}</a></h2>", unsafe_allow_html=True)
+                    st.write('---')
+                    
+                    # --- ADD mentions to the text         
+                    inline_mention = mention(
+                        label=f"**_Visit Site:_ :green[{name}]**",
+                        icon=":arrow_right:",
+                        url=url,
+                        write=False
+                    )
+                    st.image(image=image, caption=name, use_column_width=True)
+                    st.markdown(description)
+                    
+                    # --- URL AND KEYBOARD TO URL            
+                    st.write(
+                        inline_mention, unsafe_allow_html=True
+                    )
+                    # CHECK PRICE BUTTON
+                    counter_text = st.empty()
+                    
+                    form_button = st.form_submit_button(label='Check Price', on_click=open_page, args=(url,))
+                    
+                    counter_text.markdown(f'**:green[{viewed}]** times visited :exclamation:', unsafe_allow_html=True)
+                    if form_button:
+                        Item().update_record(key=item_key, updates={'clicked':clicked+1})
+                                        
+                        # Update the counter text on the page
+                        counter_text.markdown(f"**:red[{viewed+1}]** times visited :white_check_mark:")
+                        logging.info(f"{name} is clicked by {st.experimental_user.email} --> {url}")
         
     else:
         items = Item().get_record_by_catalog(catalog=selected_catalog)

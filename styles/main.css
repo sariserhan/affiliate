@@ -69,17 +69,31 @@ div.css-79elbk.e1akgbir10 {
     padding-top: 10px;
 }
 
-a:link, a:visited {
-    color: #FF4B4B;
-    text-decoration: none;
-    display: inline-block;
-}
-  
-a:hover, a:active {
-    color: rgb(61, 213, 109);
+.element {
+    color: white;
     background-color: transparent;
-    text-decoration: none;
+    text-align: center;
 }
+
+.element a:link {
+    display: inline-block;        
+    text-decoration: none;
+    filter: invert(50%);    
+    /* filter: opacity(100%); */
+}
+
+.element a:hover, a:active {
+    color: rgb(61, 213, 109);  
+    mix-blend-mode: none;
+    filter: opacity(100%);
+    background-color: transparent;
+}
+
+.element a:visited {
+    color: #FF4B4B;
+    filter: opacity(100%);
+}
+
 
 /* body {
     height: auto;
