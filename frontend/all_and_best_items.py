@@ -57,12 +57,9 @@ def all_and_best_items(is_best_pick: bool = False):
                 )
                 # CHECK PRICE BUTTON
                 counter_text = st.empty()
+                counter_text.markdown(f'**:green[{viewed}]** times visited :exclamation:', unsafe_allow_html=True)       
                 
-                form_button = st.form_submit_button(label='Check Price', on_click=open_page, args=(url,))
-                
-                counter_text.markdown(f'**:green[{viewed}]** times visited :exclamation:', unsafe_allow_html=True)
-                
-                if form_button:
+                if st.form_submit_button(label='Check Price', on_click=open_page, args=(url,)):
                     Item().update_record(key=item_key, updates={'clicked':clicked+1})
                                     
                     # Update the counter text on the page

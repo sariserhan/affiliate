@@ -71,7 +71,7 @@ def init():
     
     if "state_dict" not in st.session_state:
         st.session_state.state_dict = {}
-
+    
     # --- IMPACT.COM SETUP
     # impact_setup()
 
@@ -110,6 +110,11 @@ def init():
         track_color="#29B5E8",  # optional
     )
     
+    # SET DEFAULT THEME
+    config_toml = open('.streamlit/config.toml', 'w')
+    config_toml.write('[theme]\nbase="dark"')
+    config_toml.close()
+    
     # --- HEADER
     colored_header(
         label='AI-Powered Picks: Unleashing the Future of Smart Shopping:exclamation:',
@@ -119,10 +124,11 @@ def init():
         color_name="red-70"
         )
     
+    # SET CHOSEN THEME
     try:
         config_toml = open('.streamlit/config.toml', 'w')
         if night_mode:        
-            config_toml.write('[theme]\nbase="dark"')        
+            config_toml.write('[theme]\nbase="dark"')       
         else:        
             config_toml.write('[theme]\nbase="light"')
     finally:
@@ -206,7 +212,6 @@ def main():
                 )
     
     st.divider()
-        
 
     # --- EMAIL SUBSCRIPTION
     subscription()

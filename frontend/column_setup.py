@@ -112,10 +112,9 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
                                         
             # CHECK PRICE BUTTON
             counter_text = st.empty()
-            form_button = st.form_submit_button(label='Check Price', on_click=open_page, args=(url,))     
             counter_text.markdown(f'**:green[{viewed}]** times visited :exclamation:', unsafe_allow_html=True)   
             
-            if form_button:
+            if st.form_submit_button(label='Check Price', on_click=open_page, args=(url,)):
                 Item().update_record(key=item_key, updates={'clicked':clicked+1})
                                 
                 # Update the counter text on the page
