@@ -73,6 +73,18 @@ def init():
     
     if "state_dict" not in st.session_state:
         st.session_state.state_dict = {}
+        
+    if "is_mobile" not in st.session_state:
+        st.session_state.is_mobile = False
+        
+    st.components.v1.html("""
+        <script>
+            const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+            const data = JSON.stringify({ isMobile: isMobile });
+            const event = new CustomEvent('message', { detail: data });
+            parent.document.dispatchEvent(event);
+        </script>
+    """, height=0)
 
     # --- IMPACT.COM SETUP
     # impact_setup()
@@ -137,10 +149,9 @@ def main():
     # --- ITEM LIST
     if selected_catalog == "All Items":
         logging.info("-------- ALL ITEMS SELECTED ----------")
-        
-        user_agent = st.experimental_get_query_params().get("user_agent", [None])[0]
-        if "Mobile" in user_agent or "Android" in user_agent or "iPhone" in user_agent:
-                
+
+
+        if not st.session_state.is_mobile:                
             ad_col_left, ad_col_right = st.columns(2)
             
             # Google Adsense
