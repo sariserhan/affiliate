@@ -22,7 +22,8 @@ def get_catalog_list(catalogs=Catalog().fetch_records()) -> list:
         if catalog['is_active']:
             catalog_list.append(catalog['name'])
     
-    #Add All Items into Catalog and make it default 
+    #Add All Items into Catalog and make it default
+    catalog_list.insert(0, 'Best Picks')
     catalog_list.insert(0, 'All Items')
         
     return catalog_list
