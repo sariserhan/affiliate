@@ -69,7 +69,22 @@ div.css-79elbk.e1akgbir10 {
     padding-top: 10px;
 }
 
+a:link, a:visited {
+    color: #FF4B4B;
+    text-decoration: none;
+    display: inline-block;
+}
+  
+a:hover, a:active {
+    color: rgb(61, 213, 109);
+    background-color: transparent;
+    text-decoration: none;
+}
 
+/* body {
+    height: auto;
+    overflow: auto;
+} */
   
 
 /* CONTROLS --> ENTIRE PAGE EXCEPT SIDEBAR */

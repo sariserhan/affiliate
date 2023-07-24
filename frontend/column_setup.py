@@ -38,9 +38,9 @@ def open_page(url):
     open_script= """
         <script type="text/javascript">
             window.open('%s', '_blank').focus();
-        </script>
+        </script> 
     """ % (url)
-    html(open_script)
+    html(open_script, height=0)
     
 # Navigates in the same page
 def nav_to(url): 
@@ -61,8 +61,10 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
         viewed = clicked + f_clicked
         
         with st.form(f'{name}_{col_name}', clear_on_submit=False):  
+            
             # --- SUB-HEADER  
-            st.markdown(f"<h2 style='text-align: center;'>{name}</h2>", unsafe_allow_html=True)
+            st.markdown(f"<h2 style='text-align: center;'><a href={url}>{name}</a></h2>", unsafe_allow_html=True)
+            st.write('---')
             
             # --- ADD keyboard to URL
             number = number_to_words(item_index)
@@ -91,12 +93,7 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
             #     f'{inline_mention} or hit {key(number, False)} on your keyboard {inline_ad_mention} nor hit {key(":a:", False)} :exclamation:',
             #     unsafe_allow_html=True,
             # )     
-            # -------------------------------------
-            
-            # --- URL AND KEYBOARD TO URL            
-            st.write(
-                f'{inline_mention} or hit {key(number, False)} on your keyboard', unsafe_allow_html=True
-            )
+            # -------------------------------------                       
 
             # --- IMAGE
             try:
@@ -107,15 +104,20 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
             
             # --- DESCRIPTION
             st.markdown(description)
+            
+             # --- URL AND KEYBOARD TO URL            
+            st.write(
+                f'{inline_mention} or hit {key(number, False)} on your keyboard', unsafe_allow_html=True
+            )
                                         
             # CHECK PRICE BUTTON
             counter_text = st.empty()
-            form_button = st.form_submit_button(label='[Check Price', on_click=open_page, args=(url,))     
+            form_button = st.form_submit_button(label='Check Price', on_click=open_page, args=(url,))     
             counter_text.markdown(f'**:green[{viewed}]** times visited :exclamation:', unsafe_allow_html=True)   
             
             if form_button:
                 Item().update_record(key=item_key, updates={'clicked':clicked+1})
                                 
                 # Update the counter text on the page
-                counter_text.markdown(f"**:red[{viewed+1}]** times visited :white_check_mark:")
+                counter_text.markdown(f"**:red[{viewed+1}]** times visited :white_check_mark:")                
                 logging.info(f"{name} is clicked by {st.experimental_user.email} --> {url}")
