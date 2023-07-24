@@ -124,7 +124,7 @@ def init():
         color_name="red-70"
         )
     
-    # SET CHOSEN THEME
+    # SET THEME FROM TOGGLE
     try:
         config_toml = open('.streamlit/config.toml', 'w')
         if night_mode:        
@@ -138,79 +138,28 @@ def main():
     # --- CATALOG SIDE BAR
     selected_catalog = sidebar()
     
+    _, col2, _ = st.columns([1,2.5,1])
+    
     # --- ITEM LIST
     if selected_catalog == "All Items":
         logging.info("-------- ALL ITEMS SELECTED ----------")
-        all_and_best_items()
+        all_and_best_items(col2)
         
     elif selected_catalog == "Best Picks":
         logging.info("-------- BEST PICKS SELECTED ----------")
-        all_and_best_items(is_best_pick=True)
+        all_and_best_items(col2, is_best_pick=True)
         
     else:
         items = Item().get_record_by_catalog(catalog=selected_catalog)
     
         # --- POST LIST
-        if len(items) % 3 == 0:        
-            col1, col2, col3 = st.columns([4,4,4], gap='small')
-            col1_start, col1_end = 0, len(items)//3
-            col2_start, col2_end = len(items)//3, (len(items)//3)*2
-            col3_start, col3_end = (len(items)//3)*2, len(items)
-        elif len(items) % 2 == 0:
-            _, col1, col2, _ = st.columns([0.3,4,4,0.3], gap='large')
-            col1_start, col1_end = 0, len(items)//2
-            col2_start, col2_end = len(items)//2, len(items)
-            col3 = None
-        elif len(items) == 1:
-            _, col1, _ = st.columns([0.1,1,0.1])
-            col1_start, col1_end = 0, len(items)
-            col2 = None
-            col3 = None
-        elif len(items) == 5:
-            col1, col2 = st.columns([4,4], gap='small')
-            col1_start, col1_end = 0, 3
-            col2_start, col2_end = 3, len(items)
-            col3 = None
-        elif len(items) == 7:
-            col1, col2, col3 = st.columns([4,4,4], gap='small')
-            col1_start, col1_end = 0, 3
-            col2_start, col2_end = 3, 6
-            col3_start, col3_end = 6, len(items)
-        else:
-            logging.warning(f'This should not happen: {len(items)}')
-        
-        # --- COLUMN-1
-        with col1:        
+        with col2:        
             set_form(
-                items=items, 
-                start=col1_start, 
-                end=col1_end, 
-                col_name='col1', 
+                items=items,
+                col_name='col2', 
                 selected_catalog=selected_catalog
             )
             
-        # --- COLUMN-2
-        if col2:
-            with col2:
-                set_form(
-                    items=items, 
-                    start=col2_start,
-                    end=col2_end,
-                    col_name='col2', 
-                    selected_catalog=selected_catalog
-                )
-            
-        # --- COLUMN-3
-        if col3:
-            with col3:        
-                set_form(
-                    items=items, 
-                    start=col3_start,
-                    end=col3_end,
-                    col_name='col3', 
-                    selected_catalog=selected_catalog
-                )
-    
     st.divider()
 
     # --- EMAIL SUBSCRIPTION

@@ -8,17 +8,16 @@ from frontend.column_setup import get_image, open_page
 
 logging.basicConfig(level=logging.DEBUG)
 
-def all_and_best_items(is_best_pick: bool = False):
-    col1, col2, col3 = st.columns([1,2.5,1])
+def all_and_best_items(col2, is_best_pick: bool = False):
     items = Item().fetch_records()
     
-    if not is_best_pick:
-        random.shuffle(items)
-    else:
+    if is_best_pick:
         temp_catalog_list = []
+    else:
+        random.shuffle(items)        
         
     for item in items:
-        logging.info(f"{item['name']} is processing...")
+        logging.info(f" -------> {item['name']} is processing...")
         if is_best_pick:
             form_name = item['name']
             if item['catalog'] in temp_catalog_list:

@@ -15,12 +15,10 @@ def subscription():
         with col2:
             email = st.text_input(label='Email to subscribe', key='subscribe', placeholder='Email to subscribe/unsubscribe', label_visibility='collapsed')
         with col3:
-            subscribe_button = st.form_submit_button(label='Subscribe')
-            if subscribe_button:                
+            if st.form_submit_button(label='Subscribe'):                
                 result, message = subscribe(email)
         with col4:
-            unsubscribe_button = st.form_submit_button(label='Unsubscribe')
-            if unsubscribe_button:                
+            if st.form_submit_button(label='Unsubscribe'):                
                 result, message = unsubscribe(email)                       
                 
     if result == 'error':

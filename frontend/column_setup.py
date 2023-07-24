@@ -49,15 +49,15 @@ def nav_to(url):
                  """ % (url)
     st.write(nav_script, unsafe_allow_html=True)
 
-def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: str):
-    for item_index in range(start, end):
-        item_key = items[item_index]["key"]
-        name = items[item_index]["name"]
-        url = items[item_index]['affiliate_link']
-        description = items[item_index]['description']
-        image_name = items[item_index]['image_name']
-        clicked = items[item_index]["clicked"]
-        f_clicked = items[item_index]["f_clicked"]
+def set_form(items:dict, col_name: str, selected_catalog: str):
+    for item_index, item in enumerate(items):
+        item_key = item["key"]
+        name = item["name"]
+        url = item['affiliate_link']
+        description = item['description']
+        image_name = item['image_name']
+        clicked = item["clicked"]
+        f_clicked = item["f_clicked"]
         viewed = clicked + f_clicked
         
         with st.form(f'{name}_{col_name}', clear_on_submit=False):  
