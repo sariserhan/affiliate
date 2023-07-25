@@ -17,6 +17,7 @@ from st_pages import Page, hide_pages, show_pages
 from backend.data.item import Item
 
 from frontend.ads import get_ads
+from frontend.compare_items import compare_items
 from frontend.all_and_best_items import all_and_best_items
 from frontend.sidebar import sidebar
 from frontend.subscription import subscription
@@ -138,10 +139,14 @@ def main():
     # --- CATALOG SIDE BAR
     selected_catalog = sidebar()
     
-    _, col2, _ = st.columns([1,2.5,1])
+    _, col2, _ = st.columns([1,2.5,1])    
     
     # --- ITEM LIST
-    if selected_catalog == "All Items":
+    if selected_catalog == "Cons & Pros":
+        compare_items()
+        
+            
+    elif selected_catalog == "All Items":
         logging.info("-------- ALL ITEMS SELECTED ----------")
         all_and_best_items(col2)
         

@@ -82,7 +82,8 @@ div.css-79elbk.e1akgbir10 {
 }
 
 .element a:hover, a:active {
-    color: rgb(61, 213, 109);  
+    color: #FF4B4B;
+    /* color: rgb(61, 213, 109);   */
     mix-blend-mode: none;
     filter: opacity(100%);
     background-color: transparent;

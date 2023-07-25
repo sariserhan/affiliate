@@ -44,7 +44,9 @@ def add_item(item_obj, catalog_list):
         st.warning(f"Special characters are not allowed in the name section: {name}")
         st.stop()
         
-    description = st.text_area(label='Item Description', height=50, key='description', placeholder='Description',label_visibility='collapsed')    
+    description = st.text_area(label='Item Description', height=50, key='description', placeholder='Description',label_visibility='collapsed')
+    pros = st.text_area(label='Pros', height=50, key='pros', placeholder='Pros',label_visibility='collapsed')
+    cons = st.text_area(label='Cons', height=50, key='cons', placeholder='Cons',label_visibility='collapsed')  
     affiliate_link = st.text_input(label='Item Affiliate Link', key='affiliate_link', placeholder='Affiliate Link',label_visibility='collapsed')
 
     catalog_name = st.selectbox(label="Choose Category or Add New", options=catalog_list[:])
@@ -64,7 +66,7 @@ def add_item(item_obj, catalog_list):
     
     disable_button = True    
     
-    if all([uploaded_file, name, description, affiliate_link, catalog_name, affiliate_partner]):
+    if all([uploaded_file, name, description, affiliate_link, catalog_name, affiliate_partner, pros, cons]):
         image_val = uploaded_file.getvalue()
         image_name = uploaded_file.name
         disable_button = False            
@@ -82,6 +84,8 @@ def add_item(item_obj, catalog_list):
                 affiliate_link=affiliate_link,
                 affiliate_partner=affiliate_partner,
                 catalog_names=[catalog_name],
+                pros=pros,
+                cons=cons,
                 f_clicked=int(f_clicked_val) if f_clicked_toggle else 0
                 )
             
