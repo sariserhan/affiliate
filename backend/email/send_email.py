@@ -38,7 +38,7 @@ class EmailService():
 
     @classmethod
     def get_item(cls, item_name: str) -> dict:
-        item_db = cls.connect_db('item_db')
+        item_db = cls.connect_db('items_db2')
         key = item_name.replace(' ',f'_')
         return item_db.get(key=key)
 
@@ -49,42 +49,55 @@ class EmailService():
 
     # Function to send the email
     @classmethod
-    def send_email(cls, recipient_email: str, item_dict: dict):
+    def send_email(cls, recipient_email: str, item_dict: dict = None, subscription_event: str = None):
         sender_email: str = os.getenv('email_sender_name')
-        image_data = cls.get_image(name=item_dict['image_name'], catalog=item_dict['catalog'])
-        item_name = item_dict['name']
-        item_description = item_dict['description']
-        item_link = item_dict['affiliate_link']
-        item_image_name = item_dict['image_name']
-        item_viewed = item_dict['clicked']
-        
-        # Create the email message
-        subject = 'Hello from Python!'
-        message = 'This is the body of the email.'
-
         msg = MIMEMultipart()
+        if item_dict:
+            image_data = cls.get_image(name=item_dict['image_name'], catalog=item_dict['catalog'])
+            item_name = item_dict['name']
+            item_description = item_dict['description']
+            item_link = item_dict['affiliate_link']
+            item_image_name = item_dict['image_name']
+            item_viewed = item_dict['clicked'] + item_dict['f_clicked']
+            pros = []
+            cons = []
+            
+            for i in item_dict['pros'].split('. '):
+                cons.append(f'<li>❌ {i}</li>')
+            
+            for i in item_dict['cons'].split('. '):
+                pros.append(f'<li>✅ {i}</li>')
+            
+            # Create the email message
+            subject = item_name          
+            
+            # --- PATH SETTINGS ---
+            current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
+            email_body_file = current_dir / 'backend' / 'email' / 'email_body.html'
+
+            # Read the HTML file
+            with open(email_body_file, "r") as file:
+                html_content = file.read()
+            image_base64 = base64.b64encode(image_data).decode("utf-8")
+            
+            html_content = html_content\
+                            .replace("ITEM_NAME", item_name)\
+                            .replace("ITEM_LINK", item_link)\
+                            .replace("IMAGE_DATA", image_base64)\
+                            .replace("IMAGE_ALT", item_image_name)\
+                            .replace("ITEM_VIEWED", f'🔥 {item_viewed}')\
+                            .replace("ITEM_PROS", ''.join(pros))\
+                            .replace("ITEM_CONS", ''.join(cons))\
+                            .replace("ITEM_DESCRIPTION", item_description.split('. ')[0])
+                        
+            msg.attach(MIMEText(html_content, 'html'))
+        else:
+            subject = subscription_event
+        
         msg['From'] = formataddr(("AIBestGoods", f"{sender_email}"))
         msg['To'] = recipient_email
-        msg['Subject'] = subject
+        msg['Subject'] = '👉 '+subject
         # msg.attach(image)
-        
-        # --- PATH SETTINGS ---
-        current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
-        email_body_file = current_dir / 'backend' / 'email' / 'email_body.html'
-
-        # Read the HTML file
-        with open(email_body_file, "r") as file:
-            html_content = file.read()
-        image_base64 = base64.b64encode(image_data).decode("utf-8")
-        
-        html_content = html_content\
-                        .replace("ITEM_NAME", item_name)\
-                        .replace("ITEM_LINK", item_link)\
-                        .replace("IMAGE_DATA", image_base64)\
-                        .replace("IMAGE_ALT", item_image_name)\
-                        .replace("ITEM_DESCRIPTION", item_description)
-        
-        msg.attach(MIMEText(html_content, 'html'))
         
         # Setup the SMTP server
         smtp_server = 'smtp.titan.email'

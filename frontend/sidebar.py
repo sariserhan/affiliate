@@ -10,7 +10,7 @@ def sidebar() -> str:
         
         sidebar = option_menu(
             menu_title=None,
-            options=(catalog_list[::-1])
+            options=(catalog_list)
         )
     
     return sidebar
@@ -21,5 +21,10 @@ def get_catalog_list(catalogs=Catalog().fetch_records()) -> list:
     for catalog in catalogs:
         if catalog['is_active']:
             catalog_list.append(catalog['name'])
+    
+    #Add All Items into Catalog and make it default
+    catalog_list.insert(0, 'Pros & Cons')
+    catalog_list.insert(0, 'Best Picks')
+    catalog_list.insert(0, 'All Items')
         
     return catalog_list

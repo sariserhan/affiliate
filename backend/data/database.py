@@ -37,6 +37,14 @@ class DETA:
                 records_list.append(record)
         return records_list
     
+    def update_record(self, key:str, updates: dict) -> str:
+        record = self.db.get(key)
+        for k, v in updates.items():
+            if k in record:
+                record[k] = v
+                
+        self.db.put(record)
+    
     def change_record(self, key: str, updates: dict) -> str:
         record = self.db.get(key)
         for k, v in updates.items():
@@ -66,7 +74,7 @@ class DETA:
             catalog_base.put(catalog_record)
             logging.info(f"{name} successfully removed from catalog.")
         except Exception as e:
-            logging.error(f'Error in removing {name} fron catalog ---> {e}')
+            logging.error(f'Error in removing {name} from catalog ---> {e}')
         try:
             self.db.delete(key)
             logging.info(f"{name} successfully deleted.")
@@ -74,7 +82,22 @@ class DETA:
         except Exception as e:
             logging.error(f'Error in deleting {name} ---> {e}')
             return False
-
+        
+    def migrate_database(self, target_database: str):        
+        target = self.deta.Base(target_database)        
+        
+        for item in self.db.fetch().items:
+            if item['key'].startswith('Corsair'):
+                pass
+            else:
+                try:
+                    target.insert(item)
+                    logging.info(f'{item["key"]} is migrated!')
+                except Exception as e:
+                    logging.error(f'Error migrating {item["key"]} --> {e}')
+                    raise e
+        return
+                
 
 if __name__ == '__main__':
-    pass
+    DETA('item_db').migrate_database(target_database='items_db2')

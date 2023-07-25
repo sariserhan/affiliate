@@ -10,9 +10,9 @@ logging.basicConfig(level=logging.DEBUG)
 class Item(DETA):
     
     def __init__(self, name: str = ''):
-        super(Item, self).__init__(db="item_db")
+        super(Item, self).__init__(db="items_db2")
 
-    def create_item(self, name: str, description: str, image_path: str, image_name: str, affiliate_link: str, affiliate_partner: str, catalog_names: list, f_clicked: int = 0):        
+    def create_item(self, name: str, description: str, image_path: str, pros: str, cons: str, image_name: str, affiliate_link: str, affiliate_partner: str, catalog_names: list, f_clicked: int = 0):        
         for catalog_name in catalog_names:
             name = name.strip()
             key = name.replace(' ',f'_')
@@ -26,6 +26,8 @@ class Item(DETA):
                 "clicked": 0,
                 "f_clicked": f_clicked,
                 "catalog": catalog_name,
+                "pros": pros,
+                "cons": cons,
                 "email_sent": False
             }
 

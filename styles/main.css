@@ -69,13 +69,42 @@ div.css-79elbk.e1akgbir10 {
     padding-top: 10px;
 }
 
+.element {
+    color: white;
+    background-color: transparent;
+    text-align: center;
+}
 
+.element a:link {
+    display: inline-block;        
+    text-decoration: none;
+    filter: invert(50%);    
+}
+
+.element a:hover, a:active {
+    color: #FF4B4B;
+    /* color: rgb(61, 213, 109);   */
+    mix-blend-mode: none;
+    filter: opacity(100%);
+    background-color: transparent;
+}
+
+.element a:visited {
+    color: #FF4B4B;
+    filter: opacity(100%);
+}
+
+
+/* body {
+    height: auto;
+    overflow: auto;
+} */
   
 
 /* CONTROLS --> ENTIRE PAGE EXCEPT SIDEBAR */
-/* div.block-container.css-z5fcl4.e1g8pov64 {
-    background-color: aqua;
-} */
+ /* div.block-container.css-z5fcl4.e1g8pov64 {
+    background-color: aqua; 
+}*/
 
 [id="footer"] {
     text-align: center;
@@ -86,6 +115,6 @@ div.css-79elbk.e1akgbir10 {
 }
 
 
-#MainMenu {visibility: hidden;}
+MainMenu {visibility: hidden;}
 footer {visibility: hidden;}
 header {visibility: hidden;}

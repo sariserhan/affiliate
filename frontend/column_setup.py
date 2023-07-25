@@ -1,13 +1,14 @@
 import logging
+import base64
 import streamlit as st
 
 from io import BytesIO
 from PIL import Image
-from bokeh.models.widgets import Div
 
 from streamlit_extras.keyboard_url import keyboard_to_url
 from streamlit_extras.keyboard_text import key
 from streamlit_extras.mention import mention
+from streamlit.components.v1 import html
 
 from backend.data.item import Item
 
@@ -19,24 +20,51 @@ def number_to_words(number):
     return " ".join(words[int(i)] for i in str(number))
 
 @st.cache_data(show_spinner=False)
-def get_image(image_name, selected_catalog):
+def get_image(image_name, selected_catalog, resize = None):
     image_data = Item().get_image_data(name=image_name, catalog=selected_catalog)
-    return Image.open(BytesIO(image_data))
-    
+    image = Image.open(BytesIO(image_data))
+    if resize:
+        return image.resize((resize[0], resize[1]), Image.ANTIALIAS)
+    return image
 
-def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: str):
-    for item_index in range(start, end):
-        item_key = items[item_index]["key"]
-        name = items[item_index]["name"]
-        url = items[item_index]['affiliate_link']
-        description = items[item_index]['description']
-        image_name = items[item_index]['image_name']
-        clicked = items[item_index]["clicked"]
-        f_clicked = items[item_index]["f_clicked"]
+# Function to convert image to base64 encoding
+def pil_image_to_base64(image):
+    img_buffer = BytesIO()
+    image.save(img_buffer, format="PNG")  # You can change the format to JPEG if needed
+    return base64.b64encode(img_buffer.getvalue()).decode()
+
+# Navigates in the new page
+def open_page(url):
+    open_script= """
+        <script type="text/javascript">
+            window.open('%s', '_blank').focus();
+        </script> 
+    """ % (url)
+    html(open_script, height=0)
+    
+# Navigates in the same page
+def nav_to(url): 
+    nav_script = """
+                    <meta http-equiv="refresh" content="0; url='%s'" target="_blank">                    
+                 """ % (url)
+    st.write(nav_script, unsafe_allow_html=True)
+
+def set_form(items:dict, col_name: str, selected_catalog: str):
+    for item_index, item in enumerate(items):
+        item_key = item["key"]
+        name = item["name"]
+        url = item['affiliate_link']
+        description = item['description']
+        image_name = item['image_name']
+        clicked = item["clicked"]
+        f_clicked = item["f_clicked"]
+        viewed = clicked + f_clicked
         
-        with st.form(f'{name}_{col_name}', clear_on_submit=False):            
+        with st.form(f'{name}_{col_name}', clear_on_submit=False):  
+            
             # --- SUB-HEADER  
-            st.markdown(f"<h2 style='text-align: center;'>{name}</h2>", unsafe_allow_html=True)
+            st.markdown(f"<h2 class='element'><a href={url}>{name}</a></h2>", unsafe_allow_html=True)
+            st.write('---')
             
             # --- ADD keyboard to URL
             number = number_to_words(item_index)
@@ -49,25 +77,24 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
                 url=url,
                 write=False
             )
-
+            
+            # -------------------------------------
+            # THIS IS FOR AD
             # --- ADD mentions to the text for ad..
-            inline_ad_mention = mention(
-                label="but don't click :red[THIS]",
-                icon=':exclamation:',
-                url="https://www.google.com",
-                write=False
-            )
+            # inline_ad_mention = mention(
+            #     label="but don't click :red[THIS]",
+            #     icon=':exclamation:',
+            #     url="https://www.google.com",
+            #     write=False
+            # )
             # NOTE: Add ad link here
             # keyboard_to_url(key="a", url="https://www.google.com")            
             # st.write(
             #     f'{inline_mention} or hit {key(number, False)} on your keyboard {inline_ad_mention} nor hit {key(":a:", False)} :exclamation:',
             #     unsafe_allow_html=True,
             # )     
-            # --- URL AND KEYBOARD TO URL
-            st.write(
-                f'{inline_mention} or hit {key(number, False)} on your keyboard', unsafe_allow_html=True
-            )
-                        
+            # -------------------------------------                       
+
             # --- IMAGE
             try:
                 image = get_image(image_name, selected_catalog)
@@ -78,26 +105,18 @@ def set_form(items:dict, start: int, end:int, col_name: str, selected_catalog: s
             # --- DESCRIPTION
             st.markdown(description)
             
-            # --- COUNTER
-            if name not in st.session_state:
-                st.session_state.name = clicked+ f_clicked
-                
-            counter_text = st.empty()            
-            counter_text.markdown(f'**:red[{st.session_state.name}]** times visited!', unsafe_allow_html=True)          
-            
+             # --- URL AND KEYBOARD TO URL            
+            st.write(
+                f'{inline_mention} or hit {key(number, False)} on your keyboard', unsafe_allow_html=True
+            )
+                                        
             # CHECK PRICE BUTTON
-            form_button = st.form_submit_button(label="Check Price")
+            counter_text = st.empty()
+            counter_text.markdown(f'**:green[{viewed}]** times visited :exclamation:', unsafe_allow_html=True)   
             
-            if form_button:
-                st.session_state.name += 1
-                Item().change_record(key=item_key, updates={'clicked':st.session_state.name})                    
-                                    
+            if st.form_submit_button(label='Check Price', on_click=open_page, args=(url,)):
+                Item().update_record(key=item_key, updates={'clicked':clicked+1})
+                                
                 # Update the counter text on the page
-                counter_text.markdown(f"**:red[{st.session_state.name}]** times visited!")
-
-                js = f"window.open('{url}')"  # New tab or window
-                html = '<img src onerror="{}">'.format(js)
-                div = Div(text=html)
-                st.bokeh_chart(div)
-                logging.info(f"{name} is clicked by {st.experimental_user.email}")
-                
+                counter_text.markdown(f"**:red[{viewed+1}]** times visited :white_check_mark:")                
+                logging.info(f"{name} is clicked by {st.experimental_user.email} --> {url}")

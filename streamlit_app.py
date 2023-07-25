@@ -10,10 +10,15 @@ from PIL import Image
 from streamlit_extras.buy_me_a_coffee import button
 from streamlit_extras.app_logo import add_logo
 from streamlit_extras.colored_header import colored_header
+from streamlit_toggle import st_toggle_switch
+
 from st_pages import Page, hide_pages, show_pages
 
 from backend.data.item import Item
 
+from frontend.ads import get_ads
+from frontend.compare_items import compare_items
+from frontend.all_and_best_items import all_and_best_items
 from frontend.sidebar import sidebar
 from frontend.subscription import subscription
 from frontend.column_setup import set_form
@@ -21,14 +26,12 @@ from frontend.column_setup import set_form
 from frontend.google_analytics import google_analytics_setup
 from frontend.google_adsense import google_adsense_setup
 from frontend.impact_com import impact_setup
-from frontend.vertical_ad import add_vertical_ad
 
 from dotenv import load_dotenv
 
 # Load environment variables from .env file
 load_dotenv()
 
-# Disable DEBUG level logging for the PIL module
 logging.basicConfig(level=logging.DEBUG)
 
 
@@ -37,15 +40,24 @@ def get_base64_of_bin_file(bin_file):
         data = f.read()
     return base64.b64encode(data).decode()
 
-def get_img_with_href(local_img_path, context):
+def get_img_with_href(local_img_path, context, target_url = None):
     img_format = os.path.splitext(local_img_path)[-1].replace('.', '')
     bin_str = get_base64_of_bin_file(local_img_path)
-    html_code = f'<img src="data:image/{img_format};base64,{bin_str}" alt="{context}" height="25" />'
+    if target_url:
+        html_code = f'''
+                        <a href="{target_url}">
+                            <img src="data:image/{img_format};base64,{bin_str}" alt="{context}"/>
+                        </a>
+                    '''
+    else:
+        html_code = f'<img src="data:image/{img_format};base64,{bin_str}" alt="{context}" height="25" />'
+        
     return html_code
 
 def local_css(file_name):
     with open(file_name) as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+        
 
 def init():
     # --- ICON
@@ -60,7 +72,7 @@ def init():
     
     if "state_dict" not in st.session_state:
         st.session_state.state_dict = {}
-
+    
     # --- IMPACT.COM SETUP
     # impact_setup()
 
@@ -82,13 +94,28 @@ def init():
     hide_pages(["admin", "home", "unsubscribe", "privacy"])
 
     # --- CSS 
-    local_css('./styles/main.css')            
- 
+    local_css('./styles/main.css')
+    
     # --- LOGO
     add_logo("./assets/logo.png", height=100)
-
+  
     streamlit_analytics.start_tracking()
-
+    
+    night_mode = st_toggle_switch(
+        label=None,
+        key="theme_switch",
+        default_value=False,
+        label_after=False,
+        inactive_color="#D3D3D3",  # optional
+        active_color="#11567f",  # optional
+        track_color="#29B5E8",  # optional
+    )
+    
+    # SET DEFAULT THEME
+    config_toml = open('.streamlit/config.toml', 'w')
+    config_toml.write('[theme]\nbase="dark"')
+    config_toml.close()
+    
     # --- HEADER
     colored_header(
         label='AI-Powered Picks: Unleashing the Future of Smart Shopping:exclamation:',
@@ -97,86 +124,58 @@ def init():
                     """,
         color_name="red-70"
         )
-
-def main():
+    
+    # SET THEME FROM TOGGLE
+    try:
+        config_toml = open('.streamlit/config.toml', 'w')
+        if night_mode:        
+            config_toml.write('[theme]\nbase="dark"')       
+        else:        
+            config_toml.write('[theme]\nbase="light"')
+    finally:
+        config_toml.close()
+    
+def main():    
     # --- CATALOG SIDE BAR
     selected_catalog = sidebar()
-
+    
+    _, col2, _ = st.columns([1,2.5,1])    
+    
     # --- ITEM LIST
-    items = Item().get_record_by_catalog(catalog=selected_catalog)
-    
-    # --- POST LIST
-    if len(items) % 3 == 0:        
-        col1, col2, col3 = st.columns([4,4,4], gap='small')
-        col1_start, col1_end = 0, len(items)//3
-        col2_start, col2_end = len(items)//3, (len(items)//3)*2
-        col3_start, col3_end = (len(items)//3)*2, len(items)
-    elif len(items) % 2 == 0:
-        _, col1, col2, _ = st.columns([0.3,4,4,0.3], gap='large')
-        col1_start, col1_end = 0, len(items)//2
-        col2_start, col2_end = len(items)//2, len(items)
-        col3 = None
-    else:
-        if len(items) == 1:
-            _, col1, _ = st.columns([0.1,1,0.1])
-            col1_start, col1_end = 0, len(items)
-            col2 = None
-            col3 = None
-        elif len(items) == 5:
-            col1, col2 = st.columns([4,4], gap='small')
-            col1_start, col1_end = 0, 3
-            col2_start, col2_end = 3, len(items)
-            col3 = None
-        elif len(items) == 7:
-            col1, col2, col3 = st.columns([4,4,4], gap='small')
-            col1_start, col1_end = 0, 3
-            col2_start, col2_end = 3, 6
-            col3_start, col3_end = 6, len(items)
-        else:
-            logging.warning(f'This should not happen: {len(items)}')
-    
-    # --- COLUMN-1
-    with col1:        
-        set_form(
-            items=items, 
-            start=col1_start, 
-            end=col1_end, 
-            col_name='col1', 
-            selected_catalog=selected_catalog
-        )
+    if selected_catalog == "Pros & Cons":
+        compare_items()
+        logging.info("-------- PROS & CONS SELECTED ----------")
+                    
+    elif selected_catalog == "All Items":        
+        all_and_best_items(col2)
+        logging.info("-------- ALL ITEMS SELECTED ----------")
         
-    # --- COLUMN-2
-    if col2:
-        with col2:
+    elif selected_catalog == "Best Picks":        
+        all_and_best_items(col2, is_best_pick=True)
+        logging.info("-------- BEST PICKS SELECTED ----------")
+        
+    else:
+        items = Item().get_record_by_catalog(catalog=selected_catalog)
+        logging.info(f"-------- CATALOG - {selected_catalog} - SELECTED ----------")
+    
+        # --- POST LIST
+        with col2:        
             set_form(
-                items=items, 
-                start=col2_start,
-                end=col2_end,
+                items=items,
                 col_name='col2', 
                 selected_catalog=selected_catalog
             )
-        
-    # --- COLUMN-3
-    if col3:
-        with col3:        
-            set_form(
-                items=items, 
-                start=col3_start,
-                end=col3_end,
-                col_name='col3', 
-                selected_catalog=selected_catalog
-            )
-        
-
+            
     st.divider()
-        
+
     # --- EMAIL SUBSCRIPTION
-    # subscription()
+    subscription()
+    st.write('---')
 
     # --- BUY ME A COFFEE
     button(username=os.getenv("buy_me_coffee"), floating=False, width=220)
         
-    # --- FOOTER    
+    # --- FOOTER
     instagram_icon = get_img_with_href("./assets/instagram.png", "Instagram")
     twitter_icon = get_img_with_href("./assets/twitter.png", "Twitter")
     gmail_icon = get_img_with_href("./assets/gmail.png", "Gmail")
@@ -201,7 +200,6 @@ def main():
     )
 
     streamlit_analytics.stop_tracking(unsafe_password=os.getenv("STREAMLIT_ANALYTICS"))
-    
     
 if __name__ == "__main__":
     init()
