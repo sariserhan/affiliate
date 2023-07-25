@@ -38,7 +38,7 @@ class EmailService():
 
     @classmethod
     def get_item(cls, item_name: str) -> dict:
-        item_db = cls.connect_db('item_db')
+        item_db = cls.connect_db('items_db2')
         key = item_name.replace(' ',f'_')
         return item_db.get(key=key)
 
@@ -59,7 +59,15 @@ class EmailService():
             item_link = item_dict['affiliate_link']
             item_image_name = item_dict['image_name']
             item_viewed = item_dict['clicked'] + item_dict['f_clicked']
-        
+            pros = []
+            cons = []
+            
+            for i in item_dict['pros'].split('. '):
+                cons.append(f'<li>❌ {i}</li>')
+            
+            for i in item_dict['cons'].split('. '):
+                pros.append(f'<li>✅ {i}</li>')
+            
             # Create the email message
             subject = item_name          
             
@@ -77,8 +85,10 @@ class EmailService():
                             .replace("ITEM_LINK", item_link)\
                             .replace("IMAGE_DATA", image_base64)\
                             .replace("IMAGE_ALT", item_image_name)\
-                            .replace("ITEM_VIEWED", f'✅ {item_viewed}')\
-                            .replace("ITEM_DESCRIPTION", item_description)
+                            .replace("ITEM_VIEWED", f'🔥 {item_viewed}')\
+                            .replace("ITEM_PROS", ''.join(pros))\
+                            .replace("ITEM_CONS", ''.join(cons))\
+                            .replace("ITEM_DESCRIPTION", item_description.split('. ')[0])
                         
             msg.attach(MIMEText(html_content, 'html'))
         else:
@@ -86,7 +96,7 @@ class EmailService():
         
         msg['From'] = formataddr(("AIBestGoods", f"{sender_email}"))
         msg['To'] = recipient_email
-        msg['Subject'] = subject
+        msg['Subject'] = '👉 '+subject
         # msg.attach(image)
         
         # Setup the SMTP server

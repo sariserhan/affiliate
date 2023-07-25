@@ -4,6 +4,8 @@ import random
 import logging
 import streamlit as st
 
+from streamlit_extras.no_default_selectbox import selectbox
+
 from backend.data.affiliate_partner import Affiliate_Partner
 
 # --- ADD ITEM
@@ -42,18 +44,17 @@ def add_item(item_obj, catalog_list):
         pass
     else:
         st.warning(f"Special characters are not allowed in the name section: {name}")
-        st.stop()
         
     description = st.text_area(label='Item Description', height=50, key='description', placeholder='Description',label_visibility='collapsed')
     pros = st.text_area(label='Pros', height=50, key='pros', placeholder='Pros',label_visibility='collapsed')
     cons = st.text_area(label='Cons', height=50, key='cons', placeholder='Cons',label_visibility='collapsed')  
     affiliate_link = st.text_input(label='Item Affiliate Link', key='affiliate_link', placeholder='Affiliate Link',label_visibility='collapsed')
 
-    catalog_name = st.selectbox(label="Choose Category or Add New", options=catalog_list[:])
+    catalog_name = selectbox(label='Choose Category or Add New', options=catalog_list[:])
     if "Add New Catalog" == catalog_name:
         catalog_name = st.text_input(label='Add Catalog Name', key='catalog_name', placeholder='Catalog Name', label_visibility='collapsed')    
         
-    affiliate_partner = st.selectbox(label="Choose Affiliate Partner or Add New", options=affiliate_partner_list)
+    affiliate_partner = selectbox(label='Choose Affiliate Partner or Add New', options=affiliate_partner_list)
     if "Add New Partner" == affiliate_partner:
         affiliate_partner = st.text_input(label='Add Partner Name', key='partner_name', placeholder='Partner Name', label_visibility='collapsed')
         

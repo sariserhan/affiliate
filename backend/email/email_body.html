@@ -4,37 +4,36 @@
     <meta charset="UTF-8">
     <title>AIBestGoods</title>
     <style>
-      /* CSS styles for the unsubscribe button */
-      .unsubscribe-button {
-        display: inline-block;
-        padding: 6px 16px;
-        background-color: #f44336;
-        color: #fff;
-        text-decoration: none;
-      }
       .box {
-        border: 1px solid #333;
+        border: 1px solid #F0F2F6;
         padding: 10px;
-        background-color: #0e0a090a;
+        background-color: #FFFFFF;
       }
     </style>
   </head>
   <body>
     <center>
       <div class="box">
-        <h1>ITEM_NAME</h1>
-        <a href="ITEM_LINK"><b><i>Visit Site:</i> <span style='color:green'>ITEM_NAME</span></b> </a>
-        <br>
-        <br>
-        <a style=font-size:18px; href='ITEM_LINK/' target='_blank' rel="noopener noreferrer">
-          <img src="data:image/jpeg;base64,IMAGE_DATA" alt="IMAGE_ALT", width="574"/>
+        <h1><a href="ITEM_LINK" style='color:white; text-decoration:none; filter: invert(50%);'>ITEM_NAME</a></h1>       
+        <p style="width:574px; font-size:20px;"><span style='color: rgb(61, 213, 109);'>ITEM_VIEWED</span> times viewed❗</p>
+        <div style=font-size:18px; href='ITEM_LINK/' target='_blank' rel="noopener noreferrer">
+          <figure>
+            <img src="data:image/jpeg;base64,IMAGE_DATA" alt="IMAGE_ALT", width="574"/>
+            <figcaption align="center"; style="width:574px; font-size:15px;">ITEM_DESCRIPTION</figcaption>
+          </figure>
         </a>
-        <p align="left"; style="width:574px; font-size:15px;">ITEM_DESCRIPTION</p>
-        <p style="width:574px; font-size:15px;"><span style='color:green'>ITEM_VIEWED</span> times viewed!</p>
-        
+        <a href="ITEM_LINK"><b><i>Visit Site:</i> <span style='color: rgb(61, 213, 109);'>ITEM_NAME</span></b> </a>
+        <!-- <hr width="574px" /> -->
+        <ul align="left";  style="width:574px; list-style-type: none; font-size:15px;">
+          ITEM_PROS
+        </ul>
+        <hr width="574px" />
+        <ul align="left";  style="width:574px; list-style-type: none; font-size:15px;">
+          ITEM_CONS
+        </ul>
+        <hr width="574px" />                
         <footer>
-          <p>❗To unsubscribe, click the button below❗</p>
-          <a class="unsubscribe-button" href="https://aibestgoods.com/unsubscribe">Unsubscribe</a>
+            <a href="https://aibestgoods.com/unsubscribe" style="text-decoration:none; color:grey; font-size: x-small;">Unsubscribe</a>
         </footer>
       </div>
     </center>

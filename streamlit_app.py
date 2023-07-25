@@ -142,20 +142,21 @@ def main():
     _, col2, _ = st.columns([1,2.5,1])    
     
     # --- ITEM LIST
-    if selected_catalog == "Cons & Pros":
+    if selected_catalog == "Pros & Cons":
         compare_items()
-        
-            
-    elif selected_catalog == "All Items":
-        logging.info("-------- ALL ITEMS SELECTED ----------")
+        logging.info("-------- PROS & CONS SELECTED ----------")
+                    
+    elif selected_catalog == "All Items":        
         all_and_best_items(col2)
+        logging.info("-------- ALL ITEMS SELECTED ----------")
         
-    elif selected_catalog == "Best Picks":
-        logging.info("-------- BEST PICKS SELECTED ----------")
+    elif selected_catalog == "Best Picks":        
         all_and_best_items(col2, is_best_pick=True)
+        logging.info("-------- BEST PICKS SELECTED ----------")
         
     else:
         items = Item().get_record_by_catalog(catalog=selected_catalog)
+        logging.info(f"-------- CATALOG - {selected_catalog} - SELECTED ----------")
     
         # --- POST LIST
         with col2:        
