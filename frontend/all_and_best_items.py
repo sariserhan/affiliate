@@ -3,8 +3,9 @@ import logging
 import streamlit as st
 
 from streamlit_extras.mention import mention
+
 from backend.data.item import Item
-from frontend.column_setup import get_image, open_page
+from frontend.utils.utils import get_image, open_page
 from frontend.ask_ai import ask_ai
 
 def all_and_best_items(col2, is_best_pick: bool = False, is_most_viewed: bool = False):

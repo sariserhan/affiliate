@@ -10,14 +10,14 @@ from PIL import Image
 from streamlit_extras.buy_me_a_coffee import button
 from streamlit_extras.app_logo import add_logo
 from streamlit_extras.colored_header import colored_header
-from streamlit_toggle import st_toggle_switch
 
 from st_pages import Page, hide_pages, show_pages
 
 from backend.data.item import Item
 
 from frontend.ads import get_ads
-from frontend.compare_items import compare_items, item_pick_ask_ai
+from frontend.ask_ai import ask_ai
+from frontend.compare_items import compare_items
 from frontend.all_and_best_items import all_and_best_items
 from frontend.sidebar import sidebar
 from frontend.subscription import subscription
@@ -101,15 +101,19 @@ def init():
   
     streamlit_analytics.start_tracking()
     
-    night_mode = st_toggle_switch(
-        label=None,
-        key="theme_switch",
-        default_value=False,
-        label_after=False,
-        inactive_color="#D3D3D3",  # optional
-        active_color="#11567f",  # optional
-        track_color="#29B5E8",  # optional
-    )
+    try:
+        from streamlit_toggle import st_toggle_switch
+        night_mode = st_toggle_switch(
+            label=None,
+            key="theme_switch",
+            default_value=False,
+            label_after=False,
+            inactive_color="#D3D3D3",  # optional
+            active_color="#11567f",  # optional
+            track_color="#29B5E8",  # optional
+        )
+    except:
+        logging.info("streamlit_toggle is not available!")
     
     # SET DEFAULT THEME
     config_toml = open('.streamlit/config.toml', 'w')
@@ -151,7 +155,7 @@ def main():
         logging.info("-------- COMPARE ITEMS SELECTED ----------")
     
     elif selected_catalog == "Ask AI":
-        item_pick_ask_ai()
+        ask_ai()
         logging.info("-------- ASK AI SELECTED ----------")  
     
     elif selected_catalog == "Pros & Cons":
