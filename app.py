@@ -16,14 +16,9 @@ from st_pages import Page, hide_pages, show_pages
 
 from backend.data.item import Item
 
-<<<<<<< HEAD:streamlit_app.py
-from frontend.ads import get_ads
-from frontend.compare_items import compare_items, ask_ai
-=======
 from frontend.utils.ads import get_ads
 from frontend.ask_ai import ask_ai
 from frontend.compare_items import compare_items
->>>>>>> 7977635588135b18372533be9e9f40c5cf12dbec:app.py
 from frontend.all_and_best_items import all_and_best_items
 from frontend.sidebar import sidebar
 from frontend.subscription import subscription
