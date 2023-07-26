@@ -9,3 +9,4 @@ streamlit_authenticator==0.2.2
 streamlit_extras==0.2.7
 streamlit_option_menu==0.3.6
 streamlit_toggle_switch
+openai

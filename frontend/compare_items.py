@@ -1,3 +1,7 @@
+import os
+import time
+import openai
+
 import logging
 import streamlit as st
 
@@ -11,8 +15,11 @@ from backend.data.item import Item
 from frontend.column_setup import get_image, open_page
 
 logging.basicConfig(level=logging.DEBUG)
+openai.organization = "org-KAv10qRlhbdtXmwkdkuET5TP"
+openai.api_key = os.getenv("OPENAI_API_KEY")
+models = openai.Model.list()
         
-def compare_items():    
+def compare_items(compare: bool = False):    
     catalog_list = [catalog['name'] for catalog in Catalog().fetch_records()]
     selected_catalog = selectbox(label="Choose Category", options=catalog_list)
     items_list = [item['name'] for item in Item().get_record_by_catalog(selected_catalog)]
@@ -47,19 +54,20 @@ def compare_items():
                         f'{inline_mention_left} or hit {key(":one:", False)} on your keyboard :exclamation:', unsafe_allow_html=True
                     )                        
                     
-                    st.write('---')
+                    if not compare:
+                        st.write('---')
+                            
+                        pros_left = item_left['pros'].split('. ')
+                        cons_left = item_left['cons'].split('. ')
                         
-                    pros_left = item_left['pros'].split('. ')
-                    cons_left = item_left['cons'].split('. ')
-                    
-                    for pros in pros_left:
-                        if pros != '':
-                            st.write(f':white_check_mark: {pros}')
-                        
-                    st.write('---')                                                        
-                    for cons in cons_left:
-                        if cons != '':
-                            st.write(f':x: {cons}')                                                                                                 
+                        for pros in pros_left:
+                            if pros != '':
+                                st.write(f':white_check_mark: {pros}')
+                            
+                        st.write('---')                                                        
+                        for cons in cons_left:
+                            if cons != '':
+                                st.write(f':x: {cons}')                                                                                                 
                     
                     st.write('---')
                     button_row_1, _, button_row_3, _, _ = st.columns([1,0.1,1,0.1,0.1])
@@ -104,19 +112,20 @@ def compare_items():
                         f'{inline_mention_right} or hit {key(":two:", False)} on your keyboard :exclamation:', unsafe_allow_html=True
                     )
                     
-                    st.write('---')                            
-                    pros_right = item_right['pros'].split('. ')
-                    cons_right = item_right['cons'].split('. ')
-                    
-                    for pros in pros_right:
-                        if pros != '':
-                            st.write(f':white_check_mark: {pros}')
+                    if not compare:
+                        st.write('---')                            
+                        pros_right = item_right['pros'].split('. ')
+                        cons_right = item_right['cons'].split('. ')
                         
-                    st.write('---')                                                        
-                    for cons in cons_right:
-                        if cons != '':
-                            st.write(f':x: {cons}')                                            
-                    
+                        for pros in pros_right:
+                            if pros != '':
+                                st.write(f':white_check_mark: {pros}')
+                            
+                        st.write('---')                                                        
+                        for cons in cons_right:
+                            if cons != '':
+                                st.write(f':x: {cons}')                                            
+                        
                     st.write('---')
                     button_row_1, _, button_row_3, _, _ = st.columns([1,0.1,1,0.1,0.1])
                     with button_row_3:
@@ -133,4 +142,106 @@ def compare_items():
                             # Update the counter text on the page
                             counter_text.markdown(f'**:red[{item_right["clicked"]+item_right["f_clicked"]+1}]** times visited :white_check_mark:')                
                             logging.info(f"{item_right['name']} is clicked by {st.experimental_user.email} --> {item_right['affiliate_link']}")
+        
+        if compare:
+            with st.form("Compare_with_AI"):
+                if st.form_submit_button("Compare items with AI"):
+                    if selected_item_left and selected_item_right:
+                        if selected_item_right == selected_item_left:
+                            st.warning("Please select different items to compare with AI")
+                        else:
+                            logging.info(models.data[0].id)
+                            progress_text = "Searching... Please wait..."
+                            my_bar = st.empty()
+                            my_bar.progress(0, text=progress_text)
+                            
+                            # create a chat completion
+                            chat_completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", 
+                                                                        messages=[{"role": "user", 
+                                                                                "content": f"you have to choose one {item_left['name']} or {item_right['name']} and tell me why! And dont say this 'As an AI language model, I don't have personal opinions'"}])
+
+                            for percent_complete in range(100):
+                                time.sleep(0.01)
+                                my_bar.progress(percent_complete + 1, text=progress_text)
+                            my_bar.progress(100, text='Completed')
+                            time.sleep(1)
+                            my_bar.empty()
+                            answer = chat_completion.choices[0].message.content
+                            
+                            # st.subheader(f"Why you should buy:exclamation:")
+                            st.write(answer)
+ 
+                
+def ask_ai():
+    all_items = Item().fetch_records()
+    items_name_list = [val for item in all_items for key,val in item.items() if key == 'name']
+    selected_item = selectbox(label='items', options=items_name_list, key='items', label_visibility='collapsed')
+    if selected_item:
+        key_right = selected_item.replace(' ','_')                        
+        item= Item().get_record(key_right)
+        item_image = get_image(item['image_name'], item['catalog'])
+        with st.form('ai'):
+            # --- ADD keyboard to URL
+            keyboard_to_url(key=str(1), url=item['affiliate_link'])
+            
+            inline_mention_right = mention(
+                label=f"**_Visit Site:_ :green[{item['name']}]**",
+                icon=":arrow_right:",
+                url=item['affiliate_link'],
+                write=False
+            )
+            
+            st.markdown(f"<h2 class='element'><a href={item['affiliate_link']}>{item['name']}</a></h2>", unsafe_allow_html=True)
+            st.write('---')
+            st.image(item_image, use_column_width=True, caption=item['description'])
+            
+            # --- URL AND KEYBOARD TO URL            
+            st.write(
+                f'{inline_mention_right} or hit {key(":one:", False)} on your keyboard :exclamation:', unsafe_allow_html=True
+            )
+            
+            st.write('---')                         
+            button_row_1, _, button_row_3, _, button_row_5 = st.columns([1, 0.1 ,1 ,0.1 ,1])
+            
+            with button_row_1:
+                ask_ai_button = st.form_submit_button('Ask AI')
+            with button_row_5:
+                buy_button = st.form_submit_button("Check Price", on_click=open_page, args=(item['affiliate_link'],))   
+            with button_row_3:
+                # CHECK PRICE BUTTON
+                counter_text = st.empty()
+                counter_text.markdown(f'**:green[{item["clicked"]+item["f_clicked"]}]** times visited :exclamation:', unsafe_allow_html=True) 
+            
+            if ask_ai_button:
+                logging.info(models.data[0].id)
+                my_bar = st.empty()
+                progress_text = "Searching... Please wait..."
+                my_bar.progress(0, text=progress_text)
+                # create a chat completion
+                chat_completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", 
+                                                            messages=[{"role": "user", 
+                                                                       "content": f"tell me why should I buy this item in one paragraph and in second paragraph why I sould not buy:{item['name']}"}])
+
+                for percent_complete in range(100):
+                    time.sleep(0.01)
+                    my_bar.progress(percent_complete + 1, text=progress_text)
+                my_bar.progress(100, text='Completed')
+                time.sleep(1)
+                my_bar.empty()
+                
+                answer = chat_completion.choices[0].message.content.split('\n')
+                buy_paragraph, dont_buy_paragraph = answer[0], answer[2]
+                
+                st.subheader(f"Why you should buy:exclamation:")
+                st.write(buy_paragraph)
+                st.write('---')
+                st.subheader(f"Why you should not buy:exclamation:")
+                st.write(dont_buy_paragraph)
+            
+            if buy_button:
+                Item().update_record(key=item['key'], updates={'clicked':item['clicked']+1})
+                    
+                # Update the counter text on the page
+                counter_text.markdown(f'**:red[{item["clicked"]+item["f_clicked"]+1}]** times visited :white_check_mark:')                
+                logging.info(f"{item['name']} is clicked by {st.experimental_user.email} --> {item['affiliate_link']}")
                 
