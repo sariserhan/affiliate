@@ -4,10 +4,10 @@ import streamlit as st
 from backend.data.item import Item
 from backend.data.catalog import Catalog
 
-from frontend.auth import auth
-from frontend.add_item import add_item
-from frontend.delete_item import delete_item
-from frontend.send_email import send_email
+from frontend.utils.auth import auth
+from frontend.utils.add_item import add_item
+from frontend.utils.delete_item import delete_item
+from frontend.utils.send_email import send_email
 
 logging.basicConfig(level=logging.DEBUG)
 

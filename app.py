@@ -6,6 +6,7 @@ import streamlit as st
 import streamlit_analytics
 
 from PIL import Image
+from pathlib import Path
 
 from streamlit_extras.buy_me_a_coffee import button
 from streamlit_extras.app_logo import add_logo
@@ -15,7 +16,7 @@ from st_pages import Page, hide_pages, show_pages
 
 from backend.data.item import Item
 
-from frontend.ads import get_ads
+from frontend.utils.ads import get_ads
 from frontend.ask_ai import ask_ai
 from frontend.compare_items import compare_items
 from frontend.all_and_best_items import all_and_best_items
@@ -23,9 +24,9 @@ from frontend.sidebar import sidebar
 from frontend.subscription import subscription
 from frontend.column_setup import set_form
 
-from frontend.google_analytics import google_analytics_setup
-from frontend.google_adsense import google_adsense_setup
-from frontend.impact_com import impact_setup
+from frontend.utils.google_analytics import google_analytics_setup
+from frontend.utils.google_adsense import google_adsense_setup
+from frontend.utils.impact_com import impact_setup
 
 from dotenv import load_dotenv
 
@@ -60,8 +61,17 @@ def local_css(file_name):
         
 
 def init():
+    
+    # --- PATH SETTINGS
+    current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
+    icon_file = current_dir / 'assets' / 'icon.png'
+    logo_file = current_dir / 'assets' / 'logo.png'
+    css_file = current_dir / 'styles' / 'main.css'
+    config_toml_file = current_dir / '.streamlit' / 'config.toml'
+    
+    
     # --- ICON
-    icon = Image.open("./assets/icon.png")
+    icon = Image.open(icon_file)
 
     # --- NAVIGATION BAR
     st.set_page_config(
@@ -85,7 +95,7 @@ def init():
     # --- MAKE PAGES & HIDE
     show_pages(
         [
-            Page("streamlit_app.py", "home"),
+            Page("app.py", "home"),
             Page("pages/unsubscribe.py", "unsubscribe"),
             Page("pages/admin.py", "admin"),
             Page("pages/privacy.py", "privacy")
@@ -94,10 +104,10 @@ def init():
     hide_pages(["admin", "home", "unsubscribe", "privacy"])
 
     # --- CSS 
-    local_css('./styles/main.css')
+    local_css(css_file)
     
     # --- LOGO
-    add_logo("./assets/logo.png", height=100)
+    add_logo(logo_file.as_posix(), height=100)
   
     streamlit_analytics.start_tracking()
     
@@ -116,7 +126,7 @@ def init():
         logging.info("streamlit_toggle is not available!")
     
     # SET DEFAULT THEME
-    config_toml = open('.streamlit/config.toml', 'w')
+    config_toml = open(config_toml_file, 'w')
     config_toml.write('[theme]\nbase="dark"')
     config_toml.close()
     
@@ -131,7 +141,7 @@ def init():
     
     # SET THEME FROM TOGGLE
     try:
-        config_toml = open('.streamlit/config.toml', 'w')
+        config_toml = open(config_toml_file, 'w')
         if night_mode:        
             config_toml.write('[theme]\nbase="dark"')       
         else:        
@@ -192,9 +202,13 @@ def main():
     button(username=os.getenv("buy_me_coffee"), floating=False, width=220)
         
     # --- FOOTER
-    instagram_icon = get_img_with_href("./assets/instagram.png", "Instagram")
-    twitter_icon = get_img_with_href("./assets/twitter.png", "Twitter")
-    gmail_icon = get_img_with_href("./assets/gmail.png", "Gmail")
+    current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
+    gmail_file = current_dir / 'assets' / 'gmail.png'
+    twitter_file = current_dir / 'assets' / 'twitter.png'
+    instagram_file = current_dir / 'assets' / 'instagram.png'
+    instagram_icon = get_img_with_href(instagram_file, "Instagram")
+    twitter_icon = get_img_with_href(twitter_file, "Twitter")
+    gmail_icon = get_img_with_href(gmail_file, "Gmail")
     st.markdown(
         f"""
         <div id="footer"> 
