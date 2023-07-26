@@ -26,6 +26,8 @@ def get_catalog_list(catalogs=Catalog().fetch_records()) -> list:
     catalog_list.insert(0, 'Pros & Cons')
     catalog_list.insert(0, 'Most Viewed')
     catalog_list.insert(0, 'Best Picks')
+    catalog_list.insert(0, 'Compare Items with AI')
+    catalog_list.insert(0, 'Ask AI')
     catalog_list.insert(0, 'All Items')
         
     return catalog_list

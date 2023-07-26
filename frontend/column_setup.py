@@ -11,9 +11,9 @@ from streamlit_extras.mention import mention
 from streamlit.components.v1 import html
 
 from backend.data.item import Item
+from frontend.ask_ai import ask_ai
 
 logging.basicConfig(level=logging.DEBUG)
-
 
 def number_to_words(number):
     words = [":one:", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:", ":eight:", ":nine:"]
@@ -112,7 +112,8 @@ def set_form(items:dict, col_name: str, selected_catalog: str):
                                         
             # CHECK PRICE BUTTON
             counter_text = st.empty()
-            counter_text.markdown(f'**:green[{viewed}]** times visited :exclamation:', unsafe_allow_html=True)   
+            counter_text.markdown(f'**:green[{viewed}]** times visited :exclamation:', unsafe_allow_html=True)
+            ask_ai(name=name)
             
             if st.form_submit_button(label='Check Price', on_click=open_page, args=(url,)):
                 Item().update_record(key=item_key, updates={'clicked':clicked+1})

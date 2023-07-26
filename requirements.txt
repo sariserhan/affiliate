@@ -1,5 +1,6 @@
 deta==1.2.0
 in_place==0.5.0
+openai==0.27.8
 Pillow==9.4.0
 python-dotenv==1.0.0
 st_pages==0.4.3
