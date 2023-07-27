@@ -9,6 +9,7 @@ from pathlib import Path
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.utils import formataddr
+from frontend.utils.utils import get_img_with_href
 
 from deta import Deta
 from dotenv import load_dotenv
@@ -61,6 +62,18 @@ class EmailService():
             item_viewed = item_dict['clicked'] + item_dict['f_clicked']
             pros = []
             cons = []
+            dark_theme = {
+                "background-color": "#0E1117",
+                "secondary-background-color": "#262730",
+                "text-color": "#FAFAFA"
+            }
+            light_theme = {
+                "background-color": "#FFFFFF",
+                "secondary-background-color": "#F0F2F6",
+                "text-color": "#31333F"
+            }
+            
+            theme = dark_theme
             
             for i in item_dict['pros'].split('. '):
                 cons.append(f'<li>❌ {i}</li>')
@@ -79,8 +92,14 @@ class EmailService():
             with open(email_body_file, "r") as file:
                 html_content = file.read()
             image_base64 = base64.b64encode(image_data).decode("utf-8")
+            current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
+            aibestgoods_logo_path = current_dir / 'assets' / 'logo.png'
+            aibestgoods_logo = get_img_with_href(aibestgoods_logo_path, "AIBestGoods")
             
             html_content = html_content\
+                            .replace("AIBESTGOODS_ICON", aibestgoods_logo)\
+                            .replace("PRIMARY_COLOR", theme['background-color'])\
+                            .replace("SECONDARY_COLOR", theme['secondary-background-color'])\
                             .replace("ITEM_NAME", item_name)\
                             .replace("ITEM_LINK", item_link)\
                             .replace("IMAGE_DATA", image_base64)\

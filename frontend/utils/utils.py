@@ -61,3 +61,23 @@ def get_progress_bar(my_bar, progress_text: str):
     my_bar.progress(100, text='Completed')
     time.sleep(1)
     my_bar.empty()
+    
+    
+def get_img_with_href(local_img_path, context, target_url = None):
+    img_format = os.path.splitext(local_img_path)[-1].replace('.', '')
+    bin_str = get_base64_of_bin_file(local_img_path)
+    if target_url:
+        html_code = f'''
+                        <a href="{target_url}">
+                            <img src="data:image/{img_format};base64,{bin_str}" alt="{context}"/>
+                        </a>
+                    '''
+    else:
+        html_code = f'<img src="data:image/{img_format};base64,{bin_str}" alt="{context}" height="25" />'        
+    return html_code
+
+
+def get_base64_of_bin_file(bin_file):
+    with open(bin_file, 'rb') as f:
+        data = f.read()
+    return base64.b64encode(data).decode()

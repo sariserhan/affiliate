@@ -47,8 +47,14 @@ def add_item(item_obj, catalog_list):
 		pass
 	else:
 		st.warning(f"Special characters are not allowed in the name section: {name}")
+  
+	desc_button = False
+	pros_button = False
+	cons_button = False
 	
-	desc_button = st.button("Get Description!")
+	desc_button_container = st.empty()
+	if name:
+		desc_button = desc_button_container.button("Get Description!")
 	description = st.text_area(label='Item Description', height=50, key='description', placeholder='Description', label_visibility='collapsed', disabled=False)
 	desc_container = st.empty()
 	if desc_button and name:
@@ -57,8 +63,10 @@ def add_item(item_obj, catalog_list):
 		answer = ask_ai(message_to_ask=f'Describe this item in one paragraph:{name}')
 		get_progress_bar(my_bar_desc, progress_text="Searching Description...")		
 		desc_container.write(answer)
-
-	pros_button = st.button("Get Pros!")
+	
+	pros_button_container = st.empty()
+	if name:
+		pros_button = pros_button_container.button("Get Pros!")
 	pros = st.text_area(label='Pros', height=50, key='pros', placeholder='Pros',label_visibility='collapsed', disabled=False)
 	pros_container = st.empty()
 	if pros_button and name:
@@ -68,7 +76,9 @@ def add_item(item_obj, catalog_list):
 		get_progress_bar(my_bar_pros, progress_text="Searching Pros...")		
 		pros_container.write(answer)
 	
-	cons_button = st.button("Get Cons!")
+	cons_button_container = st.empty()
+	if name:
+		cons_button = cons_button_container.button("Get Cons!")
 	cons = st.text_area(label='Cons', height=50, key='cons', placeholder='Cons',label_visibility='collapsed', disabled=False)
 	cons_container = st.empty()
 	if cons_button and name:
@@ -101,30 +111,30 @@ def add_item(item_obj, catalog_list):
 		image_name = uploaded_file.name
 		disable_button = False            
 	
-	if st.button(label='Add a New Item', disabled=disable_button):
-		progress_text = "Submitting... Please wait..."
-		my_bar = st.progress(0, text=progress_text)
-			
-		try:
-			item_obj.create_item(
-				name=name, 
-				description=description,
-				image_path=image_val,
-				image_name=image_name,
-				affiliate_link=affiliate_link,
-				affiliate_partner=affiliate_partner,
-				catalog_names=[catalog_name],
-				pros=pros,
-				cons=cons,
-				f_clicked=int(f_clicked_val) if f_clicked_toggle else 0
-				)
-			
-			for percent_complete in range(100):
-				time.sleep(0.01)
-				my_bar.progress(percent_complete + 1, text=progress_text)
+		if st.button(label='Add a New Item', disabled=disable_button):
+			progress_text = "Submitting... Please wait..."
+			my_bar = st.progress(0, text=progress_text)
 				
-			st.success(f'Item added into DB: {name}')
-		except Exception as e:
-			st.error("Something went wrong!")
-			logging.error(e)
-   
+			try:
+				item_obj.create_item(
+					name=name, 
+					description=description,
+					image_path=image_val,
+					image_name=image_name,
+					affiliate_link=affiliate_link,
+					affiliate_partner=affiliate_partner,
+					catalog_names=[catalog_name],
+					pros=pros,
+					cons=cons,
+					f_clicked=int(f_clicked_val) if f_clicked_toggle else 0
+					)
+				
+				for percent_complete in range(100):
+					time.sleep(0.01)
+					my_bar.progress(percent_complete + 1, text=progress_text)
+					
+				st.success(f'Item added into DB: {name}')
+			except Exception as e:
+				st.error("Something went wrong!")
+				logging.error(e)
+	

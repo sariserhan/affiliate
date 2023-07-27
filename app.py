@@ -1,5 +1,4 @@
 import os
-import base64
 import logging
 
 import streamlit as st
@@ -27,6 +26,7 @@ from frontend.column_setup import set_form
 from frontend.utils.google_analytics import google_analytics_setup
 from frontend.utils.google_adsense import google_adsense_setup
 from frontend.utils.impact_com import impact_setup
+from frontend.utils.utils import get_img_with_href
 
 from dotenv import load_dotenv
 
@@ -35,25 +35,6 @@ load_dotenv()
 
 logging.basicConfig(level=logging.DEBUG)
 
-
-def get_base64_of_bin_file(bin_file):
-    with open(bin_file, 'rb') as f:
-        data = f.read()
-    return base64.b64encode(data).decode()
-
-def get_img_with_href(local_img_path, context, target_url = None):
-    img_format = os.path.splitext(local_img_path)[-1].replace('.', '')
-    bin_str = get_base64_of_bin_file(local_img_path)
-    if target_url:
-        html_code = f'''
-                        <a href="{target_url}">
-                            <img src="data:image/{img_format};base64,{bin_str}" alt="{context}"/>
-                        </a>
-                    '''
-    else:
-        html_code = f'<img src="data:image/{img_format};base64,{bin_str}" alt="{context}" height="25" />'
-        
-    return html_code
 
 def local_css(file_name):
     with open(file_name) as f:
@@ -206,9 +187,11 @@ def main():
     gmail_file = current_dir / 'assets' / 'gmail.png'
     twitter_file = current_dir / 'assets' / 'twitter.png'
     instagram_file = current_dir / 'assets' / 'instagram.png'
+    linkedin_file = current_dir / 'assets' / 'linkedin.png'
     instagram_icon = get_img_with_href(instagram_file, "Instagram")
     twitter_icon = get_img_with_href(twitter_file, "Twitter")
     gmail_icon = get_img_with_href(gmail_file, "Gmail")
+    linkedin_icon = get_img_with_href(linkedin_file, "Linkedin")
     st.markdown(
         f"""
         <div id="footer"> 
@@ -218,10 +201,13 @@ def main():
                 </a>   
                 <a href='https://www.instagram.com/{os.getenv("buy_me_coffee")}/' target='_blank' rel="noopener noreferrer">                    
                     {instagram_icon}
+                </a>
+                <a href='https:/linkedin.com/in/{os.getenv("buy_me_coffee")}/?locale=en_US' target='_blank' rel="noopener noreferrer">                    
+                    {linkedin_icon}
                 </a>                
                 <a href = "mailto: serhan.sari83@gmail.com">                    
                     {gmail_icon}
-                </a>
+                </a>                
             </p>
             © 2023 AIBestGoods. All rights reserved. 
         </div>
