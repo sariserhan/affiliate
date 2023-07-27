@@ -17,7 +17,7 @@ from st_pages import Page, hide_pages, show_pages
 from backend.data.item import Item
 
 from frontend.utils.ads import get_ads
-from frontend.ask_ai import ask_ai
+from frontend.ask_ai import ask_ai_page
 from frontend.compare_items import compare_items
 from frontend.all_and_best_items import all_and_best_items
 from frontend.sidebar import sidebar
@@ -165,7 +165,7 @@ def main():
         logging.info("-------- COMPARE ITEMS SELECTED ----------")
     
     elif selected_catalog == "Ask AI":
-        ask_ai()
+        ask_ai_page()
         logging.info("-------- ASK AI SELECTED ----------")  
     
     elif selected_catalog == "Pros & Cons":

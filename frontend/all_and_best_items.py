@@ -6,7 +6,7 @@ from streamlit_extras.mention import mention
 
 from backend.data.item import Item
 from frontend.utils.utils import get_image, open_page
-from frontend.ask_ai import ask_ai
+from frontend.ask_ai import ask_ai_page
 
 def all_and_best_items(col2, is_best_pick: bool = False, is_most_viewed: bool = False):
     items = Item().fetch_records()
@@ -58,7 +58,7 @@ def all_and_best_items(col2, is_best_pick: bool = False, is_most_viewed: bool = 
                     counter_text = st.empty()
                     counter_text.markdown(f'**:green[{viewed}]** times visited :exclamation:', unsafe_allow_html=True)
                     if is_best_pick:
-                        ask_ai(name=name)
+                        ask_ai_page(name=name)
                     if st.form_submit_button(label='Check Price', on_click=open_page, args=(url,)):
                         Item().update_record(key=item_key, updates={'clicked':clicked+1})
                                         
@@ -112,7 +112,7 @@ def all_and_best_items(col2, is_best_pick: bool = False, is_most_viewed: bool = 
                         # CHECK PRICE BUTTON
                         counter_text = st.empty()
                         counter_text.markdown(f'**:green[{viewed}]** times visited :exclamation:', unsafe_allow_html=True)       
-                        ask_ai(name=name)
+                        ask_ai_page(name=name)
                         if st.form_submit_button(label='Check Price', on_click=open_page, args=(url,)):
                             Item().update_record(key=item_key, updates={'clicked':clicked+1})
                                             

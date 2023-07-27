@@ -1,4 +1,6 @@
+import os
 import time
+import openai
 import base64
 import streamlit as st
 
@@ -7,6 +9,15 @@ from PIL import Image
 
 from backend.data.item import Item
 from streamlit.components.v1 import html
+
+openai.organization = "org-KAv10qRlhbdtXmwkdkuET5TP"
+openai.api_key = os.getenv("OPENAI_API_KEY")
+models = openai.Model.list()
+
+
+def ask_ai(message_to_ask: str):
+    chat_completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=[{"role": "user", "content": f'{message_to_ask}'}])
+    return chat_completion.choices[0].message.content
 
 
 @st.cache_data(show_spinner=False)

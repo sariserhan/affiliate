@@ -1,19 +1,12 @@
-import os
 import re
 import time
-import openai
 import random
 import logging
 import streamlit as st
 
-
 from streamlit_extras.no_default_selectbox import selectbox
-from frontend.utils.utils import get_progress_bar
+from frontend.utils.utils import get_progress_bar, ask_ai
 from backend.data.affiliate_partner import Affiliate_Partner
-
-openai.organization = "org-KAv10qRlhbdtXmwkdkuET5TP"
-openai.api_key = os.getenv("OPENAI_API_KEY")
-models = openai.Model.list()
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -61,9 +54,9 @@ def add_item(item_obj, catalog_list):
 	if desc_button and name:
 		my_bar_desc = st.progress(0, text="Searching Description...")
 
-		chat_completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=[{"role": "user", "content": f'Describe this item in one paragraph:{name}'}])
+		answer = ask_ai(message_to_ask=f'Describe this item in one paragraph:{name}')
 		get_progress_bar(my_bar_desc, progress_text="Searching Description...")		
-		desc_container.write(chat_completion.choices[0].message.content)
+		desc_container.write(answer)
 
 	pros_button = st.button("Get Pros!")
 	pros = st.text_area(label='Pros', height=50, key='pros', placeholder='Pros',label_visibility='collapsed', disabled=False)
@@ -71,10 +64,9 @@ def add_item(item_obj, catalog_list):
 	if pros_button and name:
 		my_bar_pros = st.progress(0, text="Searching Pros...")
 
-		chat_completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", 
-                                                                    messages=[{"role": "user", "content": f'What are the pros of this item:{name}'}])
+		answer = ask_ai(message_to_ask=f'What are the pros of this item:{name}')
 		get_progress_bar(my_bar_pros, progress_text="Searching Pros...")		
-		pros_container.write(chat_completion.choices[0].message.content)
+		pros_container.write(answer)
 	
 	cons_button = st.button("Get Cons!")
 	cons = st.text_area(label='Cons', height=50, key='cons', placeholder='Cons',label_visibility='collapsed', disabled=False)
@@ -82,10 +74,9 @@ def add_item(item_obj, catalog_list):
 	if cons_button and name:
 		my_bar_cons = st.progress(0, text="Searching Cons...")
 
-		chat_completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", 
-                                                                    messages=[{"role": "user", "content": f'What are the cons of this item:{name}'}])
+		answer = ask_ai(message_to_ask=f'What are the cons of this item:{name}')
 		get_progress_bar(my_bar_cons, progress_text="Searching Cons...")
-		cons_container.write(chat_completion.choices[0].message.content)
+		cons_container.write(answer)
 			
 	affiliate_link = st.text_input(label='Item Affiliate Link', key='affiliate_link', placeholder='Affiliate Link',label_visibility='collapsed')
 	catalog_name = selectbox(label='Choose Category or Add New', options=catalog_list[:])

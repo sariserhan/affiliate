@@ -7,7 +7,7 @@ from streamlit_extras.mention import mention
 
 from frontend.utils.utils import get_image, open_page
 from backend.data.item import Item
-from frontend.ask_ai import ask_ai
+from frontend.ask_ai import ask_ai_page
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -80,7 +80,7 @@ def set_form(items:dict, col_name: str, selected_catalog: str):
             # CHECK PRICE BUTTON
             counter_text = st.empty()
             counter_text.markdown(f'**:green[{viewed}]** times visited :exclamation:', unsafe_allow_html=True)
-            ask_ai(name=name)
+            ask_ai_page(name=name)
             
             if st.form_submit_button(label='Check Price', on_click=open_page, args=(url,)):
                 Item().update_record(key=item_key, updates={'clicked':clicked+1})

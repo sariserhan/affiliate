@@ -12,7 +12,7 @@ from streamlit_extras.keyboard_url import keyboard_to_url
 from streamlit_extras.keyboard_text import key
 
 from backend.data.item import Item
-from frontend.utils.utils import get_image, open_page, get_progress_bar
+from frontend.utils.utils import get_image, open_page, get_progress_bar, ask_ai
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -22,7 +22,7 @@ models = openai.Model.list()
 
 load_dotenv()
 
-def ask_ai(name: str = None):
+def ask_ai_page(name: str = None):
     if name:
         ask_ai_button = st.form_submit_button('Not Sure? Ask AI')
                 
@@ -31,17 +31,13 @@ def ask_ai(name: str = None):
             my_bar = st.empty()
             progress_text = "Searching... Please wait..."
             my_bar.progress(0, text=progress_text)
-            # create a chat completion
-            chat_completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", 
-                                                        messages=[{"role": "user", 
-                                                                    "content": os.getenv('AI_ASK').format(name)
-                                                                }])
-
+            
+            answer = ask_ai(message_to_ask=os.getenv('AI_ASK').format(name)).split('\n')
             get_progress_bar(my_bar, progress_text)
             
-            answer = chat_completion.choices[0].message.content.split('\n')
             logging.info(f'--------> AI ANSWER:{answer}')
             buy_paragraph, dont_buy_paragraph = answer[0], answer[2]
+            
             logging.info(f'--------> AI ANSWER BUY:{buy_paragraph}')
             logging.info(f'--------> AI ANSWER DONT BUY:{dont_buy_paragraph}')
             
@@ -50,7 +46,6 @@ def ask_ai(name: str = None):
             st.write('---')
             st.subheader("You shouldn't because ❌")
             st.write(dont_buy_paragraph)
-        
         
     else:
         all_items = Item().fetch_records()
@@ -86,14 +81,19 @@ def ask_ai(name: str = None):
                 counter_text = st.empty()
                 counter_text.markdown(f'**:green[{item["clicked"]+item["f_clicked"]}]** times visited :exclamation:', unsafe_allow_html=True) 
                 
-                buy_button = st.form_submit_button("Check Price", on_click=open_page, args=(item['affiliate_link'],))
+                check_price_button = st.form_submit_button("Check Price", on_click=open_page, args=(item['affiliate_link'],))
+                if check_price_button:
+                    Item().update_record(key=item['key'], updates={'clicked':item['clicked']+1})
+                        
+                    # Update the counter text on the page
+                    counter_text.markdown(f'**:red[{item["clicked"]+item["f_clicked"]+1}]** times visited :white_check_mark:')                
+                    logging.info(f"{item['name']} is clicked by {st.experimental_user.email} --> {item['affiliate_link']}")
+                    
                 questions_list = [
                     f'Should I buy this product:{selected_item}',
                     f'Should I not this buy product:{selected_item}',
                     f'What are the main features and specifications of this product:{selected_item}?',
                     f'What are my alternatives rather than this product:{selected_item}',
-                    f'What is the customer ratings for this product:{selected_item}',
-                    f'Show me the customer reviews for this product:{selected_item}',
                     f'What is the warranty or guarantee period of this product:{selected_item}?',
                     f'Would you buy this product:{selected_item} or pass if you were me?',
                     f'Tell me the best part of this product:{selected_item}',
@@ -113,21 +113,8 @@ def ask_ai(name: str = None):
                     progress_text = "Searching with AI... Please wait..."
                     my_bar.progress(0, text=progress_text)
                     
-                    # create a chat completion
-                    chat_completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", 
-                                                                messages=[{"role": "user", "content": selected_question}])
-
-                    
+                    answer = ask_ai(message_to_ask=selected_question)
                     get_progress_bar(my_bar, progress_text)
-                    
-                    answer = chat_completion.choices[0].message.content
                     logging.info(f'--------> AI ANSWER:{answer}')
                     st.write(answer)        
-                    
-                    if buy_button:
-                        Item().update_record(key=item['key'], updates={'clicked':item['clicked']+1})
-                            
-                        # Update the counter text on the page
-                        counter_text.markdown(f'**:red[{item["clicked"]+item["f_clicked"]+1}]** times visited :white_check_mark:')                
-                        logging.info(f"{item['name']} is clicked by {st.experimental_user.email} --> {item['affiliate_link']}")
                         

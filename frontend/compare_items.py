@@ -1,6 +1,4 @@
 import os
-import time
-import openai
 
 import logging
 import streamlit as st
@@ -14,13 +12,9 @@ from streamlit_extras.keyboard_text import key
 
 from backend.data.catalog import Catalog
 from backend.data.item import Item
-from frontend.utils.utils import get_image, open_page, get_progress_bar
+from frontend.utils.utils import get_image, open_page, get_progress_bar, ask_ai
 
 logging.basicConfig(level=logging.DEBUG)
-
-openai.organization = "org-KAv10qRlhbdtXmwkdkuET5TP"
-openai.api_key = os.getenv("OPENAI_API_KEY")
-models = openai.Model.list()
 
 load_dotenv()
         
@@ -153,20 +147,11 @@ def compare_items(compare: bool = False):
                     if selected_item_right == selected_item_left:
                         st.warning("Please select different items to compare :exclamation:")
                     else:
-                        logging.info(models.data[0].id)
                         progress_text = "Searching... Please wait..."
                         my_bar = st.empty()
                         my_bar.progress(0, text=progress_text)
                         
-                        # create a chat completion
-                        chat_completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", 
-                                                                    messages=[{"role": "user", 
-                                                                                "content": os.getenv("AI_COMPARE").format(item_left['name'], item_right['name'])
-                                                                                }])
-
+                        answer = ask_ai(message_to_ask=os.getenv("AI_COMPARE").format(item_left['name'], item_right['name']))
                         get_progress_bar(my_bar, progress_text)
-                        answer = chat_completion.choices[0].message.content
                         logging.info(f'--------> AI ANSWER:{answer}')
                         st.write(answer)
-
-                
