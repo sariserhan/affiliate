@@ -46,24 +46,23 @@ def send_email(item_obj, catalog_list):
     email_sending_to = None
 
     with col1:
-        if st.button(label='Send to Subscribers'):
-            if item_dict['clicked'] > 1000:   
-                emails_to_send = email_obj.get_subscription_list()
-                            
-                for email in emails_to_send:
-                    if not item_dict['email_sent']:
+        if st.button(label='Send to Subscribers') and item_dict['clicked'] > 1000:
+            emails_to_send = email_obj.get_subscription_list()
+                        
+            for email in emails_to_send:
+                if not item_dict['email_sent']:
+                    try:
+                        email_obj.send_email(recipient_email=email, item_dict=item_dict)
+                        email_sending_to = email
+                        success = f'Email sent to {email_sending_to}'                        
                         try:
-                            email_obj.send_email(recipient_email=email, item_dict=item_dict)
-                            email_sending_to = email
-                            success = f'Email sent to {email_sending_to}'                        
-                            try:
-                                item_obj.update_record(key=item_dict['key'], updates={'email_sent': True})
-                                logging.info(f"{item_dict['name']} updated in DB")
-                            except Exception as e:
-                                logging.error(f"Error in updating {item_dict['name']} in DB {e}")
+                            item_obj.update_record(key=item_dict['key'], updates={'email_sent': True})
+                            logging.info(f"{item_dict['name']} updated in DB")
                         except Exception as e:
-                            logging.error(f'Error sending email --> {e}')                           
-                            error = f'Error sending email --> {e}'
+                            logging.error(f"Error in updating {item_dict['name']} in DB {e}")
+                    except Exception as e:
+                        logging.error(f'Error sending email --> {e}')                           
+                        error = f'Error sending email --> {e}'
             else:
                 warning = "Item has less than 1000 views to send to subscribers!"
 
@@ -71,16 +70,15 @@ def send_email(item_obj, catalog_list):
         test_email_to_send = st.text_input(label='Email', key='email', placeholder='Email', label_visibility='collapsed')
                         
     with col2:
-        if st.button(label='Send Test Email'):
-            if test_email_to_send:
-                try:
-                    email_obj.send_email(recipient_email=test_email_to_send, item_dict=item_dict)
-                    email_sending_to = test_email_to_send
-                    success = f'Email sent to {email_sending_to}'                    
-                except Exception as e:
-                    logging.error(f"Error in updating {item_dict['name']} in DB {e}")
-            else:                
-                warning = 'Please enter email to send!'
+        if st.button(label='Send Test Email') and test_email_to_send:
+            try:
+                email_obj.send_email(recipient_email=test_email_to_send, item_dict=item_dict)
+                email_sending_to = test_email_to_send
+                success = f'Email sent to {email_sending_to}'                    
+            except Exception as e:
+                logging.error(f"Error in updating {item_dict['name']} in DB {e}")
+        else:                
+            warning = 'Please enter email to send!'
                 
     if success:
         st.success(success)

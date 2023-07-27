@@ -1,4 +1,4 @@
-
+import time
 import base64
 import streamlit as st
 
@@ -41,3 +41,12 @@ def nav_to(url):
                     <meta http-equiv="refresh" content="0; url='%s'" target="_blank">                    
                  """ % (url)
     st.write(nav_script, unsafe_allow_html=True)
+    
+    
+def get_progress_bar(my_bar, progress_text: str):
+    for percent_complete in range(100):
+        time.sleep(0.01)
+        my_bar.progress(percent_complete + 1, text=progress_text)
+    my_bar.progress(100, text='Completed')
+    time.sleep(1)
+    my_bar.empty()

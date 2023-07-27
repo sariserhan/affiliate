@@ -14,7 +14,7 @@ from streamlit_extras.keyboard_text import key
 
 from backend.data.catalog import Catalog
 from backend.data.item import Item
-from frontend.utils.utils import get_image, open_page
+from frontend.utils.utils import get_image, open_page, get_progress_bar
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -28,8 +28,9 @@ def compare_items(compare: bool = False):
     catalog_list = [catalog['name'] for catalog in Catalog().fetch_records()]
     selected_catalog = selectbox(label="Choose Category", options=catalog_list)
     items_list = [item['name'] for item in Item().get_record_by_catalog(selected_catalog)]
-    
+    compare_form_container = st.empty()
     col1, col2 = st.columns(2)
+    
     
     if selected_catalog:
         with col1:
@@ -146,32 +147,26 @@ def compare_items(compare: bool = False):
                             counter_text.markdown(f'**:red[{item_right["clicked"]+item_right["f_clicked"]+1}]** times visited :white_check_mark:')                
                             logging.info(f"{item_right['name']} is clicked by {st.experimental_user.email} --> {item_right['affiliate_link']}")
         
-        if compare:
-            with st.form("Compare_with_AI"):
+        if compare and (selected_item_left and selected_item_right):
+            with compare_form_container.form("Compare_with_AI"):
                 if st.form_submit_button("Compare items with AI"):
-                    if selected_item_left and selected_item_right:
-                        if selected_item_right == selected_item_left:
-                            st.warning("Please select different items to compare with AI")
-                        else:
-                            logging.info(models.data[0].id)
-                            progress_text = "Searching... Please wait..."
-                            my_bar = st.empty()
-                            my_bar.progress(0, text=progress_text)
-                            
-                            # create a chat completion
-                            chat_completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", 
-                                                                        messages=[{"role": "user", 
-                                                                                    "content": os.getenv("AI_COMPARE").format(item_left['name'], item_right['name'])
-                                                                                    }])
+                    if selected_item_right == selected_item_left:
+                        st.warning("Please select different items to compare :exclamation:")
+                    else:
+                        logging.info(models.data[0].id)
+                        progress_text = "Searching... Please wait..."
+                        my_bar = st.empty()
+                        my_bar.progress(0, text=progress_text)
+                        
+                        # create a chat completion
+                        chat_completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", 
+                                                                    messages=[{"role": "user", 
+                                                                                "content": os.getenv("AI_COMPARE").format(item_left['name'], item_right['name'])
+                                                                                }])
 
-                            for percent_complete in range(100):
-                                time.sleep(0.01)
-                                my_bar.progress(percent_complete + 1, text=progress_text)
-                            my_bar.progress(100, text='Completed')
-                            time.sleep(1)
-                            my_bar.empty()
-                            answer = chat_completion.choices[0].message.content
-                            logging.info(f'--------> AI ANSWER:{answer}')
-                            st.write(answer)
- 
+                        get_progress_bar(my_bar, progress_text)
+                        answer = chat_completion.choices[0].message.content
+                        logging.info(f'--------> AI ANSWER:{answer}')
+                        st.write(answer)
+
                 
