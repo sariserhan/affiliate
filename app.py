@@ -34,6 +34,8 @@ from dotenv import load_dotenv
 load_dotenv()
 
 logging.basicConfig(level=logging.DEBUG)
+logging.getLogger('PIL.PngImagePlugin').setLevel(logging.WARNING)
+logging.getLogger('fsevents').setLevel(logging.WARNING)
 
 
 def local_css(file_name):
@@ -130,7 +132,7 @@ def init():
     finally:
         config_toml.close()
     
-def main():    
+def main():
     # --- CATALOG SIDE BAR
     selected_catalog = sidebar()
     
