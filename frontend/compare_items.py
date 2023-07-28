@@ -57,8 +57,15 @@ def compare_items(compare: bool = False):
                     if not compare:
                         st.write('---')
                             
-                        pros_left = item_left['pros'].split('.')
-                        cons_left = item_left['cons'].split('.')
+                        if '\n\n' in item_left['pros']:
+                            pros_left = item_left['pros'].replace('\n\n', '\n').split('\n')
+                        else:
+                            pros_left = item_left['pros'].split('. ')
+         
+                        if '\n\n' in item_left['cons']:  
+                            cons_left = item_left['cons'].replace('\n\n', '\n').split('. ')
+                        else:
+                            cons_left = item_left['cons'].split('. ') 
                         
                         for pros in pros_left:
                             if pros != '':
@@ -112,20 +119,28 @@ def compare_items(compare: bool = False):
                     )
                     
                     if not compare:
-                        st.write('---')                            
-                        pros_right = item_right['pros'].split('.')
-                        cons_right = item_right['cons'].split('.')
+                        st.divider()          
+         
+                        if '\n\n' in item_right['pros']:
+                            pros_right = item_right['pros'].replace('\n\n', '\n').split('\n')
+                        else:
+                            pros_right = item_right['pros'].split('. ')
+         
+                        if '\n\n' in item_right['cons']:  
+                            cons_right = item_right['cons'].replace('\n\n', '\n').split('. ')
+                        else:
+                            cons_right = item_right['cons'].split('. ') 
                         
                         for pros in pros_right:
                             if pros != '':
                                 st.write(f':white_check_mark: {pros}')
                             
-                        st.write('---')                                                        
+                        st.divider()
                         for cons in cons_right:
                             if cons != '':
                                 st.write(f':x: {cons}')                                            
                         
-                    st.write('---')
+                    st.divider()
                     button_row_1, _, button_row_3, _, _ = st.columns([1,0.1,1,0.1,0.1])
                     with button_row_3:
                         button = st.form_submit_button("Check Price", on_click=open_page, args=(item_right['affiliate_link'],))                        

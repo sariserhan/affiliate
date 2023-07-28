@@ -11,7 +11,7 @@ from backend.data.affiliate_partner import Affiliate_Partner
 logging.basicConfig(level=logging.DEBUG)
 
 # --- ADD ITEM
-def add_item(item_obj, catalog_list):    
+def add_item(item_obj, catalog_list):   
 	f_clicked_toggle = None
 	
 	try:
@@ -28,34 +28,34 @@ def add_item(item_obj, catalog_list):
 		)
 	except:
 		logging.warning('Toggle Switch in not available')    
-	
+
 	catalog_list.append("Add New Catalog")
-	
+
 	# GET AFFILIATE PARTNER FROM DB
 	affiliate_partner_list = []
 	affiliate_partners = Affiliate_Partner().fetch_records()        
 	for affiliate_partner in affiliate_partners:
 		affiliate_partner_list.append(affiliate_partner['key'])
-	
+
 	affiliate_partner_list.append("Add New Partner")
-	
+
 	regex = re.compile('[@_!#$%^&*()<>?/\|}{~:]')
-	
+
 	name = st.text_input(label='Item Name', key='item_name', placeholder='Name', label_visibility='collapsed')
 
 	if(regex.search(name) == None):
 		pass
 	else:
 		st.warning(f"Special characters are not allowed in the name section: {name}")
-  
+
 	desc_button = False
 	pros_button = False
 	cons_button = False
-	
+
 	desc_button_container = st.empty()
 	if name:
 		desc_button = desc_button_container.button("Get Description!")
-	description = st.text_area(label='Item Description', height=50, key='description', placeholder='Description', label_visibility='collapsed', disabled=False)
+	description = st.text_area(label='Item Description', height=200, key='description', placeholder='Description', label_visibility='collapsed', disabled=False)
 	desc_container = st.empty()
 	if desc_button and name:
 		my_bar_desc = st.progress(0, text="Searching Description...")
@@ -63,11 +63,11 @@ def add_item(item_obj, catalog_list):
 		answer = ask_ai(message_to_ask=f'Describe this item in one paragraph:{name}')
 		get_progress_bar(my_bar_desc, progress_text="Searching Description...")		
 		desc_container.write(answer)
-	
+
 	pros_button_container = st.empty()
 	if name:
 		pros_button = pros_button_container.button("Get Pros!")
-	pros = st.text_area(label='Pros', height=50, key='pros', placeholder='Pros',label_visibility='collapsed', disabled=False)
+	pros = st.text_area(label='Pros', height=300, key='pros', placeholder='Pros',label_visibility='collapsed', disabled=False)
 	pros_container = st.empty()
 	if pros_button and name:
 		my_bar_pros = st.progress(0, text="Searching Pros...")
@@ -75,11 +75,11 @@ def add_item(item_obj, catalog_list):
 		answer = ask_ai(message_to_ask=f'What are the pros of this item:{name}')
 		get_progress_bar(my_bar_pros, progress_text="Searching Pros...")		
 		pros_container.write(answer)
-	
+
 	cons_button_container = st.empty()
 	if name:
 		cons_button = cons_button_container.button("Get Cons!")
-	cons = st.text_area(label='Cons', height=50, key='cons', placeholder='Cons',label_visibility='collapsed', disabled=False)
+	cons = st.text_area(label='Cons', height=300, key='cons', placeholder='Cons',label_visibility='collapsed', disabled=False)
 	cons_container = st.empty()
 	if cons_button and name:
 		my_bar_cons = st.progress(0, text="Searching Cons...")
@@ -103,15 +103,16 @@ def add_item(item_obj, catalog_list):
 		
 	uploaded_file = st.file_uploader("Choose a file")
 	st.write('---')
-	
-	disable_button = True    
+
+	disable_button = True
+	add_button_container = st.empty()
 
 	if all([uploaded_file, name, description, affiliate_link, catalog_name, affiliate_partner, pros, cons]):
 		image_val = uploaded_file.getvalue()
 		image_name = uploaded_file.name
 		disable_button = False            
-	
-		if st.button(label='Add a New Item', disabled=disable_button):
+
+		if add_button_container.button(label='Add a New Item', disabled=disable_button):
 			progress_text = "Submitting... Please wait..."
 			my_bar = st.progress(0, text=progress_text)
 				
@@ -137,4 +138,5 @@ def add_item(item_obj, catalog_list):
 			except Exception as e:
 				st.error("Something went wrong!")
 				logging.error(e)
-	
+			finally:
+				add_button_container.empty()

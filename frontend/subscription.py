@@ -8,7 +8,7 @@ logging.basicConfig(level=logging.DEBUG)
 
 def subscription():    
     result = None
-    with st.form('subscription_form'):
+    with st.form('subscription_form', clear_on_submit=True):
         col1, col2, col3, col4 = st.columns([1.6,2.5,0.6,0.7])
         with col1:
             st.write('Subscribe to receive weekly email newsletter')

@@ -1,13 +1,22 @@
 import streamlit as st
 
+from pathlib import Path
 from st_pages import hide_pages
 from streamlit_extras.switch_page_button import switch_page
+from frontend.footer import get_footer
+from frontend.utils.utils import local_css
 
 hide_pages(["admin", "unsubscribe"])
 
+            
+current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
+css_file = current_dir / '../styles' / 'main.css'
+local_css(css_file)
+
+
 with st.form("privacy"):
     st.subheader("PRIVACY")
-    
+
     st.write("""
                 Effective Date: [07/28/2023]
 
@@ -55,7 +64,12 @@ with st.form("privacy"):
 
                 Contact Us
                 If you have any questions or concerns about this Privacy Policy, please contact us at [serhan.sari83@gmail.com].
-             """, unsafe_allow_html=True)
-    
+                """, unsafe_allow_html=True)
+
     if st.form_submit_button("Home"):
-        switch_page("app")
+        try:
+            switch_page("home")
+        except:
+            switch_page("app")
+        
+get_footer()

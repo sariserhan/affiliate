@@ -7,9 +7,9 @@ import streamlit_analytics
 from PIL import Image
 from pathlib import Path
 
-from streamlit_extras.buy_me_a_coffee import button
 from streamlit_extras.app_logo import add_logo
 from streamlit_extras.colored_header import colored_header
+from streamlit_extras.buy_me_a_coffee import button
 
 from st_pages import Page, hide_pages, show_pages
 
@@ -22,11 +22,12 @@ from frontend.all_and_best_items import all_and_best_items
 from frontend.sidebar import sidebar
 from frontend.subscription import subscription
 from frontend.column_setup import set_form
+from frontend.footer import get_footer
 
 from frontend.utils.google_analytics import google_analytics_setup
 from frontend.utils.google_adsense import google_adsense_setup
 from frontend.utils.impact_com import impact_setup
-from frontend.utils.utils import get_img_with_href
+from frontend.utils.utils import local_css
 
 from dotenv import load_dotenv
 
@@ -38,10 +39,6 @@ logging.getLogger('PIL.PngImagePlugin').setLevel(logging.WARNING)
 logging.getLogger('fsevents').setLevel(logging.WARNING)
 
 
-def local_css(file_name):
-    with open(file_name) as f:
-        st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
-        
 
 def init():
     
@@ -51,7 +48,6 @@ def init():
     logo_file = current_dir / 'assets' / 'logo.png'
     css_file = current_dir / 'styles' / 'main.css'
     config_toml_file = current_dir / '.streamlit' / 'config.toml'
-    
     
     # --- ICON
     icon = Image.open(icon_file)
@@ -85,7 +81,7 @@ def init():
             Page("pages/terms-conditions.py", "terms and conditions")
         ]
     )
-    hide_pages(["admin", "home", "unsubscribe", "privacy", "terms-conditions"])
+    hide_pages(["admin", "home", "unsubscribe", "privacy", "terms and conditions", "app", "terms-conditions"])
 
     # --- CSS 
     local_css(css_file)
@@ -180,58 +176,17 @@ def main():
 
     # --- EMAIL SUBSCRIPTION
     subscription()
-    st.write('---')    
         
     # --- FOOTER
-    current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
-    gmail_file = current_dir / 'assets' / 'gmail.png'
-    twitter_file = current_dir / 'assets' / 'twitter.png'
-    instagram_file = current_dir / 'assets' / 'instagram.png'
-    linkedin_file = current_dir / 'assets' / 'linkedin.png'
-    instagram_icon = get_img_with_href(instagram_file, "Instagram")
-    twitter_icon = get_img_with_href(twitter_file, "Twitter")
-    gmail_icon = get_img_with_href(gmail_file, "Gmail")
-    linkedin_icon = get_img_with_href(linkedin_file, "Linkedin")
-    
     _, col2, col3 = st.columns(3)
     with col2:
-        st.markdown(
-            f"""
-            <div id="footer">
-                <p>
-                    <a href='https://twitter.com/{os.getenv("buy_me_coffee")}_/' target='_blank' rel="noopener noreferrer">                    
-                        {twitter_icon}
-                    </a>   
-                    <a href='https://www.instagram.com/{os.getenv("buy_me_coffee")}/' target='_blank' rel="noopener noreferrer">                    
-                        {instagram_icon}
-                    </a>
-                    <a href='https:/linkedin.com/in/{os.getenv("buy_me_coffee")}/?locale=en_US' target='_blank' rel="noopener noreferrer">                    
-                        {linkedin_icon}
-                    </a>                
-                    <a href = "mailto: serhan.sari83@gmail.com">                    
-                        {gmail_icon}
-                    </a>           
-                    <br>                             
-                    © 2023, USCapita LLC. All rights reserved.  
-                    <br>
-                    <a style="text-decoration: none; filter: invert(50%)" href='https:/aibestgoods.com/privacy' target='_blank' rel="noopener noreferrer">                    
-                        Privacy Statement
-                    </a>              
-                    <a style="display: inline-block; margin-left: 10px; text-decoration: none; filter: invert(50%)" href='https:/aibestgoods.com/terms-conditions' target='_blank' rel="noopener noreferrer">                    
-                        Terms And Conditions
-                    </a>  
-                </p>
-            </div>
-            """,
-            unsafe_allow_html=True
-        )                    
-            
+        get_footer()
     with col3:
-        # --- BUY ME A COFFEE
-        button(username=os.getenv("buy_me_coffee"), floating=False, width=220)    
+        button(username=os.getenv('buy_me_coffee'), floating=False, width=220)
 
     streamlit_analytics.stop_tracking(unsafe_password=os.getenv("STREAMLIT_ANALYTICS"))
     
 if __name__ == "__main__":
     init()
     main()
+    
