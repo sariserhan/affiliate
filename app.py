@@ -81,10 +81,11 @@ def init():
             Page("app.py", "home"),
             Page("pages/unsubscribe.py", "unsubscribe"),
             Page("pages/admin.py", "admin"),
-            Page("pages/privacy.py", "privacy")
+            Page("pages/privacy.py", "privacy"),
+            Page("pages/terms-conditions.py", "terms and conditions")
         ]
     )
-    hide_pages(["admin", "home", "unsubscribe", "privacy"])
+    hide_pages(["admin", "home", "unsubscribe", "privacy", "terms-conditions"])
 
     # --- CSS 
     local_css(css_file)
@@ -179,10 +180,7 @@ def main():
 
     # --- EMAIL SUBSCRIPTION
     subscription()
-    st.write('---')
-
-    # --- BUY ME A COFFEE
-    button(username=os.getenv("buy_me_coffee"), floating=False, width=220)
+    st.write('---')    
         
     # --- FOOTER
     current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
@@ -194,28 +192,43 @@ def main():
     twitter_icon = get_img_with_href(twitter_file, "Twitter")
     gmail_icon = get_img_with_href(gmail_file, "Gmail")
     linkedin_icon = get_img_with_href(linkedin_file, "Linkedin")
-    st.markdown(
-        f"""
-        <div id="footer"> 
-            <p>                
-                <a href='https://twitter.com/{os.getenv("buy_me_coffee")}_/' target='_blank' rel="noopener noreferrer">                    
-                    {twitter_icon}
-                </a>   
-                <a href='https://www.instagram.com/{os.getenv("buy_me_coffee")}/' target='_blank' rel="noopener noreferrer">                    
-                    {instagram_icon}
-                </a>
-                <a href='https:/linkedin.com/in/{os.getenv("buy_me_coffee")}/?locale=en_US' target='_blank' rel="noopener noreferrer">                    
-                    {linkedin_icon}
-                </a>                
-                <a href = "mailto: serhan.sari83@gmail.com">                    
-                    {gmail_icon}
-                </a>                
-            </p>
-            © 2023 AIBestGoods. All rights reserved. 
-        </div>
-        """,
-        unsafe_allow_html=True
-    )
+    
+    _, col2, col3 = st.columns(3)
+    with col2:
+        st.markdown(
+            f"""
+            <div id="footer">
+                <p>
+                    <a href='https://twitter.com/{os.getenv("buy_me_coffee")}_/' target='_blank' rel="noopener noreferrer">                    
+                        {twitter_icon}
+                    </a>   
+                    <a href='https://www.instagram.com/{os.getenv("buy_me_coffee")}/' target='_blank' rel="noopener noreferrer">                    
+                        {instagram_icon}
+                    </a>
+                    <a href='https:/linkedin.com/in/{os.getenv("buy_me_coffee")}/?locale=en_US' target='_blank' rel="noopener noreferrer">                    
+                        {linkedin_icon}
+                    </a>                
+                    <a href = "mailto: serhan.sari83@gmail.com">                    
+                        {gmail_icon}
+                    </a>           
+                    <br>                             
+                    © 2023, USCapita LLC. All rights reserved.  
+                    <br>
+                    <a style="text-decoration: none; filter: invert(50%)" href='https:/aibestgoods.com/privacy' target='_blank' rel="noopener noreferrer">                    
+                        Privacy Statement
+                    </a>              
+                    <a style="display: inline-block; margin-left: 10px; text-decoration: none; filter: invert(50%)" href='https:/aibestgoods.com/terms-conditions' target='_blank' rel="noopener noreferrer">                    
+                        Terms And Conditions
+                    </a>  
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )                    
+            
+    with col3:
+        # --- BUY ME A COFFEE
+        button(username=os.getenv("buy_me_coffee"), floating=False, width=220)    
 
     streamlit_analytics.stop_tracking(unsafe_password=os.getenv("STREAMLIT_ANALYTICS"))
     
