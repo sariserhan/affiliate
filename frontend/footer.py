@@ -40,10 +40,10 @@ def get_footer():
                 <br>                             
                 © 2023, USCapita LLC. All rights reserved.  
                 <br>
-                <a style="text-decoration: none; filter: invert(50%)" href='https:/aibestgoods.com/privacy' target='_blank' rel="noopener noreferrer">                    
+                <a style="text-decoration: none; filter: invert(50%)" href='https:/aibestgoods.com/privacy' target='_blank' rel="related">                    
                     Privacy Statement
                 </a>              
-                <a style="display: inline-block; margin-left: 10px; text-decoration: none; filter: invert(50%)" href='https:/aibestgoods.com/terms-conditions' target='_blank' rel="noopener noreferrer">                    
+                <a style="display: inline-block; margin-left: 10px; text-decoration: none; filter: invert(50%)" href='https:/aibestgoods.com/terms-conditions' target='_blank' rel="related">                    
                     Terms And Conditions
                 </a>                      
             </p>

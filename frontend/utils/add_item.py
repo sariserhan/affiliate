@@ -51,7 +51,7 @@ def add_item(item_obj, catalog_list):
 	desc_button = False
 	pros_button = False
 	cons_button = False
-
+# ------------------------------------
 	desc_button_container = st.empty()
 	if name:
 		desc_button = desc_button_container.button("Get Description!")
@@ -87,7 +87,7 @@ def add_item(item_obj, catalog_list):
 		answer = ask_ai(message_to_ask=f'What are the cons of this item:{name}')
 		get_progress_bar(my_bar_cons, progress_text="Searching Cons...")
 		cons_container.write(answer)
-			
+# ------------------------------------	
 	affiliate_link = st.text_input(label='Item Affiliate Link', key='affiliate_link', placeholder='Affiliate Link',label_visibility='collapsed')
 	catalog_name = selectbox(label='Choose Category or Add New', options=catalog_list[:])
 	if "Add New Catalog" == catalog_name:

@@ -6,8 +6,7 @@ from streamlit_extras.switch_page_button import switch_page
 from frontend.footer import get_footer
 from frontend.utils.utils import local_css
 
-hide_pages(["admin", "unsubscribe"])
-        
+hide_pages(["admin", "unsubscribe", "app", "term-conditions", "privacy"])
         
 current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
 css_file = current_dir / '../styles' / 'main.css'

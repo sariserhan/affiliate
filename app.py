@@ -10,6 +10,7 @@ from pathlib import Path
 from streamlit_extras.app_logo import add_logo
 from streamlit_extras.colored_header import colored_header
 from streamlit_extras.buy_me_a_coffee import button
+from streamlit_toggle import st_toggle_switch
 
 from st_pages import Page, hide_pages, show_pages
 
@@ -28,6 +29,7 @@ from frontend.utils.google_analytics import google_analytics_setup
 from frontend.utils.google_adsense import google_adsense_setup
 from frontend.utils.impact_com import impact_setup
 from frontend.utils.utils import local_css
+from frontend.utils.theme import set_theme, set_color, theme
 
 from dotenv import load_dotenv
 
@@ -39,28 +41,25 @@ logging.getLogger('PIL.PngImagePlugin').setLevel(logging.WARNING)
 logging.getLogger('fsevents').setLevel(logging.WARNING)
 
 
-
 def init():
-    
     # --- PATH SETTINGS
     current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
     icon_file = current_dir / 'assets' / 'icon.png'
     logo_file = current_dir / 'assets' / 'logo.png'
     css_file = current_dir / 'styles' / 'main.css'
-    config_toml_file = current_dir / '.streamlit' / 'config.toml'
     
     # --- ICON
     icon = Image.open(icon_file)
-
-    # --- NAVIGATION BAR
+    
+    if "state_dict" not in st.session_state:
+        st.session_state.state_dict = {}
+        
+    # # --- NAVIGATION BAR
     st.set_page_config(
         layout='wide',
         page_icon=icon,
         page_title="AIBestGoods"
     )
-    
-    if "state_dict" not in st.session_state:
-        st.session_state.state_dict = {}
     
     # --- IMPACT.COM SETUP
     # impact_setup()
@@ -90,25 +89,18 @@ def init():
     add_logo(logo_file.as_posix(), height=100)
   
     streamlit_analytics.start_tracking()
+   
+    dark_mode = st_toggle_switch(
+        label=None,
+        key="theme_switch",
+        default_value=False,
+        label_after=False,
+        inactive_color="#D3D3D3",  # optional
+        active_color="#11567f",  # optional
+        track_color="#29B5E8",  # optional
+    )
     
-    try:
-        from streamlit_toggle import st_toggle_switch
-        night_mode = st_toggle_switch(
-            label=None,
-            key="theme_switch",
-            default_value=False,
-            label_after=False,
-            inactive_color="#D3D3D3",  # optional
-            active_color="#11567f",  # optional
-            track_color="#29B5E8",  # optional
-        )
-    except:
-        logging.info("streamlit_toggle is not available!")
-    
-    # SET DEFAULT THEME
-    config_toml = open(config_toml_file, 'w')
-    config_toml.write('[theme]\nbase="dark"')
-    config_toml.close()
+    set_theme(dark_mode)
     
     # --- HEADER
     colored_header(
@@ -118,16 +110,6 @@ def init():
                     """,
         color_name="red-70"
         )
-    
-    # SET THEME FROM TOGGLE
-    try:
-        config_toml = open(config_toml_file, 'w')
-        if night_mode:        
-            config_toml.write('[theme]\nbase="dark"')       
-        else:        
-            config_toml.write('[theme]\nbase="light"')
-    finally:
-        config_toml.close()
     
 def main():
     # --- CATALOG SIDE BAR
