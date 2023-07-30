@@ -14,6 +14,8 @@ from streamlit_toggle import st_toggle_switch
 
 from st_pages import Page, hide_pages, show_pages
 
+from frontend.utils.settings import theme_switch
+
 from backend.data.item import Item
 
 from frontend.utils.ads import get_ads
@@ -29,7 +31,7 @@ from frontend.utils.google_analytics import google_analytics_setup
 from frontend.utils.google_adsense import google_adsense_setup
 from frontend.utils.impact_com import impact_setup
 from frontend.utils.utils import local_css
-from frontend.utils.theme import set_theme, set_color, theme
+from frontend.utils.theme import set_theme
 
 from dotenv import load_dotenv
 
@@ -89,18 +91,19 @@ def init():
     add_logo(logo_file.as_posix(), height=100)
   
     streamlit_analytics.start_tracking()
-   
-    dark_mode = st_toggle_switch(
-        label=None,
-        key="theme_switch",
-        default_value=False,
-        label_after=False,
-        inactive_color="#D3D3D3",  # optional
-        active_color="#11567f",  # optional
-        track_color="#29B5E8",  # optional
-    )
     
-    set_theme(dark_mode)
+    if theme_switch:
+        dark_mode = st_toggle_switch(
+            label=None,
+            key="theme_switch",
+            default_value=False,
+            label_after=False,
+            inactive_color="#D3D3D3",  # optional
+            active_color="#11567f",  # optional
+            track_color="#29B5E8",  # optional
+        )
+    
+        set_theme(dark_mode)
     
     # --- HEADER
     colored_header(
@@ -128,7 +131,20 @@ def main():
     
     elif selected_catalog == "Ask AI":
         ask_ai_page()
-        logging.info("-------- ASK AI SELECTED ----------")  
+        logging.info("-------- ASK AI SELECTED ----------")
+        st.write("""
+                 <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4959375849193463"
+                    crossorigin="anonymous"></script>
+                <ins class="adsbygoogle"
+                    style="display:block; text-align:center;"
+                    data-ad-layout="in-article"
+                    data-ad-format="fluid"
+                    data-ad-client="ca-pub-4959375849193463"
+                    data-ad-slot="4920781155"></ins>
+                <script>
+                    (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>                                  
+                 """, unsafe_allow_html=True)
     
     elif selected_catalog == "Pros & Cons":
         compare_items()

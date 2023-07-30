@@ -8,6 +8,7 @@ from frontend.utils.auth import auth
 from frontend.utils.add_item import add_item
 from frontend.utils.delete_item import delete_item
 from frontend.utils.send_email import send_email
+from frontend.utils.settings import enable_theme_selection_for_user, set_default_theme
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -16,10 +17,11 @@ st.set_page_config(layout='centered')
 if "state_dict" not in st.session_state:
     st.session_state.state_dict = {}
     
+
 # --- ADMIN AUTHENTICATION
 if auth():
     with st.container():
-        tab1, tab2, tab3 = st.tabs(["Add New Item", "Delete Item", "Send Email"])
+        tab1, tab2, tab3, tab4 = st.tabs(["Add New Item", "Delete Item", "Send Email", "Settings"])
 
         # --- SHARED AREA
         catalog_list = []
@@ -39,4 +41,10 @@ if auth():
                         
         # --- SEND EMAIL
         with tab3:
-            send_email(item_obj, catalog_list)                     
+            send_email(item_obj, catalog_list)      
+            
+        # --- WEBSITE-SETTINGS
+        with tab4:
+            enable_theme_selection_for_user()
+            set_default_theme()
+            
