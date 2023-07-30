@@ -40,12 +40,12 @@ def pil_image_to_base64(image):
 def open_page(url):
     open_script= """
         <script type="text/javascript">
-            window.open('%s', '_blank').focus();
+            window.open('%s', '_blank', 'noopener,noreferrer').focus();
         </script> 
     """ % (url)
     html(open_script, height=0)
-    
-    
+
+
 # Navigates in the same page
 def nav_to(url): 
     nav_script = """

@@ -14,7 +14,7 @@ from streamlit_toggle import st_toggle_switch
 
 from st_pages import Page, hide_pages, show_pages
 
-from frontend.utils.settings import theme_switch
+from frontend.utils.settings import enable_theme_switch
 
 from backend.data.item import Item
 
@@ -92,7 +92,7 @@ def init():
   
     streamlit_analytics.start_tracking()
     
-    if theme_switch:
+    if enable_theme_switch:
         dark_mode = st_toggle_switch(
             label=None,
             key="theme_switch",
