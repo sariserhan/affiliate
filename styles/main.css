@@ -108,83 +108,20 @@ div.css-79elbk.e1akgbir10 {
     background-color: aqua; 
 }*/
 
-/* label {
-    width:40px;
-    height:20px;
-    position: relative;
-    display: block;
-    background: #ebebeb;
-    border-radius: 200px;
-    box-shadow: inset 0px 5px 15px rgba(0,0,0,0.4), inset 0px -5px 15px rgba(255,255,255,0.4);
-    cursor: pointer;
-  }
 
-  label:after {
-    content: "";
-    width:16px;
-    height: 16px;
-    position: absolute;
-    top:3px;
-    left:1px;
-    background: linear-gradient(180deg,#ffcc89,#d8860b);
-    border-radius: 180px;
-    box-shadow: 0px 5px 10px rgba(0,0,0,0.2);
-  }
-  input {
-    width: 0;
-    height: 0;
-    visibility: hidden;
-  }
-
-  input:checked + label {
-    background: #242424;
-  }
-  input:checked + label:after {
-    left:40px;
-    transform: translateX(-100%);
-    background: linear-gradient(180deg,#777,#3a3a3a);
-  }
-  label, label:after {
-    transition: 0.3s
-  }
-
-  label:active:after{ 
-    width: 20px; 
-  } */
-
-
-
- /* .stAppViewContainer {
-    background-color: #FF4B4B;
-} */
-
-/* :root {
-    --text-color: #31333F;
-    --primary-color: #ff4b4b;
-    --secondary-background-color: #f0f2f6;
-    --background-color: #ffffff;
+/* Go to TOP Button */
+.floating-button {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background-color: transparent;
+    /* color: #ffffff; */
+    /* padding: 10px 20px; */
+    /* border-radius: 50px; */
+    /* cursor: pointer; */
+    /* box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2); */
+    /* text-decoration: none; */
 }
-
-.stApp {
-    background-color: var(--background-color);;
-    --primary-color: var(--primary-color);
-    --secondary-background-color: var(--secondary-background-color);
-    color: var(--text-color);
-    --text-color: #31333F;
- }    */
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
 [id="footer"] {

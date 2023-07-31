@@ -11,6 +11,7 @@ from streamlit_extras.app_logo import add_logo
 from streamlit_extras.colored_header import colored_header
 from streamlit_extras.buy_me_a_coffee import button
 from streamlit_toggle import st_toggle_switch
+from streamlit.components.v1 import html
 
 from st_pages import Page, hide_pages, show_pages
 
@@ -49,6 +50,7 @@ def init():
     icon_file = current_dir / 'assets' / 'icon.png'
     logo_file = current_dir / 'assets' / 'logo.png'
     css_file = current_dir / 'styles' / 'main.css'
+    toggle_icon_file = current_dir / 'assets' / 'toggle_icon.png'
     
     # --- ICON
     icon = Image.open(icon_file)
@@ -87,6 +89,9 @@ def init():
     # --- CSS 
     local_css(css_file)
     
+    # hidden div with anchor
+    st.markdown("<div id='linkto_top'></div>", unsafe_allow_html=True)
+    
     # --- LOGO
     add_logo(logo_file.as_posix(), height=100)
   
@@ -114,6 +119,9 @@ def init():
         color_name="red-70"
     )
     
+    # Create the floating button
+    st.markdown("<a href='#linkto_top' class='floating-button'>:arrow_up:</a>", unsafe_allow_html=True)
+
 def main():
     # --- CATALOG SIDE BAR
     selected_catalog = sidebar()
@@ -179,9 +187,9 @@ def main():
     _, col2, col3 = st.columns(3)
     with col2:
         get_footer()
-    with col3:
-        button(username=os.getenv('buy_me_coffee'), floating=False, width=220)
-
+    # with col3:
+    #     button(username=os.getenv('buy_me_coffee'), floating=True, width=220)
+        
     streamlit_analytics.stop_tracking(unsafe_password=os.getenv("STREAMLIT_ANALYTICS"))
     
 if __name__ == "__main__":
