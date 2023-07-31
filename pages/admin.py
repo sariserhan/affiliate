@@ -8,7 +8,7 @@ from frontend.utils.auth import auth
 from frontend.utils.add_item import add_item
 from frontend.utils.delete_item import delete_item
 from frontend.utils.send_email import send_email
-from frontend.utils.settings import enable_theme_selection_for_user, set_default_theme
+from frontend.utils.settings import disable_theme_selection_for_user, set_default_theme
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -45,6 +45,6 @@ if auth():
             
         # --- WEBSITE-SETTINGS
         with tab4:
-            enable_theme_selection_for_user()
+            disable_theme_selection_for_user()
             set_default_theme()
             

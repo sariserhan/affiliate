@@ -2,14 +2,13 @@ import streamlit as st
 
 from pathlib import Path
 
-enable_theme_switch = None
-def enable_theme_selection_for_user():
-    global enable_theme_switch    
-    if st.checkbox("Enable Theme Switch"):
-        enable_theme_switch = True
-        return enable_theme_switch
-    enable_theme_switch = False
-    return enable_theme_switch
+disable_theme_switch = False
+def disable_theme_selection_for_user():
+    global disable_theme_switch    
+    if st.checkbox("Disable Theme Switch"):
+        disable_theme_switch = True
+    
+    return disable_theme_switch
 
 
 def set_default_theme():

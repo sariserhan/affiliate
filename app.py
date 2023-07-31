@@ -14,7 +14,7 @@ from streamlit_toggle import st_toggle_switch
 
 from st_pages import Page, hide_pages, show_pages
 
-from frontend.utils.settings import enable_theme_switch
+from frontend.utils.settings import disable_theme_switch
 
 from backend.data.item import Item
 
@@ -56,7 +56,7 @@ def init():
     if "state_dict" not in st.session_state:
         st.session_state.state_dict = {}
         
-    # # --- NAVIGATION BAR
+    # --- NAVIGATION BAR
     st.set_page_config(
         layout='wide',
         page_icon=icon,
@@ -67,7 +67,7 @@ def init():
     # impact_setup()
 
     # --- GOOGLE ADSENSE SETUP
-    # google_adsense_setup()
+    google_adsense_setup()
 
     # --- GOOGLE ANALYTICS SETUP
     google_analytics_setup()
@@ -92,7 +92,7 @@ def init():
   
     streamlit_analytics.start_tracking()
     
-    if enable_theme_switch:
+    if not disable_theme_switch:
         dark_mode = st_toggle_switch(
             label=None,
             key="theme_switch",
@@ -112,7 +112,7 @@ def init():
                         Our recommendation engine analyzes data and trends for informed choices. Experience the future of intelligent shopping with AI-BestGoods.
                     """,
         color_name="red-70"
-        )
+    )
     
 def main():
     # --- CATALOG SIDE BAR
