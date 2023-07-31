@@ -13,6 +13,21 @@ css_file = current_dir / '../styles' / 'main.css'
 local_css(css_file)
 
 with st.form("privacy"):
+    
+    # HIDE SIDE BAR
+    st.markdown("""
+            <style>
+            [data-testid="stSidebar"] {
+                display: none
+            }
+
+            [data-testid="collapsedControl"] {
+                display: none
+            }
+            </style>
+            """, unsafe_allow_html=True
+            )
+    
     st.subheader("PRIVACY")
 
     st.write("""
