@@ -11,7 +11,6 @@ from streamlit_extras.app_logo import add_logo
 from streamlit_extras.colored_header import colored_header
 from streamlit_extras.buy_me_a_coffee import button
 from streamlit_toggle import st_toggle_switch
-from streamlit.components.v1 import html
 
 from st_pages import Page, hide_pages, show_pages
 

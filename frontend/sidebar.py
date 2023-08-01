@@ -10,7 +10,8 @@ def sidebar() -> str:
         
         sidebar = option_menu(
             menu_title=None,
-            options=(catalog_list)
+            options=(catalog_list),
+            icons=["list-stars", "question-square", "arrow-left-right", "star", "bookmark-star", "yin-yang"]
         )
     
     return sidebar
