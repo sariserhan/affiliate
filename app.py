@@ -99,7 +99,7 @@ def init():
     
     if not disable_theme_switch:
         dark_mode = st_toggle_switch(
-            label=None,
+            label="\U0001F317",
             key="theme_switch",
             default_value=False,
             label_after=False,
