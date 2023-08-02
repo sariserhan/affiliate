@@ -63,8 +63,7 @@ def send_email(item_obj, catalog_list):
                     except Exception as e:
                         logging.error(f'Error sending email --> {e}')                           
                         error = f'Error sending email --> {e}'
-            else:
-                warning = "Item has less than 1000 views to send to subscribers!"
+            warning = "Item has less than 1000 views to send to subscribers!"
 
     with col3:
         test_email_to_send = st.text_input(label='Email', key='email', placeholder='Email', label_visibility='collapsed')

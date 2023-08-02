@@ -20,9 +20,7 @@ class Affiliate_Partner(DETA):
             self.db.insert(data)
             logging.info(f"{name} is successfully added.")
             return f"{name} is successfully added."
-        except:
+        except Exception:
             logging.warning(f"{name} is already in the database.")
         return
     
-if __name__ == '__main__':
-    pass

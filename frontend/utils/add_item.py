@@ -13,7 +13,7 @@ logging.basicConfig(level=logging.DEBUG)
 # --- ADD ITEM
 def add_item(item_obj, catalog_list):   
 	f_clicked_toggle = None
-	
+
 	try:
 		from streamlit_toggle import st_toggle_switch
 		# TOGGLE SWITCH FOR f_clicked
@@ -26,14 +26,14 @@ def add_item(item_obj, catalog_list):
 			active_color="#11567f",  # optional
 			track_color="#29B5E8",  # optional
 		)
-	except:
+	except Exception:
 		logging.warning('Toggle Switch in not available')    
 
 	catalog_list.append("Add New Catalog")
 
 	# GET AFFILIATE PARTNER FROM DB
 	affiliate_partner_list = []
-	affiliate_partners = Affiliate_Partner().fetch_records()        
+	affiliate_partners = Affiliate_Partner().fetch_records()
 	for affiliate_partner in affiliate_partners:
 		affiliate_partner_list.append(affiliate_partner['key'])
 
@@ -43,14 +43,10 @@ def add_item(item_obj, catalog_list):
 
 	name = st.text_input(label='Item Name', key='item_name', placeholder='Name', label_visibility='collapsed')
 
-	if(regex.search(name) == None):
-		pass
-	else:
+	if regex.search(name) != None:
 		st.warning(f"Special characters are not allowed in the name section: {name}")
 
 	desc_button = False
-	pros_button = False
-	cons_button = False
 # ------------------------------------
 	desc_button_container = st.empty()
 	if name:
@@ -65,8 +61,7 @@ def add_item(item_obj, catalog_list):
 		desc_container.write(answer)
 
 	pros_button_container = st.empty()
-	if name:
-		pros_button = pros_button_container.button("Get Pros!")
+	pros_button = pros_button_container.button("Get Pros!") if name else False
 	pros = st.text_area(label='Pros', height=300, key='pros', placeholder='Pros',label_visibility='collapsed', disabled=False)
 	pros_container = st.empty()
 	if pros_button and name:
@@ -77,8 +72,7 @@ def add_item(item_obj, catalog_list):
 		pros_container.write(answer)
 
 	cons_button_container = st.empty()
-	if name:
-		cons_button = cons_button_container.button("Get Cons!")
+	cons_button = cons_button_container.button("Get Cons!") if name else False
 	cons = st.text_area(label='Cons', height=300, key='cons', placeholder='Cons',label_visibility='collapsed', disabled=False)
 	cons_container = st.empty()
 	if cons_button and name:
@@ -90,17 +84,17 @@ def add_item(item_obj, catalog_list):
 # ------------------------------------	
 	affiliate_link = st.text_input(label='Item Affiliate Link', key='affiliate_link', placeholder='Affiliate Link',label_visibility='collapsed')
 	catalog_name = selectbox(label='Choose Category or Add New', options=catalog_list[:])
-	if "Add New Catalog" == catalog_name:
+	if catalog_name == "Add New Catalog":
 		catalog_name = st.text_input(label='Add Catalog Name', key='catalog_name', placeholder='Catalog Name', label_visibility='collapsed')    
-		
+
 	affiliate_partner = selectbox(label='Choose Affiliate Partner or Add New', options=affiliate_partner_list)
-	if "Add New Partner" == affiliate_partner:
+	if affiliate_partner == "Add New Partner":
 		affiliate_partner = st.text_input(label='Add Partner Name', key='partner_name', placeholder='Partner Name', label_visibility='collapsed')
-		
+
 	if f_clicked_toggle:
 		random_num = random.randint(1000, 5000)
 		f_clicked_val = st.number_input(label='Num of f_clicked to start', value=random_num, key='f_clicked')
-		
+
 	uploaded_file = st.file_uploader("Choose a file")
 	st.write('---')
 
@@ -115,7 +109,7 @@ def add_item(item_obj, catalog_list):
 		if add_button_container.button(label='Add a New Item', disabled=disable_button):
 			progress_text = "Submitting... Please wait..."
 			my_bar = st.progress(0, text=progress_text)
-				
+
 			try:
 				item_obj.create_item(
 					name=name, 
@@ -129,11 +123,11 @@ def add_item(item_obj, catalog_list):
 					cons=cons,
 					f_clicked=int(f_clicked_val) if f_clicked_toggle else 0
 					)
-				
+
 				for percent_complete in range(100):
 					time.sleep(0.01)
 					my_bar.progress(percent_complete + 1, text=progress_text)
-					
+
 				st.success(f'Item added into DB: {name}')
 			except Exception as e:
 				st.error("Something went wrong!")

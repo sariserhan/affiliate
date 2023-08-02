@@ -28,5 +28,3 @@ class Subscription(DETA):
         pattern = r'^[\w\.-]+@[\w\.-]+\.\w+$'
         return re.match(pattern, email) is not None
     
-if __name__ == '__main__':
-    pass

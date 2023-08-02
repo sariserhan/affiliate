@@ -31,11 +31,7 @@ class DETA:
     
     def get_record_by_catalog(self, catalog: str) -> list:
         records = self.fetch_records()
-        records_list = []
-        for record in records:
-            if catalog == record['catalog']:
-                records_list.append(record)
-        return records_list
+        return [record for record in records if catalog == record['catalog']]
     
     def update_record(self, key:str, updates: dict) -> str:
         record = self.db.get(key)
@@ -85,11 +81,9 @@ class DETA:
         
     def migrate_database(self, target_database: str):        
         target = self.deta.Base(target_database)        
-        
+
         for item in self.db.fetch().items:
-            if item['key'].startswith('Corsair'):
-                pass
-            else:
+            if not item['key'].startswith('Corsair'):
                 try:
                     target.insert(item)
                     logging.info(f'{item["key"]} is migrated!')

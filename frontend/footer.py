@@ -20,9 +20,9 @@ def get_footer():
     # twitter_icon = get_img_with_href(twitter_file, "Twitter")
     # gmail_icon = get_img_with_href(gmail_file, "Gmail")
     # linkedin_icon = get_img_with_href(linkedin_file, "Linkedin")
-    
+
     st.markdown(
-        f"""
+        """
         <div id="footer">
             <p>                                                 
                 © 2023, USCapita LLC. All rights reserved.
@@ -36,6 +36,6 @@ def get_footer():
             </p>
         </div>
         """,
-        unsafe_allow_html=True
+        unsafe_allow_html=True,
     )                            
        

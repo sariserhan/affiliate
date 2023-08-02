@@ -11,7 +11,5 @@ with open('./styles/main.css') as f:
 hide_pages(["admin"])
 
 email = st.text_input(label='email', placeholder="Email to unsubscribe!", label_visibility='hidden')
-unsubscribe_button = st.button(label='Unsubscribe')
-
-if unsubscribe_button:
+if st.button(label='Unsubscribe'):
     unsubscribe(email)

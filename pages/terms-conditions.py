@@ -7,7 +7,7 @@ from frontend.footer import get_footer
 from frontend.utils.utils import local_css
 
 hide_pages(["admin", "unsubscribe", "app", "term-conditions", "privacy"])
-        
+
 current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
 css_file = current_dir / '../styles' / 'main.css'
 local_css(css_file)
@@ -27,8 +27,8 @@ with st.form('terms_and_conditions'):
             </style>
             """, unsafe_allow_html=True
             )
-    
-    
+
+
     st.subheader('TERMS AND CONDITIONS')
     st.write("""            
 
@@ -77,11 +77,11 @@ with st.form('terms_and_conditions'):
                 If you have any questions or concerns regarding these Terms and Conditions, please contact us at [serhan.sari83@gmail.com].
             
          """, unsafe_allow_html=True)
-    
+
     if st.form_submit_button('Home'):
         try:
             switch_page("home")
-        except:
+        except Exception:
             switch_page("app")
-        
+
 get_footer()

@@ -15,7 +15,7 @@ def all_and_best_items(col2, is_best_pick: bool = False, is_most_viewed: bool = 
             temp_catalog_list = []
         else:
             random.shuffle(items)        
-            
+
         for item in items:
             logging.info(f" -------> {item['name']} is processing...")
             if is_best_pick:
@@ -25,7 +25,7 @@ def all_and_best_items(col2, is_best_pick: bool = False, is_most_viewed: bool = 
                 temp_catalog_list.append(item['catalog'])
             else:
                 form_name = item['name'] + '_best_pick'
-                    
+
             image = get_image(item['image_name'], item['catalog'])
             item_key = item["key"]
             name = item["name"]
@@ -34,12 +34,12 @@ def all_and_best_items(col2, is_best_pick: bool = False, is_most_viewed: bool = 
             clicked = item["clicked"]
             f_clicked = item["f_clicked"]
             viewed = clicked + f_clicked
-            
+
             with col2:
                 with st.form(form_name):
                     st.write(f"<h2 class='element'><a href={url}>{name}<br>({item['catalog']})</a></h2>", unsafe_allow_html=True)
                     st.write('---')
-                    
+
                     # --- ADD mentions to the text         
                     inline_mention = mention(
                         label=f"**_Visit Site:_ :green[{name}]** :pushpin:",
@@ -49,7 +49,7 @@ def all_and_best_items(col2, is_best_pick: bool = False, is_most_viewed: bool = 
                     )
                     st.image(image=image, caption=name, use_column_width=True)
                     st.markdown(description)
-                    
+
                     # --- URL AND KEYBOARD TO URL            
                     st.write(
                         inline_mention, unsafe_allow_html=True
@@ -61,7 +61,7 @@ def all_and_best_items(col2, is_best_pick: bool = False, is_most_viewed: bool = 
                         ask_ai_page(name=name)
                     if st.form_submit_button(label=':heavy_dollar_sign: Check Price', on_click=open_page, args=(url,)):
                         Item().update_record(key=item_key, updates={'clicked':clicked+1})
-                                        
+
                         # Update the counter text on the page
                         counter_text.markdown(f"**:red[{viewed+1}]** times visited :white_check_mark:")
                         logging.info(f"{name} is clicked by {st.experimental_user.email} --> {url}")
@@ -71,16 +71,15 @@ def all_and_best_items(col2, is_best_pick: bool = False, is_most_viewed: bool = 
             viewed = item['clicked'] + item['f_clicked']
             if item['catalog'] not in items_category_dict:
                 items_category_dict[item['catalog']] = [item['name'],viewed]
-            else:
-                if viewed > items_category_dict[item['catalog']][1]:
-                    items_category_dict[item['catalog']] = [item['name'],viewed]
+            elif viewed > items_category_dict[item['catalog']][1]:
+                items_category_dict[item['catalog']] = [item['name'],viewed]
 
         most_viewed_items_name = [value[0] for _,value in items_category_dict.items()]
 
         for item in items:
             if item['name'] in most_viewed_items_name:
                 form_name = item['name'] + '_most_viewed'
-                    
+
                 image = get_image(item['image_name'], item['catalog'])
                 item_key = item["key"]
                 name = item["name"]
@@ -89,12 +88,12 @@ def all_and_best_items(col2, is_best_pick: bool = False, is_most_viewed: bool = 
                 clicked = item["clicked"]
                 f_clicked = item["f_clicked"]
                 viewed = clicked + f_clicked
-                
+
                 with col2:
                     with st.form(form_name):
                         st.write(f"<h2 class='element'><a href={url}>{name}<br>({item['catalog']})</a></h2>", unsafe_allow_html=True)
                         st.write('---')
-                        
+
                         # --- ADD mentions to the text         
                         inline_mention = mention(
                             label=f"**_Visit Site:_ :green[{name}]** :pushpin:",
@@ -104,7 +103,7 @@ def all_and_best_items(col2, is_best_pick: bool = False, is_most_viewed: bool = 
                         )
                         st.image(image=image, caption=name, use_column_width=True)
                         st.markdown(description)
-                        
+
                         # --- URL AND KEYBOARD TO URL            
                         st.write(
                             inline_mention, unsafe_allow_html=True
@@ -115,7 +114,7 @@ def all_and_best_items(col2, is_best_pick: bool = False, is_most_viewed: bool = 
                         ask_ai_page(name=name)
                         if st.form_submit_button(label=':heavy_dollar_sign: Check Price', on_click=open_page, args=(url,)):
                             Item().update_record(key=item_key, updates={'clicked':clicked+1})
-                                            
+
                             # Update the counter text on the page
                             counter_text.markdown(f"**:red[{viewed+1}]** times visited :white_check_mark:")
                             logging.info(f"{name} is clicked by {st.experimental_user.email} --> {url}")

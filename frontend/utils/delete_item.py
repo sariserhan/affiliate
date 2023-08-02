@@ -10,14 +10,15 @@ def delete_item(item_obj):
         for item in item_obj.fetch_records():
             if item['key'] not in item_dict:
                 item_dict[item['name']] = item['key']
-        
-        selected_item = st.selectbox(label="Choose Item", options=[name for name in item_dict.keys()])
+
+        selected_item = st.selectbox(
+            label="Choose Item", options=list(item_dict.keys())
+        )
         key = item_dict[selected_item]
         st.write('---')
-        
-        button = st.form_submit_button(label='Delete')
-        if button:
-            item_key = item_obj.get_record(key)['key']            
+
+        if button := st.form_submit_button(label='Delete'):
+            item_key = item_obj.get_record(key)['key']
             if key == item_key:
                 if item_obj.delete_item(key=key):
                     st.success(f'Item is deleted {selected_item}')

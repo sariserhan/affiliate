@@ -31,16 +31,16 @@ class EmailService():
     @classmethod
     def get_subscription_list(cls) -> list:
         subscription_db = cls.connect_db('subscription_db')
-        subscribed_list = []
-        for subscribed in subscription_db.fetch().items:
-            if subscribed['is_subscribed']:
-                subscribed_list.append(subscribed['key'])
-        return subscribed_list
+        return [
+            subscribed['key']
+            for subscribed in subscription_db.fetch().items
+            if subscribed['is_subscribed']
+        ]
 
     @classmethod
     def get_item(cls, item_name: str) -> dict:
         item_db = cls.connect_db('items_db2')
-        key = item_name.replace(' ',f'_')
+        key = item_name.replace(' ', '_')
         return item_db.get(key=key)
 
     @staticmethod
@@ -60,8 +60,6 @@ class EmailService():
             item_link = item_dict['affiliate_link']
             item_image_name = item_dict['image_name']
             item_viewed = item_dict['clicked'] + item_dict['f_clicked']
-            pros = []
-            cons = []
             dark_theme = {
                 "background-color": "#0E1117",
                 "secondary-background-color": "#262730",
@@ -72,18 +70,14 @@ class EmailService():
                 "secondary-background-color": "#F0F2F6",
                 "text-color": "#31333F"
             }
-            
+
             theme = dark_theme
-            
-            for i in item_dict['pros'].split('. '):
-                cons.append(f'<li>❌ {i}</li>')
-            
-            for i in item_dict['cons'].split('. '):
-                pros.append(f'<li>✅ {i}</li>')
-            
+
+            cons = [f'<li>❌ {i}</li>' for i in item_dict['pros'].split('. ')]
+            pros = [f'<li>✅ {i}</li>' for i in item_dict['cons'].split('. ')]
             # Create the email message
             subject = item_name          
-            
+
             # --- PATH SETTINGS ---
             current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
             email_body_file = current_dir / 'backend' / 'email' / 'email_body.html'
@@ -95,43 +89,43 @@ class EmailService():
             current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
             aibestgoods_logo_path = current_dir / 'assets' / 'logo.png'
             aibestgoods_logo = get_img_with_href(aibestgoods_logo_path, "AIBestGoods")
-            
+
             html_content = html_content\
-                            .replace("AIBESTGOODS_ICON", aibestgoods_logo)\
-                            .replace("PRIMARY_COLOR", theme['background-color'])\
-                            .replace("SECONDARY_COLOR", theme['secondary-background-color'])\
-                            .replace("ITEM_NAME", item_name)\
-                            .replace("ITEM_LINK", item_link)\
-                            .replace("IMAGE_DATA", image_base64)\
-                            .replace("IMAGE_ALT", item_image_name)\
-                            .replace("ITEM_VIEWED", f'🔥 {item_viewed}')\
-                            .replace("ITEM_PROS", ''.join(pros))\
-                            .replace("ITEM_CONS", ''.join(cons))\
-                            .replace("ITEM_DESCRIPTION", item_description.split('. ')[0])
-                        
+                                .replace("AIBESTGOODS_ICON", aibestgoods_logo)\
+                                .replace("PRIMARY_COLOR", theme['background-color'])\
+                                .replace("SECONDARY_COLOR", theme['secondary-background-color'])\
+                                .replace("ITEM_NAME", item_name)\
+                                .replace("ITEM_LINK", item_link)\
+                                .replace("IMAGE_DATA", image_base64)\
+                                .replace("IMAGE_ALT", item_image_name)\
+                                .replace("ITEM_VIEWED", f'🔥 {item_viewed}')\
+                                .replace("ITEM_PROS", ''.join(pros))\
+                                .replace("ITEM_CONS", ''.join(cons))\
+                                .replace("ITEM_DESCRIPTION", item_description.split('. ')[0])
+
             msg.attach(MIMEText(html_content, 'html'))
         else:
             subject = subscription_event
-        
+
         msg['From'] = formataddr(("AIBestGoods", f"{sender_email}"))
         msg['To'] = recipient_email
-        msg['Subject'] = '👉 '+subject
+        msg['Subject'] = f'👉 {subject}'
         # msg.attach(image)
-        
+
         # Setup the SMTP server
         smtp_server = 'smtp.titan.email'
         smtp_port = 587
-        
+
         # Create a secure connection to the SMTP server
         server = smtplib.SMTP(smtp_server, smtp_port)
         server.starttls()
-        
+
         # Login to the sender's email account
         server.login(sender_email, os.getenv("email_password"))
-        
+
         # Send the email
         server.sendmail(sender_email, recipient_email, msg.as_string('email_password'))
-        
+
         # Close the connection to the SMTP server
         server.quit()
 

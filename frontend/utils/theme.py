@@ -30,21 +30,25 @@ def set_theme(dark_mode: bool):
         set_color('primaryColor', theme['light']['primaryColor'])        
         set_color('secondaryBackgroundColor', theme['light']['secondaryBackgroundColor'])
         set_color('textColor', theme['light']['textColor']) 
-        
+
     if dark_mode:
-        logging.info(f"----- Dark Mode Selected ----- session state before:{st.session_state['backgroundColor']} ---- current background:{st.get_option(f'theme.backgroundColor')}")
+        logging.info(
+            f"----- Dark Mode Selected ----- session state before:{st.session_state['backgroundColor']} ---- current background:{st.get_option('theme.backgroundColor')}"
+        )
         set_color('backgroundColor', theme['dark']['backgroundColor'])
-        set_color('primaryColor', theme['dark']['primaryColor'])        
+        set_color('primaryColor', theme['dark']['primaryColor'])
         set_color('secondaryBackgroundColor', theme['dark']['secondaryBackgroundColor'])
         set_color('textColor', theme['dark']['textColor'])
-        
-        reconcile_theme_config()
+
     else:
-        logging.info(f"----- Light Mode Selected ----- session state before:{st.session_state['backgroundColor']} ---- current background:{st.get_option(f'theme.backgroundColor')}")
+        logging.info(
+            f"----- Light Mode Selected ----- session state before:{st.session_state['backgroundColor']} ---- current background:{st.get_option('theme.backgroundColor')}"
+        )
         set_color('backgroundColor', theme['light']['backgroundColor'])
-        set_color('primaryColor', theme['light']['primaryColor'])        
+        set_color('primaryColor', theme['light']['primaryColor'])
         set_color('secondaryBackgroundColor', theme['light']['secondaryBackgroundColor'])
         set_color('textColor', theme['light']['textColor'])
-        
-        reconcile_theme_config()
+
+
+    reconcile_theme_config()
         

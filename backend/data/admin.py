@@ -25,7 +25,4 @@ class Admin(DETA):
             return False
 
         # Check for special characters
-        if not re.match("^[a-zA-Z0-9_]+$", username):
-            return False
-
-        return True
+        return bool(re.match("^[a-zA-Z0-9_]+$", username))

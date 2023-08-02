@@ -42,11 +42,10 @@ def subscribe(email: str):
         return 'error', f'Error trying to subscribe {e}'
             
 def unsubscribe(email: str):
-    try:                
+    try:            
         email_service = EmailService()
         subscription = Subscription(email=email)
-        email_obj = subscription.get_record(key=email)
-        if email_obj:
+        if email_obj := subscription.get_record(key=email):
             if email_obj['is_subscribed']:
                 subscription.unsubscribe()
                 email_service.send_email(recipient_email='serhan.sari@yahoo.com', subscription_event=f"User Unsubscribed --> {email}")

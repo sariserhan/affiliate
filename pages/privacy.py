@@ -7,7 +7,7 @@ from frontend.footer import get_footer
 from frontend.utils.utils import local_css
 
 hide_pages(["admin", "unsubscribe", "app", "term-conditions", "privacy"])
-            
+
 current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
 css_file = current_dir / '../styles' / 'main.css'
 local_css(css_file)
@@ -27,7 +27,7 @@ with st.form("privacy"):
             </style>
             """, unsafe_allow_html=True
             )
-    
+
     st.subheader("PRIVACY")
 
     st.write("""
@@ -82,7 +82,7 @@ with st.form("privacy"):
     if st.form_submit_button("Home"):
         try:
             switch_page("home")
-        except:
+        except Exception:
             switch_page("app")
-        
+
 get_footer()

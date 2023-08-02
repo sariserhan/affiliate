@@ -14,7 +14,7 @@ class Catalog(DETA):
     def create_catalog(self, name: str):
         self.key = name.replace(' ','_')
         self.name = name
-        
+
         data = {
             "key": self.key,
             "name": self.name,
@@ -25,13 +25,13 @@ class Catalog(DETA):
             self.db.insert(data)
             logging.info(f"{self.name} is successfully added.")
             return f"{self.name} is successfully added."
-        except:
+        except Exception:
             logging.warning(f"{self.name} is already in the database.")
         return
         
     
     def add_item(self, items:list):
-        if not self.name == '':
+        if self.name != '':
             catalog = self.db.get(self.key)
             if not catalog:
                 self.create_catalog(name=self.name)
@@ -45,6 +45,4 @@ class Catalog(DETA):
             return
     
         
-if __name__ == '__main__':
-    pass
     

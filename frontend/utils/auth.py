@@ -18,16 +18,12 @@ def auth():
 
     hashed_passwords = stauth.Hasher(passwords).generate()
 
-    credentials = {}
-    for i in range(len(usernames)):
-        credentials["usernames"] = {
-                    usernames[i]:
-                        {
-                            "name":names[i],
-                            "password":hashed_passwords[i]
-                        }
-                    }
-
+    credentials = {
+        "usernames": {
+            usernames[i]: {"name": names[i], "password": hashed_passwords[i]}
+        }
+        for i in range(len(usernames))
+    }
     authenticator = stauth.Authenticate(credentials, 'admin_page', 'auth', cookie_expiry_days=1)
 
     user_name, authentication_status, username = authenticator.login('Login', 'main')
@@ -35,10 +31,10 @@ def auth():
     if authentication_status == False:
         st.error("Username/password combination incorrect. Please try again.")
         return False
-    if authentication_status == None:
+    if authentication_status is None:
         st.warning("Please enter username and password to login.")
         return False
     if authentication_status:
         authenticator.login("Logout", "sidebar")
-        st.sidebar.title('Welcome *%s*' % (user_name))
+        st.sidebar.title(f'Welcome *{user_name}*')
         return True
