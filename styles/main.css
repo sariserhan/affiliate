@@ -110,10 +110,23 @@ div.css-79elbk.e1akgbir10 {
 
 
 /* Go to TOP Button */
-.floating-button {
+.floating-button-right {
     position: fixed;
     bottom: 20px;
     right: 20px;
+    background-color: transparent;
+    /* color: #ffffff; */
+    /* padding: 10px 20px; */
+    /* border-radius: 50px; */
+    /* cursor: pointer; */
+    /* box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.2); */
+    /* text-decoration: none; */
+}
+
+.floating-button-left {
+    position: fixed;
+    bottom: 20px;
+    left: 20px;
     background-color: transparent;
     /* color: #ffffff; */
     /* padding: 10px 20px; */

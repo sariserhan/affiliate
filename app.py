@@ -111,7 +111,7 @@ def init():
     
     # --- HEADER
     colored_header(
-        label='AI-Powered Picks: Unleashing the Future of Smart Shopping:exclamation:',
+        label='AI-Powered :mechanical_arm: Picks: Unleashing the Future of Smart Shopping :zap:',
         description="""
                         Our recommendation engine analyzes data and trends for informed choices. Experience the future of intelligent shopping with AI-BestGoods.
                     """,
@@ -119,7 +119,8 @@ def init():
     )
     
     # Create the floating button
-    st.markdown("<a href='#linkto_top' class='floating-button'>:arrow_up:</a>", unsafe_allow_html=True)
+    st.markdown("<a href='#linkto_top' class='floating-button-right'>:arrow_up:</a>", unsafe_allow_html=True)
+    st.markdown("<a class='floating-button-left'>:nazar_amulet:</a>", unsafe_allow_html=True)
 
 def main():
     # --- CATALOG SIDE BAR

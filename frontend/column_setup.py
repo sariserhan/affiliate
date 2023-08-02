@@ -39,7 +39,7 @@ def set_form(items:dict, col_name: str, selected_catalog: str):
             
             # --- ADD mentions to the text         
             inline_mention = mention(
-                label=f"**_Visit Site:_ :green[{name}]**",
+                label=f"**_Visit Site:_ :green[{name}]** :pushpin:",
                 icon=":arrow_right:",
                 url=url,
                 write=False
@@ -74,15 +74,15 @@ def set_form(items:dict, col_name: str, selected_catalog: str):
             
              # --- URL AND KEYBOARD TO URL            
             st.write(
-                f'{inline_mention} or hit {key(number, False)} on your keyboard', unsafe_allow_html=True
+                f'{inline_mention} or hit {key(number, False)} on your keyboard :keyboard:', unsafe_allow_html=True
             )
                                         
             # CHECK PRICE BUTTON
             counter_text = st.empty()
-            counter_text.markdown(f'**:green[{viewed}]** times visited :exclamation:', unsafe_allow_html=True)
+            counter_text.markdown(f'**:green[{viewed}]** times visited :eyes:', unsafe_allow_html=True)
             ask_ai_page(name=name)
  
-            if st.form_submit_button(label='Check Price', on_click=open_page, args=(url,)):
+            if st.form_submit_button(label=':heavy_dollar_sign: Check Price', on_click=open_page, args=(url,)):
                 Item().update_record(key=item_key, updates={'clicked':clicked+1})
                                 
                 # Update the counter text on the page

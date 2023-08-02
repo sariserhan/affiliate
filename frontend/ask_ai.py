@@ -24,7 +24,7 @@ load_dotenv()
 
 def ask_ai_page(name: str = None):
     if name:
-        ask_ai_button = st.form_submit_button('Not Sure? Ask AI')
+        ask_ai_button = st.form_submit_button('Not Sure :question: Ask AI :speech_balloon:')
                 
         if ask_ai_button:
             logging.info(models.data[0].id)
@@ -60,7 +60,7 @@ def ask_ai_page(name: str = None):
                 keyboard_to_url(key=str(1), url=item['affiliate_link'])
                 
                 inline_mention_right = mention(
-                    label=f"**_Visit Site:_ :green[{item['name']}]**",
+                    label=f"**_Visit Site:_ :green[{item['name']}]** :pushpin:",
                     icon=":arrow_right:",
                     url=item['affiliate_link'],
                     write=False
@@ -72,16 +72,16 @@ def ask_ai_page(name: str = None):
                 
                 # --- URL AND KEYBOARD TO URL            
                 st.write(
-                    f'{inline_mention_right} or hit {key(":one:", False)} on your keyboard :exclamation:', unsafe_allow_html=True
+                    f'{inline_mention_right} or hit {key(":one:", False)} on your keyboard :keyboard:', unsafe_allow_html=True
                 )
                 
                 st.write('---')                         
 
                 # CHECK PRICE BUTTON
                 counter_text = st.empty()
-                counter_text.markdown(f'**:green[{item["clicked"]+item["f_clicked"]}]** times visited :exclamation:', unsafe_allow_html=True) 
+                counter_text.markdown(f'**:green[{item["clicked"]+item["f_clicked"]}]** times visited :boom:', unsafe_allow_html=True) 
                 
-                check_price_button = st.form_submit_button("Check Price", on_click=open_page, args=(item['affiliate_link'],))
+                check_price_button = st.form_submit_button(":heavy_dollar_sign: Check Price", on_click=open_page, args=(item['affiliate_link'],))
                 if check_price_button:
                     Item().update_record(key=item['key'], updates={'clicked':item['clicked']+1})
                         
@@ -106,7 +106,7 @@ def ask_ai_page(name: str = None):
                 ]
                 selected_question = selectbox("Choose pre-selected question from the drop-down menu to ask AI", options=questions_list)
                 
-                if st.form_submit_button("Ask AI") and selected_question:
+                if st.form_submit_button("Ask AI :speech_balloon:") and selected_question:
                     # AI 
                     logging.info(models.data[0].id)
                     my_bar = st.empty()

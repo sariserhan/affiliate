@@ -39,7 +39,7 @@ def compare_items(compare: bool = False):
                     keyboard_to_url(key=str(1), url=item_left['affiliate_link'])
                     
                     inline_mention_left = mention(
-                        label=f"**_Visit Site:_ :green[{item_left['name']}]**",
+                        label=f"**_Visit Site:_ :green[{item_left['name']}]** :pushpin:",
                         icon=":arrow_right:",
                         url=item_left['affiliate_link'],
                         write=False
@@ -51,38 +51,38 @@ def compare_items(compare: bool = False):
                     
                     # --- URL AND KEYBOARD TO URL            
                     st.write(
-                        f'{inline_mention_left} or hit {key(":one:", False)} on your keyboard :exclamation:', unsafe_allow_html=True
+                        f'{inline_mention_left} or hit {key(":one:", False)} on your keyboard :keyboard:', unsafe_allow_html=True
                     )                        
                     
                     if not compare:
                         st.write('---')
                             
                         if '\n\n' in item_left['pros']:
-                            pros_left = item_left['pros'].replace('\n\n', '\n').split('\n')
+                            pros_left = item_left['pros'].replace('\n\n', '\n').split('\n')                                                                
                         else:
                             pros_left = item_left['pros'].split('. ')
-         
+                        
                         if '\n\n' in item_left['cons']:  
-                            cons_left = item_left['cons'].replace('\n\n', '\n').split('. ')
+                            cons_left = item_left['cons'].replace('\n\n', '\n').split('\n')
                         else:
                             cons_left = item_left['cons'].split('. ') 
                         
                         for pros in pros_left:
                             if pros != '':
-                                st.write(f':white_check_mark: {pros}')
+                                st.write(f':ballot_box_with_check: :blue[{pros[0:pros.find(":")+1]}]{pros[pros.find(":")+1:]}')
                             
                         st.write('---')                                                        
                         for cons in cons_left:
                             if cons != '':
-                                st.write(f':x: {cons}')                                                                                                 
+                                st.write(f':warning: :orange[{cons[0:cons.find(":")+1]}]{cons[cons.find(":")+1:]}')
                     
                     st.write('---')
                     button_row_1, _, button_row_3, _, _ = st.columns([1,0.1,1,0.1,0.1])
                     with button_row_3:
-                        button = st.form_submit_button("Check Price", on_click=open_page, args=(item_left['affiliate_link'],))
+                        button = st.form_submit_button(":heavy_dollar_sign: Check Price", on_click=open_page, args=(item_left['affiliate_link'],))
                     with button_row_1:
                         counter_text = st.empty()
-                        counter_text.markdown(f'**:green[{item_left["clicked"]+item_left["f_clicked"]}]** times visited :exclamation:', unsafe_allow_html=True)                                    
+                        counter_text.markdown(f'**:green[{item_left["clicked"]+item_left["f_clicked"]}]** times visited :eyes:', unsafe_allow_html=True)                                    
                     
                         if button:
                             Item().update_record(key=item_left['key'], updates={'clicked':item_left['clicked']+1})
@@ -103,7 +103,7 @@ def compare_items(compare: bool = False):
                     keyboard_to_url(key=str(2), url=item_right['affiliate_link'])
                     
                     inline_mention_right = mention(
-                        label=f"**_Visit Site:_ :green[{item_right['name']}]**",
+                        label=f"**_Visit Site:_ :green[{item_right['name']}]** :pushpin:",
                         icon=":arrow_right:",
                         url=item_right['affiliate_link'],
                         write=False
@@ -115,7 +115,7 @@ def compare_items(compare: bool = False):
                     
                     # --- URL AND KEYBOARD TO URL            
                     st.write(
-                        f'{inline_mention_right} or hit {key(":two:", False)} on your keyboard :exclamation:', unsafe_allow_html=True
+                        f'{inline_mention_right} or hit {key(":two:", False)} on your keyboard :keyboard:', unsafe_allow_html=True
                     )
                     
                     if not compare:
@@ -127,27 +127,27 @@ def compare_items(compare: bool = False):
                             pros_right = item_right['pros'].split('. ')
          
                         if '\n\n' in item_right['cons']:  
-                            cons_right = item_right['cons'].replace('\n\n', '\n').split('. ')
+                            cons_right = item_right['cons'].replace('\n\n', '\n').split('\n')
                         else:
                             cons_right = item_right['cons'].split('. ') 
                         
                         for pros in pros_right:
                             if pros != '':
-                                st.write(f':white_check_mark: {pros}')
+                                st.write(f':white_check_mark: :green[{pros[0:pros.find(":")+1]}]{pros[pros.find(":")+1:]}')
                             
                         st.divider()
                         for cons in cons_right:
                             if cons != '':
-                                st.write(f':x: {cons}')                                            
+                                st.write(f':lightning: :red[{cons[0:cons.find(":")+1]}]{cons[cons.find(":")+1:]}')
                         
                     st.divider()
                     button_row_1, _, button_row_3, _, _ = st.columns([1,0.1,1,0.1,0.1])
                     with button_row_3:
-                        button = st.form_submit_button("Check Price", on_click=open_page, args=(item_right['affiliate_link'],))                        
+                        button = st.form_submit_button(":heavy_dollar_sign: Check Price", on_click=open_page, args=(item_right['affiliate_link'],))                        
                     
                     with button_row_1:
                         counter_text = st.empty()
-                        counter_text.markdown(f'**:green[{item_right["clicked"]+item_right["f_clicked"]}]** times visited :exclamation:', unsafe_allow_html=True)                                    
+                        counter_text.markdown(f'**:green[{item_right["clicked"]+item_right["f_clicked"]}]** times visited :eyes:', unsafe_allow_html=True)                                    
                     
                         if button:
                             Item().update_record(key=item_right['key'], updates={'clicked':item_right['clicked']+1})
