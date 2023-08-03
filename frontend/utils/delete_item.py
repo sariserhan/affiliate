@@ -18,13 +18,21 @@ def delete_item(item_obj):
         key = item_dict[selected_item]
         st.write('---')
 
-        if button := st.form_submit_button(label='Delete'):
+        if st.form_submit_button(label='Delete'):
             item_key = item_obj.get_record(key)['key']
             if key == item_key:
-                if item_obj.delete_item(key=key):
+                try:
+                    item_obj.delete_item(key=key)
                     st.success(f'Item is deleted {selected_item}')
                     logging.info(f'Item is deleted {selected_item}')
-                else:
+                except:
                     st.error(f'Error in deleting item {selected_item}')
                     logging.error(f'Error in deleting item {selected_item}')
+                try: 
+                    item_obj.del_image_data(name=item_key['image_name'],catalog=item_key['catalog'])
+                    st.success(f'Image is deleted {selected_item}')
+                    logging.info(f'Image is deleted {selected_item}')
+                except:
+                    st.error(f'Error in deleting Image {selected_item}')
+                    logging.error(f'Error in deleting Image {selected_item}')
                     

@@ -29,6 +29,9 @@ class DETA:
     def get_image_data(self, name: str, catalog: str) -> str:        
         return self.drive.get(f"/{catalog}/{name}").read()
     
+    def del_image_data(self, name: str, catalog: str) -> str:        
+        return self.drive.delete(f"/{catalog}/{name}")
+    
     def get_record_by_catalog(self, catalog: str) -> list:
         records = self.fetch_records()
         return [record for record in records if catalog == record['catalog']]
@@ -94,4 +97,6 @@ class DETA:
                 
 
 if __name__ == '__main__':
-    DETA('item_db').migrate_database(target_database='items_db2')
+    # DETA('item_db').migrate_database(target_database='items_db2')
+    DETA('item_db2').del_image_data(name='Nathan Running Handheld Quick Squeeze.jpeg', catalog='Water Bottle')
+    
