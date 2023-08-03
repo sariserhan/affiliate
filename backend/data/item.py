@@ -3,6 +3,7 @@ import logging
 
 from .affiliate_partner import Affiliate_Partner
 from .catalog import Catalog
+from .category import Category
 from .database import DETA
 
 logging.basicConfig(level=logging.DEBUG)
@@ -12,7 +13,18 @@ class Item(DETA):
     def __init__(self, name: str = ''):
         super(Item, self).__init__(db="items_db2")
 
-    def create_item(self, name: str, description: str, image_path: str, pros: str, cons: str, image_name: str, affiliate_link: str, affiliate_partner: str, catalog_names: list, f_clicked: int = 0):        
+    def create_item(self, 
+                    name: str, 
+                    description: str, 
+                    image_path: str, 
+                    pros: str, cons: str, 
+                    image_name: str, 
+                    affiliate_link: str, 
+                    affiliate_partner: str,
+                    categories: list, 
+                    catalog_names: list, 
+                    f_clicked: int = 0
+                    ):        
         for catalog_name in catalog_names:
             name = name.strip()
             key = name.replace(' ', '_')
@@ -26,6 +38,7 @@ class Item(DETA):
                 "clicked": 0,
                 "f_clicked": f_clicked,
                 "catalog": catalog_name,
+                "categories": categories,
                 "pros": pros,
                 "cons": cons,
                 "email_sent": False
@@ -42,14 +55,19 @@ class Item(DETA):
 
             # Add item into catalog
             catalog_obj = Catalog(catalog_name)
-            catalog_obj.add_item(items=[name])     
-
+            catalog_obj.add_item(items=[name])
+            
             # Create Affiliate Partner
             affiliate_partner_obj = Affiliate_Partner()
             affiliate_partner_obj.create_partner(name=affiliate_partner)
 
-            logging.info(f"{name} is successfully added to the database.")
-            return f"{name} is successfully added to the database."
+        for category in categories:
+            # Add catalog into category
+            category_obj = Category(category)
+            category_obj.add_catalog(catalogs=catalog_names)
+            
+        logging.info(f"{name} is successfully added to the database.")
+        return f"{name} is successfully added to the database."
     
     @staticmethod
     def _process_data(data):

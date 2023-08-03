@@ -4,22 +4,22 @@ from .database import DETA
 
 logging.basicConfig(level=logging.DEBUG)
 
-class Catalog(DETA):
+class Category(DETA):
     
     def __init__(self, name: str = ''):
         self.name = name
         self.key = name.replace(' ','_')
-        super(Catalog, self).__init__(db="catalog_db")
+        super(Category, self).__init__(db="category_db")
         
-    def create_catalog(self, name: str):
+    def create_category(self, name: str):
         self.key = name.replace(' ','_')
         self.name = name
-
+        
         data = {
             "key": self.key,
             "name": self.name,
             "is_active": True,
-            "item_list": []
+            "catalog_list": []
         }
         try:
             self.db.insert(data)
@@ -28,21 +28,17 @@ class Catalog(DETA):
         except Exception:
             logging.warning(f"{self.name} is already in the database.")
         return
-        
     
-    def add_item(self, items:list):
+    def add_catalog(self, catalogs:list):
         if self.name != '':
-            catalog = self.db.get(self.key)
-            if not catalog:
-                self.create_catalog(name=self.name)
-                catalog = self.db.get(self.key)
-            catalog['item_list'].extend(items) # type: ignore
-            self.db.put(catalog) # type: ignore
-            logging.info(f"{items} are added to {self.name} catalog.")
-            return f"{items} are added to {self.name} catalog."
+            category = self.db.get(self.key)
+            if not category:
+                self.create_category(name=self.name)
+                category = self.db.get(self.key)
+            category['catalog_list'].extend(catalogs) # type: ignore
+            self.db.put(category) # type: ignore
+            logging.info(f"{catalogs} are added to {self.name} category.")
+            return f"{catalogs} are added to {self.name} category."
         else:
-            logging.warning("catalog name required.")
+            logging.warning("category name required.")
             return
-    
-        
-    

@@ -16,7 +16,7 @@ load_dotenv()
 class DETA:
     
     def __init__(self, db: str) -> None:
-        self.deta = Deta(os.getenv("DETA_KEY") or secrets("DETA_KEY"))
+        self.deta = Deta(os.getenv("DETA_KEY")) # type: ignore
         self.db = self.deta.Base(db)
         self.drive = self.deta.Drive('images_db')
         
@@ -24,10 +24,10 @@ class DETA:
         return self.db.fetch().items
     
     def get_record(self, key: str) -> str:        
-        return self.db.get(key)
+        return self.db.get(key) # type: ignore
     
     def get_image_data(self, name: str, catalog: str) -> str:        
-        return self.drive.get(f"/{catalog}/{name}").read()
+        return self.drive.get(f"/{catalog}/{name}").read() # type: ignore
     
     def del_image_data(self, name: str, catalog: str) -> str:        
         return self.drive.delete(f"/{catalog}/{name}")
@@ -36,25 +36,25 @@ class DETA:
         records = self.fetch_records()
         return [record for record in records if catalog == record['catalog']]
     
-    def update_record(self, key:str, updates: dict) -> str:
+    def update_record(self, key:str, updates: dict) -> str: # type: ignore
         record = self.db.get(key)
         for k, v in updates.items():
             if k in record:
-                record[k] = v
+                record[k] = v # type: ignore
                 
-        self.db.put(record)
+        return self.db.put(record) # type: ignore
     
     def change_record(self, key: str, updates: dict) -> str:
         record = self.db.get(key)
         for k, v in updates.items():
             if k in record:
-                record[k] = v
+                record[k] = v # type: ignore
 
         self.delete_item(key)
-        if 'name' in record:
-            record['key'] = record['name'].replace(' ','_')
+        if 'name' in record: # type: ignore
+            record['key'] = record['name'].replace(' ','_') # type: ignore
                 
-        self.db.put(record)
+        self.db.put(record) # type: ignore
         
         logging.info(f"{key} successfully changed record.")
         return f"{key} successfully changed record."
@@ -63,14 +63,14 @@ class DETA:
         name = key
         key = key.replace(' ','_')
         try:
-            catalog_name = self.get_record(key)['catalog']
+            catalog_name = self.get_record(key)['catalog'] # type: ignore
             catalog_base = self.deta.Base("catalog_db")
             catalog_record = catalog_base.get(key=catalog_name)
-            for item in catalog_record['item_list']:
+            for item in catalog_record['item_list']: # type: ignore
                 if item == name:
-                    catalog_record['item_list'].remove(item)
+                    catalog_record['item_list'].remove(item) # type: ignore
                     break
-            catalog_base.put(catalog_record)
+            catalog_base.put(catalog_record) # type: ignore
             logging.info(f"{name} successfully removed from catalog.")
         except Exception as e:
             logging.error(f'Error in removing {name} from catalog ---> {e}')

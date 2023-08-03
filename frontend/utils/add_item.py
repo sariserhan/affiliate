@@ -12,7 +12,7 @@ from frontend.utils.utils import ask_ai, get_progress_bar
 logging.basicConfig(level=logging.DEBUG)
 
 # --- ADD ITEM
-def add_item(item_obj, catalog_list):   
+def add_item(item_obj, catalog_list, category_list):   
 	f_clicked_toggle = None
 
 	try:
@@ -32,6 +32,7 @@ def add_item(item_obj, catalog_list):
 		logging.warning('Toggle Switch in not available')    
 
 	catalog_list.append("Add New Catalog")
+	category_list.append("Add New Category")
 
 	# GET AFFILIATE PARTNER FROM DB
 	affiliate_partner_list = []
@@ -85,10 +86,16 @@ def add_item(item_obj, catalog_list):
 		cons_container.write(answer)
 # ------------------------------------	
 	affiliate_link = st.text_input(label='Item Affiliate Link', key='affiliate_link', placeholder='Affiliate Link',label_visibility='collapsed')
-	catalog_name = selectbox(label='Choose Category or Add New', options=catalog_list[:])
-	if catalog_name == "Add New Catalog":
-		catalog_name = st.text_input(label='Add Catalog Name', key='catalog_name', placeholder='Catalog Name', label_visibility='collapsed')    
 
+	selected_categories = st.multiselect(label='Choose Category or Add New', options=category_list[:])
+	if "Add New Category" in selected_categories:
+		selected_categories.append(st.text_input(label='Add Category Name', key='categories', placeholder='Category Name', label_visibility='collapsed'))    
+		selected_categories.remove('Add New Category')
+ 
+	catalog_name = selectbox(label='Choose Catalog or Add New', options=catalog_list[:])
+	if catalog_name == "Add New Catalog":
+		catalog_name = st.text_input(label='Add Catalog Name', key='catalog_name', placeholder='Catalog Name', label_visibility='collapsed')    	
+ 
 	affiliate_partner = selectbox(label='Choose Affiliate Partner or Add New', options=affiliate_partner_list)
 	if affiliate_partner == "Add New Partner":
 		affiliate_partner = st.text_input(label='Add Partner Name', key='partner_name', placeholder='Partner Name', label_visibility='collapsed')
@@ -120,6 +127,7 @@ def add_item(item_obj, catalog_list):
 					image_name=image_name,
 					affiliate_link=affiliate_link,
 					affiliate_partner=affiliate_partner,
+					categories=selected_categories,
 					catalog_names=[catalog_name],
 					pros=pros,
 					cons=cons,

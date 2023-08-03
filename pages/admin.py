@@ -3,6 +3,7 @@ import logging
 import streamlit as st
 
 from backend.data.catalog import Catalog
+from backend.data.category import Category
 from backend.data.item import Item
 from frontend.utils.add_item import add_item
 from frontend.utils.auth import auth
@@ -25,11 +26,16 @@ if auth():
 
         catalogs = Catalog().fetch_records()
         catalog_list = [catalog['name'] for catalog in catalogs]
+        
+        categories = Category().fetch_records()
+        category_list = [category['name'] for category in categories]
+        
         item_obj = Item()
+        
 
         # --- ADD ITEM
         with tab1:
-            add_item(item_obj, catalog_list)
+            add_item(item_obj, catalog_list, category_list)
 
         # --- DELETE ITEM
         with tab2:
