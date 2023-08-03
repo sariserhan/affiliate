@@ -1,12 +1,13 @@
-import random
 import logging
-import streamlit as st
+import random
 
+import streamlit as st
 from streamlit_extras.mention import mention
 
 from backend.data.item import Item
-from frontend.utils.utils import get_image, open_page
 from frontend.ask_ai import ask_ai_page
+from frontend.utils.utils import get_image, open_page
+
 
 def all_and_best_items(col2, is_best_pick: bool = False, is_most_viewed: bool = False):
     items = Item().fetch_records()

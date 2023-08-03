@@ -1,18 +1,16 @@
+import logging
 import os
 
-import logging
 import streamlit as st
-
 from dotenv import load_dotenv
-
-from streamlit_extras.no_default_selectbox import selectbox
-from streamlit_extras.mention import mention
-from streamlit_extras.keyboard_url import keyboard_to_url
 from streamlit_extras.keyboard_text import key
+from streamlit_extras.keyboard_url import keyboard_to_url
+from streamlit_extras.mention import mention
+from streamlit_extras.no_default_selectbox import selectbox
 
 from backend.data.catalog import Catalog
 from backend.data.item import Item
-from frontend.utils.utils import get_image, open_page, get_progress_bar, ask_ai
+from frontend.utils.utils import ask_ai, get_image, get_progress_bar, open_page
 
 logging.basicConfig(level=logging.DEBUG)
 

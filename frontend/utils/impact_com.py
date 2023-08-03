@@ -1,9 +1,10 @@
-import os
 import logging
+import os
+
 import streamlit as st
+from dotenv import load_dotenv
 
 from .index_html import index_html_add_to_head
-from dotenv import load_dotenv
 
 logging.basicConfig(level=logging.DEBUG)
 

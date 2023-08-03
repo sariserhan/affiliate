@@ -1,8 +1,8 @@
 import streamlit as st
-
 from streamlit_option_menu import option_menu
 
 from backend.data.catalog import Catalog
+
 
 def sidebar() -> str:
     with st.sidebar:

@@ -1,10 +1,10 @@
 import os
-import streamlit as st
-
 from pathlib import Path
-from frontend.utils.utils import get_img_with_href
 
+import streamlit as st
 from dotenv import load_dotenv
+
+from frontend.utils.utils import get_img_with_href
 
 # Load environment variables from .env file
 load_dotenv()

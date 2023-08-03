@@ -1,39 +1,32 @@
-import os
 import logging
+import os
+from pathlib import Path
 
 import streamlit as st
 import streamlit_analytics
-
+from dotenv import load_dotenv
 from PIL import Image
-from pathlib import Path
-
+from st_pages import Page, hide_pages, show_pages
 from streamlit_extras.app_logo import add_logo
-from streamlit_extras.colored_header import colored_header
 from streamlit_extras.buy_me_a_coffee import button
+from streamlit_extras.colored_header import colored_header
 from streamlit_toggle import st_toggle_switch
 
-from st_pages import Page, hide_pages, show_pages
-
-from frontend.utils.settings import disable_theme_switch
-
 from backend.data.item import Item
-
-from frontend.utils.ads import get_ads
-from frontend.ask_ai import ask_ai_page
-from frontend.compare_items import compare_items
 from frontend.all_and_best_items import all_and_best_items
+from frontend.ask_ai import ask_ai_page
+from frontend.column_setup import set_form
+from frontend.compare_items import compare_items
+from frontend.footer import get_footer
 from frontend.sidebar import sidebar
 from frontend.subscription import subscription
-from frontend.column_setup import set_form
-from frontend.footer import get_footer
-
-from frontend.utils.google_analytics import google_analytics_setup
+from frontend.utils.ads import get_ads
 from frontend.utils.google_adsense import google_adsense_setup
+from frontend.utils.google_analytics import google_analytics_setup
 from frontend.utils.impact_com import impact_setup
-from frontend.utils.utils import local_css
+from frontend.utils.settings import disable_theme_switch
 from frontend.utils.theme import set_theme
-
-from dotenv import load_dotenv
+from frontend.utils.utils import local_css
 
 # Load environment variables from .env file
 load_dotenv()

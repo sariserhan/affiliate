@@ -3,6 +3,7 @@ import streamlit_authenticator as stauth
 
 from backend.data.admin import Admin
 
+
 # --- ADMIN AUTHENTICATION
 def auth():
     creds = Admin().fetch_records()

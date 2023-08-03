@@ -1,6 +1,6 @@
-import streamlit as st
-
 from pathlib import Path
+
+import streamlit as st
 
 disable_theme_switch = False
 def disable_theme_selection_for_user():

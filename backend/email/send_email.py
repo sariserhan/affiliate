@@ -1,18 +1,18 @@
+import base64
+import logging
 import os
+import smtplib
 import ssl
 import time
-import base64
-import smtplib
-import logging
-
-from pathlib import Path
-from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
+from email.mime.text import MIMEText
 from email.utils import formataddr
-from frontend.utils.utils import get_img_with_href
+from pathlib import Path
 
 from deta import Deta
 from dotenv import load_dotenv
+
+from frontend.utils.utils import get_img_with_href
 
 ssl._create_default_https_context = ssl._create_unverified_context
 logging.basicConfig(level=logging.DEBUG)

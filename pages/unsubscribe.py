@@ -1,5 +1,4 @@
 import streamlit as st
-
 from st_pages import hide_pages
 
 from frontend.subscription import unsubscribe

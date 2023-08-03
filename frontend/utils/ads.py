@@ -1,5 +1,6 @@
 import random
 
+
 def get_ads():
 
     ADS = [

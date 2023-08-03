@@ -1,8 +1,9 @@
-import streamlit as st
-
 from pathlib import Path
+
+import streamlit as st
 from st_pages import hide_pages
 from streamlit_extras.switch_page_button import switch_page
+
 from frontend.footer import get_footer
 from frontend.utils.utils import local_css
 

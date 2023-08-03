@@ -1,12 +1,13 @@
+import logging
+import random
 import re
 import time
-import random
-import logging
-import streamlit as st
 
+import streamlit as st
 from streamlit_extras.no_default_selectbox import selectbox
-from frontend.utils.utils import get_progress_bar, ask_ai
+
 from backend.data.affiliate_partner import Affiliate_Partner
+from frontend.utils.utils import ask_ai, get_progress_bar
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -16,6 +17,7 @@ def add_item(item_obj, catalog_list):
 
 	try:
 		from streamlit_toggle import st_toggle_switch
+
 		# TOGGLE SWITCH FOR f_clicked
 		f_clicked_toggle = st_toggle_switch(
 			label="Enable f-clicked?",

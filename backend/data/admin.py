@@ -1,8 +1,7 @@
-import re
 import logging
+import re
 
 from .database import DETA
-
 
 logging.basicConfig(level=logging.DEBUG)
 

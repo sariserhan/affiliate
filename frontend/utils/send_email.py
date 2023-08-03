@@ -1,8 +1,9 @@
 import logging
+
 import streamlit as st
 
-from frontend.column_setup import get_image
 from backend.email.send_email import EmailService
+from frontend.column_setup import get_image
 
 
 def send_email(item_obj, catalog_list):

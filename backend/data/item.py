@@ -1,8 +1,8 @@
 import json
 import logging
 
-from .catalog import Catalog
 from .affiliate_partner import Affiliate_Partner
+from .catalog import Catalog
 from .database import DETA
 
 logging.basicConfig(level=logging.DEBUG)
