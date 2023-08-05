@@ -2,31 +2,36 @@ import streamlit as st
 from streamlit_option_menu import option_menu
 
 from backend.data.catalog import Catalog
+from backend.data.category import Category
+ 
 
+def sidebar(catalogs: list = None) -> str:
+    if catalogs:
+        with st.sidebar:
+            
+            sidebar = option_menu(
+                menu_title=None,
+                options=catalogs,
+                orientation='horizontal'
+            )
+            return sidebar
+    else:
+        with st.sidebar:
+            categories = Category().fetch_records()
+            category_list = [
+                category['name'] for category in categories if category['is_active']
+            ]
+            main_sidebar = option_menu(
+                menu_title=None,
+                options=['All Items', 'Ask AI', 'Compare Items with AI', 'Best Picks', 'Most Viewed', 'Pros & Cons']+category_list,
+                icons=["list-stars", "question-square", "arrow-left-right", "star", "bookmark-star", "yin-yang"]
+            )
+            return main_sidebar
 
-def sidebar() -> str:
-    with st.sidebar:
-        catalog_list = get_catalog_list()
-        
-        sidebar = option_menu(
-            menu_title=None,
-            options=(catalog_list),
-            icons=["list-stars", "question-square", "arrow-left-right", "star", "bookmark-star", "yin-yang"]
-        )
-    
-    return sidebar
+# @st.cache_data
+# def get_catalog_list(catalogs=Catalog().get_record_by_catalog()) -> list:
+#     catalog_list = [
+#         catalog['name'] for catalog in catalogs if catalog['is_active']
+#     ]
 
-@st.cache_data
-def get_catalog_list(catalogs=Catalog().fetch_records()) -> list:
-    catalog_list = [
-        catalog['name'] for catalog in catalogs if catalog['is_active']
-    ]
-    #Add All Items into Catalog and make it default
-    catalog_list.insert(0, 'Pros & Cons')
-    catalog_list.insert(0, 'Most Viewed')
-    catalog_list.insert(0, 'Best Picks')
-    catalog_list.insert(0, 'Compare Items with AI')
-    catalog_list.insert(0, 'Ask AI')
-    catalog_list.insert(0, 'All Items')
-
-    return catalog_list
+#     return catalog_list

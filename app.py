@@ -10,6 +10,7 @@ from st_pages import Page, hide_pages, show_pages
 from streamlit_extras.app_logo import add_logo
 from streamlit_extras.buy_me_a_coffee import button
 from streamlit_extras.colored_header import colored_header
+from streamlit_option_menu import option_menu
 from streamlit_toggle import st_toggle_switch
 
 from backend.data.item import Item
@@ -27,6 +28,8 @@ from frontend.utils.impact_com import impact_setup
 from frontend.utils.settings import disable_theme_switch
 from frontend.utils.theme import set_theme
 from frontend.utils.utils import local_css
+
+from backend.data.category import Category
 
 # Load environment variables from .env file
 load_dotenv()
@@ -115,7 +118,8 @@ def init():
     st.markdown("<a href='#linkto_top' class='floating-button-right'>:arrow_up:</a>", unsafe_allow_html=True)
     st.markdown("<a class='floating-button-left'>:nazar_amulet:</a>", unsafe_allow_html=True)
 
-def main():
+
+def main():    
     # --- CATALOG SIDE BAR
     selected_catalog = sidebar()
     
@@ -160,16 +164,23 @@ def main():
         logging.info("-------- MOST VIEWED SELECTED ----------")
         
     else:
-        items = Item().get_record_by_catalog(catalog=selected_catalog)
-        logging.info(f"-------- CATALOG - {selected_catalog} - SELECTED ----------")
-    
-        # --- POST LIST
-        with col2:        
-            set_form(
-                items=items,
-                col_name='col2', 
-                selected_catalog=selected_catalog
-            )
+        category_key = selected_catalog.replace(' ','_')
+        category = Category().get_record(category_key)
+        
+        catalog_sidebar = sidebar(category['catalog_list'])
+        
+        if catalog_sidebar:
+        
+            items = Item().get_record_by_catalog(catalog=catalog_sidebar)
+            logging.info(f"-------- CATALOG - {selected_catalog} - SELECTED ----------")
+        
+            # --- POST LIST
+            with col2:        
+                set_form(
+                    items=items,
+                    col_name='col2', 
+                    selected_catalog=selected_catalog
+                )
             
     st.divider()
 
