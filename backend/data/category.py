@@ -5,16 +5,16 @@ from .database import DETA
 logging.basicConfig(level=logging.DEBUG)
 
 class Category(DETA):
-    
+
     def __init__(self, name: str = ''):
         self.name = name
         self.key = name.replace(' ','_')
         super(Category, self).__init__(db="category_db")
-        
+
     def create_category(self, name: str):
         self.key = name.replace(' ','_')
         self.name = name
-        
+
         data = {
             "key": self.key,
             "name": self.name,
@@ -28,7 +28,7 @@ class Category(DETA):
         except Exception:
             logging.warning(f"{self.name} is already in the database.")
         return
-    
+
     def add_catalog(self, catalogs:list):
         if self.name != '':
             category = self.db.get(self.key)
