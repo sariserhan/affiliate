@@ -28,7 +28,7 @@ from frontend.utils.google_analytics import google_analytics_setup
 from frontend.utils.impact_com import impact_setup
 from frontend.utils.settings import disable_theme_switch
 from frontend.utils.theme import set_theme
-from frontend.utils.utils import local_css
+from frontend.utils.utils import disable_secondary_sidebar, local_css
 
 # Load environment variables from .env file
 load_dotenv()
@@ -45,7 +45,6 @@ def init():
     icon_file = current_dir / 'assets' / 'icon.png'
     logo_file = current_dir / 'assets' / 'logo.png'
     css_file = current_dir / 'styles' / 'main.css'
-    toggle_icon_file = current_dir / 'assets' / 'toggle_icon.png'
 
     # --- ICON
     icon = Image.open(icon_file)
@@ -128,14 +127,17 @@ def main():
 
     # --- ITEM LIST
     if selected_category == "All Items":
+        disable_secondary_sidebar()
         all_and_best_items()
         logging.info("-------- ALL ITEMS SELECTED ----------")
 
     elif selected_category == "Compare Items with AI":
+        disable_secondary_sidebar()
         compare_items(compare=True)
         logging.info("-------- COMPARE ITEMS SELECTED ----------")
 
     elif selected_category == "Ask AI":
+        disable_secondary_sidebar()
         ask_ai_page()
         logging.info("-------- ASK AI SELECTED ----------")
         st.write("""
@@ -153,14 +155,17 @@ def main():
                  """, unsafe_allow_html=True)
 
     elif selected_category == "Pros & Cons":
+        disable_secondary_sidebar()
         compare_items()
         logging.info("-------- PROS & CONS SELECTED ----------")
 
     elif selected_category == "Best Picks":
+        disable_secondary_sidebar()
         all_and_best_items(is_best_pick=True)
         logging.info("-------- BEST PICKS SELECTED ----------")
 
     elif selected_category == 'Most Viewed':
+        disable_secondary_sidebar()
         all_and_best_items(is_most_viewed=True)
         logging.info("-------- MOST VIEWED SELECTED ----------")
 

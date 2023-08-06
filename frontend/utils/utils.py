@@ -88,3 +88,14 @@ def get_base64_of_bin_file(bin_file):
 def local_css(file_name):
     with open(file_name) as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
+
+
+def disable_secondary_sidebar():
+    return st.markdown("""
+                            <style>
+                                [class="css-1k9lj19 e1f1d6gn0"] {
+                                    display: none
+                                }
+                            </style>
+                        """, unsafe_allow_html=True
+                       )
