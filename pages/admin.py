@@ -9,7 +9,11 @@ from frontend.utils.add_item import add_item
 from frontend.utils.auth import auth
 from frontend.utils.delete_item import delete_item
 from frontend.utils.send_email import send_email
-from frontend.utils.settings import disable_theme_selection_for_user, set_default_theme
+from frontend.utils.settings import (
+    disable_theme_selection_for_user,
+    get_db_backup,
+    set_default_theme,
+)
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -49,3 +53,4 @@ if auth():
         with tab4:
             disable_theme_selection_for_user()
             set_default_theme()
+            get_db_backup()

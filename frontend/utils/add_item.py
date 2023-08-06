@@ -11,9 +11,8 @@ from frontend.utils.utils import ask_ai, get_progress_bar
 
 logging.basicConfig(level=logging.DEBUG)
 
+
 # --- ADD ITEM
-
-
 def add_item(item_obj, catalog_list, category_list):
     f_clicked_toggle = None
 

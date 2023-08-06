@@ -33,6 +33,9 @@ class DETA:
     def del_image_data(self, name: str, catalog: str) -> str:
         return self.drive.delete(f"/{catalog}/{name}")
 
+    def get_image_names(self):
+        return self.drive.list()['names']
+
     def get_record_by_catalog(self, catalog: str) -> list:
         records = self.fetch_records()
         return [record for record in records if catalog == record['catalog']]
