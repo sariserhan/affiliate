@@ -9,7 +9,6 @@ from frontend.ask_ai import ask_ai_page
 from frontend.utils.utils import get_image, open_page
 
 
-@st.cache_data(show_spinner='Loading...', persist='disk', experimental_allow_widgets=True)
 def all_and_best_items(is_best_pick: bool = False, is_most_viewed: bool = False):
     _, col2, _ = st.columns([1, 2.5, 1])
     items = Item().fetch_records()

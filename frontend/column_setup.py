@@ -18,7 +18,6 @@ def number_to_words(number):
     return " ".join(words[int(i)] for i in str(number))
 
 
-@st.cache_data(show_spinner='Loading...', persist='disk', experimental_allow_widgets=True)
 def set_form(items: dict, col_name: str, selected_catalog: str):
     for item_index, item in enumerate(items):
         item_key = item["key"]

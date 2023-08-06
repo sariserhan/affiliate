@@ -26,7 +26,7 @@ def delete_item(item_obj):
                     item_obj.delete_item(key=key)
                     st.success(f'Item is deleted {selected_item}')
                     logging.info(f'Item is deleted {selected_item}')
-                except:
+                except Exception:
                     st.error(f'Error in deleting item {selected_item}')
                     logging.error(f'Error in deleting item {selected_item}')
                 try:
@@ -34,6 +34,6 @@ def delete_item(item_obj):
                         name=item_key['image_name'], catalog=item_key['catalog'])
                     st.success(f'Image is deleted {selected_item}')
                     logging.info(f'Image is deleted {selected_item}')
-                except:
+                except Exception:
                     st.error(f'Error in deleting Image {selected_item}')
                     logging.error(f'Error in deleting Image {selected_item}')
