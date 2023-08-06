@@ -9,7 +9,7 @@ logging.basicConfig(level=logging.DEBUG)
 class Subscription(DETA):
 
     def __init__(self, email: str = '', is_subscribed: bool = True) -> None:
-        if email:
+        if not email == '':
             if not self._validate_email(email):
                 raise ValueError("Invalid email address")
             self.key = email
