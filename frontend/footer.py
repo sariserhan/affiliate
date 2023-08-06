@@ -11,7 +11,8 @@ load_dotenv()
 
 
 def get_footer():
-    current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
+    current_dir = Path(
+        __file__).parent if "__file__" in locals() else Path.cwd()
     # gmail_file = current_dir / 'assets' / 'gmail.png'
     # twitter_file = current_dir / 'assets' / 'twitter.png'
     # instagram_file = current_dir / 'assets' / 'instagram.png'
@@ -24,18 +25,17 @@ def get_footer():
     st.markdown(
         """
         <div id="footer">
-            <p>                                                 
+            <p>
                 © 2023, USCapita LLC. All rights reserved.
                 <br>
-                <a style="text-decoration: none; filter: invert(50%)" href='https://aibestgoods.com/privacy' target='_blank' rel="noopener,noreferrer">                    
+                <a style="text-decoration: none; filter: invert(50%)" href='https://aibestgoods.com/privacy' target='_blank' rel="noopener,noreferrer">
                     Privacy Statement
-                </a>              
-                <a style="display: inline-block; margin-left: 10px; text-decoration: none; filter: invert(50%)" href='https://aibestgoods.com/terms-conditions' target='_blank' rel="noopener,noreferrer">                    
+                </a>
+                <a style="display: inline-block; margin-left: 10px; text-decoration: none; filter: invert(50%)" href='https://aibestgoods.com/terms-conditions' target='_blank' rel="noopener,noreferrer">
                     Terms And Conditions
-                </a>                
+                </a>
             </p>
         </div>
         """,
         unsafe_allow_html=True,
-    )                            
-       
+    )

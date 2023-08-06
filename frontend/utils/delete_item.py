@@ -4,6 +4,7 @@ import streamlit as st
 
 logging.basicConfig(level=logging.DEBUG)
 
+
 def delete_item(item_obj):
     with st.form(key="delete-form", clear_on_submit=True):
         item_dict = {}
@@ -28,11 +29,11 @@ def delete_item(item_obj):
                 except:
                     st.error(f'Error in deleting item {selected_item}')
                     logging.error(f'Error in deleting item {selected_item}')
-                try: 
-                    item_obj.del_image_data(name=item_key['image_name'],catalog=item_key['catalog'])
+                try:
+                    item_obj.del_image_data(
+                        name=item_key['image_name'], catalog=item_key['catalog'])
                     st.success(f'Image is deleted {selected_item}')
                     logging.info(f'Image is deleted {selected_item}')
                 except:
                     st.error(f'Error in deleting Image {selected_item}')
                     logging.error(f'Error in deleting Image {selected_item}')
-                    

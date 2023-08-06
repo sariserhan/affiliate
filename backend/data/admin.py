@@ -7,17 +7,17 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 class Admin(DETA):
-    
+
     def __init__(self):
         super(Admin, self).__init__(db="admin_db")
-    
+
     def create_user(self, name: str, username: str, password: str):
         if not self._validate_username(username):
             raise ValueError("Invalid email address")
         self.name = name
         self.key = username
-        self.password = password        
-        
+        self.password = password
+
     def _validate_username(self, username):
         # Check for spaces
         if ' ' in username:

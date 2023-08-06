@@ -11,12 +11,15 @@ from frontend.utils.utils import get_image, open_page
 
 logging.basicConfig(level=logging.DEBUG)
 
+
 def number_to_words(number):
-    words = [":one:", ":two:", ":three:", ":four:", ":five:", ":six:", ":seven:", ":eight:", ":nine:"]
+    words = [":one:", ":two:", ":three:", ":four:",
+             ":five:", ":six:", ":seven:", ":eight:", ":nine:"]
     return " ".join(words[int(i)] for i in str(number))
 
-    
-def set_form(items:dict, col_name: str, selected_catalog: str):
+
+@st.cache_data(show_spinner='Loading...', persist='disk', experimental_allow_widgets=True)
+def set_form(items: dict, col_name: str, selected_catalog: str):
     for item_index, item in enumerate(items):
         item_key = item["key"]
         name = item["name"]
@@ -26,25 +29,26 @@ def set_form(items:dict, col_name: str, selected_catalog: str):
         clicked = item["clicked"]
         f_clicked = item["f_clicked"]
         viewed = clicked + f_clicked
-        
-        with st.form(f'{name}_{col_name}', clear_on_submit=False):  
-            
-            # --- SUB-HEADER  
-            st.markdown(f"<h2 class='element'><a href={url}>{name}</a></h2>", unsafe_allow_html=True)
+
+        with st.form(f'{name}_{col_name}', clear_on_submit=False):
+
+            # --- SUB-HEADER
+            st.markdown(
+                f"<h2 class='element'><a href={url}>{name}</a></h2>", unsafe_allow_html=True)
             st.write('---')
-            
+
             # --- ADD keyboard to URL
             number = number_to_words(item_index)
             keyboard_to_url(key=str(item_index+1), url=url)
-            
-            # --- ADD mentions to the text         
+
+            # --- ADD mentions to the text
             inline_mention = mention(
                 label=f"**_Visit Site:_ :green[{name}]** :pushpin:",
                 icon=":arrow_right:",
                 url=url,
                 write=False
             )
-            
+
             # -------------------------------------
             # THIS IS FOR AD
             # --- ADD mentions to the text for ad..
@@ -55,12 +59,12 @@ def set_form(items:dict, col_name: str, selected_catalog: str):
             #     write=False
             # )
             # NOTE: Add ad link here
-            # keyboard_to_url(key="a", url="https://www.google.com")            
+            # keyboard_to_url(key="a", url="https://www.google.com")
             # st.write(
             #     f'{inline_mention} or hit {key(number, False)} on your keyboard {inline_ad_mention} nor hit {key(":a:", False)} :exclamation:',
             #     unsafe_allow_html=True,
-            # )     
-            # -------------------------------------                       
+            # )
+            # -------------------------------------
 
             # --- IMAGE
             try:
@@ -68,23 +72,27 @@ def set_form(items:dict, col_name: str, selected_catalog: str):
                 st.image(image=image, caption=name, use_column_width=True)
             except Exception as e:
                 logging.error(f'Error for item: {name} ---> {e}')
-            
+
             # --- DESCRIPTION
             st.markdown(description)
-            
-             # --- URL AND KEYBOARD TO URL            
+
+            # --- URL AND KEYBOARD TO URL
             st.write(
                 f'{inline_mention} or hit {key(number, False)} on your keyboard :keyboard:', unsafe_allow_html=True
             )
-                                        
+
             # CHECK PRICE BUTTON
             counter_text = st.empty()
-            counter_text.markdown(f'**:green[{viewed}]** times visited :eyes:', unsafe_allow_html=True)
+            counter_text.markdown(
+                f'**:green[{viewed}]** times visited :eyes:', unsafe_allow_html=True)
             ask_ai_page(name=name)
- 
+
             if st.form_submit_button(label=':heavy_dollar_sign: Check Price', on_click=open_page, args=(url,)):
-                Item().update_record(key=item_key, updates={'clicked':clicked+1})
-                                
+                Item().update_record(key=item_key,
+                                     updates={'clicked': clicked+1})
+
                 # Update the counter text on the page
-                counter_text.markdown(f"**:red[{viewed+1}]** times visited :white_check_mark:")                
-                logging.info(f"{name} is clicked by {st.experimental_user.email} --> {url}")
+                counter_text.markdown(
+                    f"**:red[{viewed+1}]** times visited :white_check_mark:")
+                logging.info(
+                    f"{name} is clicked by {st.experimental_user.email} --> {url}")

@@ -22,6 +22,7 @@ load_dotenv()
 
 DETA = Deta(os.getenv("DETA_KEY"))
 
+
 class EmailService():
 
     @staticmethod
@@ -44,17 +45,18 @@ class EmailService():
         return item_db.get(key=key)
 
     @staticmethod
-    def get_image(catalog: str, name:str):
+    def get_image(catalog: str, name: str):
         return DETA.Drive('images_db').get(f"/{catalog}/{name}").read()
 
-
     # Function to send the email
+
     @classmethod
     def send_email(cls, recipient_email: str, item_dict: dict = None, subscription_event: str = None):
         sender_email: str = os.getenv('email_sender_name')
         msg = MIMEMultipart()
         if item_dict:
-            image_data = cls.get_image(name=item_dict['image_name'], catalog=item_dict['catalog'])
+            image_data = cls.get_image(
+                name=item_dict['image_name'], catalog=item_dict['catalog'])
             item_name = item_dict['name']
             item_description = item_dict['description']
             item_link = item_dict['affiliate_link']
@@ -76,32 +78,35 @@ class EmailService():
             cons = [f'<li>❌ {i}</li>' for i in item_dict['pros'].split('. ')]
             pros = [f'<li>✅ {i}</li>' for i in item_dict['cons'].split('. ')]
             # Create the email message
-            subject = item_name          
+            subject = item_name
 
             # --- PATH SETTINGS ---
-            current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
+            current_dir = Path(
+                __file__).parent if "__file__" in locals() else Path.cwd()
             email_body_file = current_dir / 'backend' / 'email' / 'email_body.html'
 
             # Read the HTML file
             with open(email_body_file, "r") as file:
                 html_content = file.read()
             image_base64 = base64.b64encode(image_data).decode("utf-8")
-            current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
+            current_dir = Path(
+                __file__).parent if "__file__" in locals() else Path.cwd()
             aibestgoods_logo_path = current_dir / 'assets' / 'logo.png'
-            aibestgoods_logo = get_img_with_href(aibestgoods_logo_path, "AIBestGoods")
+            aibestgoods_logo = get_img_with_href(
+                aibestgoods_logo_path, "AIBestGoods")
 
             html_content = html_content\
-                                .replace("AIBESTGOODS_ICON", aibestgoods_logo)\
-                                .replace("PRIMARY_COLOR", theme['background-color'])\
-                                .replace("SECONDARY_COLOR", theme['secondary-background-color'])\
-                                .replace("ITEM_NAME", item_name)\
-                                .replace("ITEM_LINK", item_link)\
-                                .replace("IMAGE_DATA", image_base64)\
-                                .replace("IMAGE_ALT", item_image_name)\
-                                .replace("ITEM_VIEWED", f'🔥 {item_viewed}')\
-                                .replace("ITEM_PROS", ''.join(pros))\
-                                .replace("ITEM_CONS", ''.join(cons))\
-                                .replace("ITEM_DESCRIPTION", item_description.split('. ')[0])
+                .replace("AIBESTGOODS_ICON", aibestgoods_logo)\
+                .replace("PRIMARY_COLOR", theme['background-color'])\
+                .replace("SECONDARY_COLOR", theme['secondary-background-color'])\
+                .replace("ITEM_NAME", item_name)\
+                .replace("ITEM_LINK", item_link)\
+                .replace("IMAGE_DATA", image_base64)\
+                .replace("IMAGE_ALT", item_image_name)\
+                .replace("ITEM_VIEWED", f'🔥 {item_viewed}')\
+                .replace("ITEM_PROS", ''.join(pros))\
+                .replace("ITEM_CONS", ''.join(cons))\
+                .replace("ITEM_DESCRIPTION", item_description.split('. ')[0])
 
             msg.attach(MIMEText(html_content, 'html'))
         else:
@@ -124,7 +129,8 @@ class EmailService():
         server.login(sender_email, os.getenv("email_password"))
 
         # Send the email
-        server.sendmail(sender_email, recipient_email, msg.as_string('email_password'))
+        server.sendmail(sender_email, recipient_email,
+                        msg.as_string('email_password'))
 
         # Close the connection to the SMTP server
         server.quit()
@@ -136,7 +142,7 @@ if __name__ == '__main__':
     email_obj = EmailService()
     emails_to_send = email_obj.get_subscription_list()
     item_dict = email_obj.get_item("August_Home")
-    
+
     for email in emails_to_send:
         if not item_dict['email_sent']:
             email_obj.send_email(recipient_email=email, item_dict=item_dict)

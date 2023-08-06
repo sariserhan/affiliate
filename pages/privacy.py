@@ -14,7 +14,7 @@ css_file = current_dir / '../styles' / 'main.css'
 local_css(css_file)
 
 with st.form("privacy"):
-    
+
     # HIDE SIDE BAR
     st.markdown("""
             <style>
@@ -27,7 +27,7 @@ with st.form("privacy"):
             }
             </style>
             """, unsafe_allow_html=True
-            )
+                )
 
     st.subheader("PRIVACY")
 
@@ -55,7 +55,7 @@ with st.form("privacy"):
                 - Send you administrative information, such as updates and notifications.
                 - Send you promotional and marketing materials.
                 - Monitor and analyze usage patterns and trends.
-                
+
                 (b) We will not share your Personal Information with third parties except as described in this Privacy Policy.
 
                 Data Security

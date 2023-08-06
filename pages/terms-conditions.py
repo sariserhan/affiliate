@@ -14,7 +14,7 @@ css_file = current_dir / '../styles' / 'main.css'
 local_css(css_file)
 
 with st.form('terms_and_conditions'):
-    
+
     # HIDE SIDE BAR
     st.markdown("""
             <style>
@@ -27,11 +27,10 @@ with st.form('terms_and_conditions'):
             }
             </style>
             """, unsafe_allow_html=True
-            )
-
+                )
 
     st.subheader('TERMS AND CONDITIONS')
-    st.write("""            
+    st.write("""
 
                 These Terms and Conditions ("Terms") govern your use of [aibestgoods.com] (the "AIBestGoods"), operated by [USCapita LLC] ("we," "us," "our").
 
@@ -76,7 +75,7 @@ with st.form('terms_and_conditions'):
 
                 Contact Us
                 If you have any questions or concerns regarding these Terms and Conditions, please contact us at [serhan.sari83@gmail.com].
-            
+
          """, unsafe_allow_html=True)
 
     if st.form_submit_button('Home'):

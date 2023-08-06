@@ -22,16 +22,16 @@ if "state_dict" not in st.session_state:
 # --- ADMIN AUTHENTICATION
 if auth():
     with st.container():
-        tab1, tab2, tab3, tab4 = st.tabs(["Add New Item", "Delete Item", "Send Email", "Settings"])
+        tab1, tab2, tab3, tab4 = st.tabs(
+            ["Add New Item", "Delete Item", "Send Email", "Settings"])
 
         catalogs = Catalog().fetch_records()
         catalog_list = [catalog['name'] for catalog in catalogs]
-        
+
         categories = Category().fetch_records()
         category_list = [category['name'] for category in categories]
-        
+
         item_obj = Item()
-        
 
         # --- ADD ITEM
         with tab1:
@@ -43,10 +43,9 @@ if auth():
 
         # --- SEND EMAIL
         with tab3:
-            send_email(item_obj, catalog_list)      
+            send_email(item_obj, catalog_list)
 
         # --- WEBSITE-SETTINGS
         with tab4:
             disable_theme_selection_for_user()
             set_default_theme()
-            

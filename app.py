@@ -10,15 +10,17 @@ from st_pages import Page, hide_pages, show_pages
 from streamlit_extras.app_logo import add_logo
 from streamlit_extras.buy_me_a_coffee import button
 from streamlit_extras.colored_header import colored_header
+from streamlit_option_menu import option_menu
 from streamlit_toggle import st_toggle_switch
 
+from backend.data.category import Category
 from backend.data.item import Item
 from frontend.all_and_best_items import all_and_best_items
 from frontend.ask_ai import ask_ai_page
 from frontend.column_setup import set_form
 from frontend.compare_items import compare_items
 from frontend.footer import get_footer
-from frontend.sidebar import sidebar
+from frontend.sidebar import get_catalog_sidebar, get_sidebar
 from frontend.subscription import subscription
 from frontend.utils.ads import get_ads
 from frontend.utils.google_adsense import google_adsense_setup
@@ -38,7 +40,8 @@ logging.getLogger('fsevents').setLevel(logging.WARNING)
 
 def init():
     # --- PATH SETTINGS
-    current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
+    current_dir = Path(
+        __file__).parent if "__file__" in locals() else Path.cwd()
     icon_file = current_dir / 'assets' / 'icon.png'
     logo_file = current_dir / 'assets' / 'logo.png'
     css_file = current_dir / 'styles' / 'main.css'
@@ -76,7 +79,8 @@ def init():
             Page("pages/terms-conditions.py", "terms and conditions")
         ]
     )
-    hide_pages(["admin", "home", "unsubscribe", "privacy", "terms and conditions", "app", "terms-conditions"])
+    hide_pages(["admin", "home", "unsubscribe", "privacy",
+               "terms and conditions", "app", "terms-conditions"])
 
     # --- CSS
     local_css(css_file)
@@ -112,25 +116,26 @@ def init():
     )
 
     # Create the floating button
-    st.markdown("<a href='#linkto_top' class='floating-button-right'>:arrow_up:</a>", unsafe_allow_html=True)
-    st.markdown("<a class='floating-button-left'>:nazar_amulet:</a>", unsafe_allow_html=True)
+    st.markdown("<a href='#linkto_top' class='floating-button-right'>:arrow_up:</a>",
+                unsafe_allow_html=True)
+    st.markdown("<a class='floating-button-left'>:nazar_amulet:</a>",
+                unsafe_allow_html=True)
+
 
 def main():
-    # --- CATALOG SIDE BAR
-    selected_catalog = sidebar()
-
-    _, col2, _ = st.columns([1,2.5,1])
+    # --- CATEGORY SIDE BAR
+    selected_category = get_sidebar()
 
     # --- ITEM LIST
-    if selected_catalog == "All Items":
-        all_and_best_items(col2)
+    if selected_category == "All Items":
+        all_and_best_items()
         logging.info("-------- ALL ITEMS SELECTED ----------")
 
-    elif selected_catalog == "Compare Items with AI":
+    elif selected_category == "Compare Items with AI":
         compare_items(compare=True)
         logging.info("-------- COMPARE ITEMS SELECTED ----------")
 
-    elif selected_catalog == "Ask AI":
+    elif selected_category == "Ask AI":
         ask_ai_page()
         logging.info("-------- ASK AI SELECTED ----------")
         st.write("""
@@ -144,33 +149,44 @@ def main():
                     data-ad-slot="4920781155"></ins>
                 <script>
                     (adsbygoogle = window.adsbygoogle || []).push({});
-                </script>                                  
+                </script>
                  """, unsafe_allow_html=True)
 
-    elif selected_catalog == "Pros & Cons":
+    elif selected_category == "Pros & Cons":
         compare_items()
         logging.info("-------- PROS & CONS SELECTED ----------")
 
-    elif selected_catalog == "Best Picks":
-        all_and_best_items(col2, is_best_pick=True)
+    elif selected_category == "Best Picks":
+        all_and_best_items(is_best_pick=True)
         logging.info("-------- BEST PICKS SELECTED ----------")
 
-    elif selected_catalog == 'Most Viewed':
-        all_and_best_items(col2, is_most_viewed=True)
+    elif selected_category == 'Most Viewed':
+        all_and_best_items(is_most_viewed=True)
         logging.info("-------- MOST VIEWED SELECTED ----------")
 
     else:
-        # ADD CATEGORY THAT CATALOG BELONGS CATEGORY=ELECTRONIC ---> CATALOG=[Electric Bike, Electric Scooter, etc..]
-        items = Item().get_record_by_catalog(catalog=selected_catalog)
-        logging.info(f"-------- CATALOG - {selected_catalog} - SELECTED ----------")
+        col1, col2, _ = st.columns([1.1, 2.5, 1])
+        catalog_list = get_catalog_sidebar(selected_category)
 
-        # --- POST LIST
-        with col2:
-            set_form(
-                items=items, # type: ignore
-                col_name='col2',
-                selected_catalog=selected_catalog
+        # --- CATALOG SECONDARY SUB-SIDEBAR
+        with col1:
+            selected_catalog = option_menu(
+                menu_title=None,
+                options=catalog_list
             )
+
+        if selected_catalog:
+            items = Item().get_record_by_catalog(catalog=selected_catalog)
+            logging.info(
+                f"-------- CATALOG - {selected_catalog} - SELECTED ----------")
+
+            # --- POST LIST
+            with col2:
+                set_form(
+                    items=items,
+                    col_name='col2',
+                    selected_catalog=selected_catalog
+                )
 
     st.divider()
 
@@ -184,9 +200,10 @@ def main():
     # with col3:
     #     button(username=os.getenv('buy_me_coffee'), floating=True, width=220)
 
-    streamlit_analytics.stop_tracking(unsafe_password=os.getenv("STREAMLIT_ANALYTICS")) # type: ignore
+    streamlit_analytics.stop_tracking(
+        unsafe_password=os.getenv("STREAMLIT_ANALYTICS"))  # type: ignore
+
 
 if __name__ == "__main__":
     init()
     main()
-    

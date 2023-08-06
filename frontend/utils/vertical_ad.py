@@ -6,6 +6,7 @@ from dotenv import load_dotenv
 # Load environment variables from .env file
 load_dotenv()
 
+
 @st.cache_resource
 def add_vertical_ad():
     google_adsense_id = os.getenv("GOOGLE_ADSENSE_ID")

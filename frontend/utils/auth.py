@@ -8,7 +8,7 @@ from backend.data.admin import Admin
 def auth():
     creds = Admin().fetch_records()
 
-    names=[]
+    names = []
     usernames = []
     passwords = []
 
@@ -25,9 +25,11 @@ def auth():
         }
         for i in range(len(usernames))
     }
-    authenticator = stauth.Authenticate(credentials, 'admin_page', 'auth', cookie_expiry_days=1)
+    authenticator = stauth.Authenticate(
+        credentials, 'admin_page', 'auth', cookie_expiry_days=1)
 
-    user_name, authentication_status, username = authenticator.login('Login', 'main')
+    user_name, authentication_status, username = authenticator.login(
+        'Login', 'main')
 
     if authentication_status == False:
         st.error("Username/password combination incorrect. Please try again.")
