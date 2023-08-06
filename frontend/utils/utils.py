@@ -16,12 +16,13 @@ models = openai.Model.list()
 
 
 def ask_ai(message_to_ask: str):
-    chat_completion = openai.ChatCompletion.create(model="gpt-3.5-turbo", messages=[{"role": "user", "content": f'{message_to_ask}'}])
+    chat_completion = openai.ChatCompletion.create(
+        model="gpt-3.5-turbo", messages=[{"role": "user", "content": f'{message_to_ask}'}])
     return chat_completion.choices[0].message.content
 
 
 @st.cache_data(show_spinner=False)
-def get_image(image_name, selected_catalog, resize = None):
+def get_image(image_name, selected_catalog, resize=None):
     image_data = Item().get_image_data(name=image_name, catalog=selected_catalog)
     image = Image.open(BytesIO(image_data))
     if resize:
@@ -32,28 +33,29 @@ def get_image(image_name, selected_catalog, resize = None):
 # Function to convert image to base64 encoding
 def pil_image_to_base64(image):
     img_buffer = BytesIO()
-    image.save(img_buffer, format="PNG")  # You can change the format to JPEG if needed
+    # You can change the format to JPEG if needed
+    image.save(img_buffer, format="PNG")
     return base64.b64encode(img_buffer.getvalue()).decode()
 
 
 # Navigates in the new page
 def open_page(url):
-    open_script= """
+    open_script = """
         <script type="text/javascript">
             window.open('%s', '_blank', 'noopener,noreferrer').focus();
-        </script> 
+        </script>
     """ % (url)
     html(open_script, height=0)
 
 
 # Navigates in the same page
-def nav_to(url): 
+def nav_to(url):
     nav_script = """
-                    <meta http-equiv="refresh" content="0; url='%s'" target="_blank">                    
+                    <meta http-equiv="refresh" content="0; url='%s'" target="_blank">
                  """ % (url)
     st.write(nav_script, unsafe_allow_html=True)
-    
-    
+
+
 def get_progress_bar(my_bar, progress_text: str):
     for percent_complete in range(100):
         time.sleep(0.01)
@@ -61,9 +63,9 @@ def get_progress_bar(my_bar, progress_text: str):
     my_bar.progress(100, text='Completed')
     time.sleep(1)
     my_bar.empty()
-    
-    
-def get_img_with_href(local_img_path, context, target_url = None):
+
+
+def get_img_with_href(local_img_path, context, target_url=None):
     img_format = os.path.splitext(local_img_path)[-1].replace('.', '')
     bin_str = get_base64_of_bin_file(local_img_path)
     return (
@@ -86,4 +88,3 @@ def get_base64_of_bin_file(bin_file):
 def local_css(file_name):
     with open(file_name) as f:
         st.markdown(f'<style>{f.read()}</style>', unsafe_allow_html=True)
-        

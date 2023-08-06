@@ -4,7 +4,7 @@ import os
 import streamlit as st
 from dotenv import load_dotenv
 
-from .index_html import index_html_add_to_head
+from .index_html_head import index_html_add_to_head
 
 logging.basicConfig(level=logging.DEBUG)
 

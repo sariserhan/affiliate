@@ -4,7 +4,7 @@ import os
 import streamlit as st
 from dotenv import load_dotenv
 
-from .index_html import alter_index_html, index_html_add_to_head
+from .index_html_head import index_html_add_to_head
 
 logging.basicConfig(level=logging.DEBUG)
 
@@ -23,8 +23,5 @@ def google_analytics_setup():
     end = f"gtag('config', '{google_tag_id}'); </script>\n"
 
     google_anayltics_script = beginning + middle + end
-
-    # --- Change Title in index.html
-    alter_index_html('<title>Streamlit', '<title>AIBestGoods')
 
     return index_html_add_to_head(context='analytics', add_head=google_anayltics_script)

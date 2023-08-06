@@ -6,10 +6,10 @@ logging.basicConfig(level=logging.DEBUG)
 
 
 class Affiliate_Partner(DETA):
-    
+
     def __init__(self):
         super(Affiliate_Partner, self).__init__(db="affiliate_partner_db")
-    
+
     def create_partner(self, name: str, email_account=None, password=None):
         data = {
             "key": name,
@@ -23,4 +23,3 @@ class Affiliate_Partner(DETA):
         except Exception:
             logging.warning(f"{name} is already in the database.")
         return
-    
