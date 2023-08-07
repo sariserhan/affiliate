@@ -32,22 +32,31 @@ class Category(DETA):
 
     def add_catalog(self, catalogs: list):
         if self.name != '':
-            category = self.db.get(self.key)
-            if not category:
+            try:
+                category = self.get_record(key=self.key)
+            except:
                 self.create_category(name=self.name)
-                category = self.db.get(self.key)
-            category['catalog_list'].extend(catalogs)  # type: ignore
-            self.db.put(category)  # type: ignore
-            logging.info("%s is added to %s category.", catalogs, self.name)
-            return f"{catalogs} is added to {self.name} category."
+                category = self.get_record(key=self.key)
+
+            for catalog in catalogs['catalog_list']:
+                if catalog in category:
+                    catalogs.remove(catalog)
+            if catalogs:
+                category['catalog_list'].extend(catalogs)  # type: ignore
+                self.db.put(category)  # type: ignore
+                logging.info("%s is added to %s category.",
+                             catalogs, self.name)
+                return f"{catalogs} is added to {self.name} category."
         else:
-            logging.warning("category name required.")
+            logging.warning("catalog name required.")
             return
 
 
 if __name__ == '__main__':
     # categories = Category().migrate_database('category_db_backup')
-    categories = Category().fetch_records()
-    for category in categories:
-        Category().update_record(
-            key=category['key'], updates={'catalog_list': []})
+    # categories = Category().fetch_records()
+    # for category in categories:
+    #     Category().update_record(
+    #         key=category['key'], updates={'catalog_list': []})
+
+    print(Category().get_record(key='Audio_Equipments')['catalog_list'])
