@@ -1,1 +1,1 @@
-# affiliate
+# aibestgoods
