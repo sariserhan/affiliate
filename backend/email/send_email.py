@@ -135,7 +135,7 @@ class EmailService():
         # Close the connection to the SMTP server
         server.quit()
 
-        logging.info(f'Email sent successfully to {recipient_email}!')
+        logging.info('Email sent successfully to %s!', recipient_email)
 
 
 if __name__ == '__main__':

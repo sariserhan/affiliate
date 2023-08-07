@@ -183,7 +183,7 @@ def main():
         if selected_catalog:
             items = Item().get_record_by_catalog(catalog=selected_catalog)
             logging.info(
-                f"-------- CATALOG - {selected_catalog} - SELECTED ----------")
+                "-------- CATALOG - %s - SELECTED ----------", selected_catalog)
 
             # --- POST LIST
             with col2:

@@ -49,7 +49,7 @@ class Item(DETA):
                 # Load data in to items_db Base
                 self.db.insert(data)
             except Exception:
-                logging.warning(f"{name} is already in the database.")
+                logging.warning("%s is already in the database.", name)
 
             # Upload image in to image_db Drive
             self.drive.put(f'{catalog_name}/{image_name}', image_path)
@@ -67,7 +67,7 @@ class Item(DETA):
             category_obj = Category(category)
             category_obj.add_catalog(catalogs=catalog_names)
 
-        logging.info(f"{name} is successfully added to the database.")
+        logging.info("%s is successfully added to the database.", name)
         return f"{name} is successfully added to the database."
 
     @staticmethod

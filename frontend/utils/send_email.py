@@ -63,12 +63,12 @@ def send_email(item_obj, catalog_list):
                         try:
                             item_obj.update_record(key=item_dict['key'], updates={
                                                    'email_sent': True})
-                            logging.info(f"{item_dict['name']} updated in DB")
+                            logging.info("%s updated in DB", item_dict['name'])
                         except Exception as e:
                             logging.error(
-                                f"Error in updating {item_dict['name']} in DB {e}")
+                                "Error in updating %s in DB %s", item_dict['name'], e)
                     except Exception as e:
-                        logging.error(f'Error sending email --> {e}')
+                        logging.error('Error sending email --> %s', e)
                         error = f'Error sending email --> {e}'
             warning = "Item has less than 1000 views to send to subscribers!"
 
@@ -85,7 +85,7 @@ def send_email(item_obj, catalog_list):
                 success = f'Email sent to {email_sending_to}'
             except Exception as e:
                 logging.error(
-                    f"Error in updating {item_dict['name']} in DB {e}")
+                    "Error in updating %s in DB %s", item_dict['name'], e)
         else:
             warning = 'Please enter email to send!'
 

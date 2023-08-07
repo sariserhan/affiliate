@@ -25,15 +25,15 @@ def delete_item(item_obj):
                 try:
                     item_obj.delete_item(key=key)
                     st.success(f'Item is deleted {selected_item}')
-                    logging.info(f'Item is deleted {selected_item}')
+                    logging.info('Item is deleted: %s', selected_item)
                 except Exception:
                     st.error(f'Error in deleting item {selected_item}')
-                    logging.error(f'Error in deleting item {selected_item}')
+                    logging.error('Error in deleting item: %s', selected_item)
                 try:
                     item_obj.del_image_data(
                         name=item_key['image_name'], catalog=item_key['catalog'])
                     st.success(f'Image is deleted {selected_item}')
-                    logging.info(f'Image is deleted {selected_item}')
+                    logging.info('Image is deleted: %s', selected_item)
                 except Exception:
                     st.error(f'Error in deleting Image {selected_item}')
-                    logging.error(f'Error in deleting Image {selected_item}')
+                    logging.error('Error in deleting Image: %s', selected_item)

@@ -19,7 +19,7 @@ def all_and_best_items(is_best_pick: bool = False, is_most_viewed: bool = False)
             random.shuffle(items)
 
         for item in items:
-            logging.info(f" -------> {item['name']} is processing...")
+            logging.info(" -------> %s is processing...", item['name'])
             if is_best_pick:
                 form_name = item['name']
                 if item['catalog'] in temp_catalog_list:
@@ -71,7 +71,7 @@ def all_and_best_items(is_best_pick: bool = False, is_most_viewed: bool = False)
                         counter_text.markdown(
                             f"**:red[{viewed+1}]** times visited :white_check_mark:")
                         logging.info(
-                            f"{name} is clicked by {st.experimental_user.email} --> {url}")
+                            "%s is clicked by %s --> %s", name, st.experimental_user.email, url)
     else:
         items_category_dict = {}
         for item in items:
@@ -131,4 +131,4 @@ def all_and_best_items(is_best_pick: bool = False, is_most_viewed: bool = False)
                             counter_text.markdown(
                                 f"**:red[{viewed+1}]** times visited :white_check_mark:")
                             logging.info(
-                                f"{name} is clicked by {st.experimental_user.email} --> {url}")
+                                "%s is clicked by %s --> %s", name, st.experimental_user.email, url)

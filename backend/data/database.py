@@ -83,15 +83,15 @@ class DETA:
                     catalog_record['item_list'].remove(item)  # type: ignore
                     break
             catalog_base.put(catalog_record)  # type: ignore
-            logging.info(f"{name} successfully removed from catalog.")
+            logging.info("%s successfully removed from catalog.", name)
         except Exception as e:
-            logging.error(f'Error in removing {name} from catalog ---> {e}')
+            logging.error('Error in removing %s from catalog ---> %s', name, e)
         try:
             self.db.delete(key)
-            logging.info(f"{name} successfully deleted.")
+            logging.info("%s successfully deleted.", name)
             return True
         except Exception as e:
-            logging.error(f'Error in deleting {name} ---> {e}')
+            logging.error('Error in deleting %s ---> %s', name, e)
             return False
 
     def migrate_database(self, target_database: str):
@@ -101,9 +101,9 @@ class DETA:
             if not item['key'].startswith('Corsair'):
                 try:
                     target.put(item)
-                    logging.info(f'{item["key"]} is migrated!')
+                    logging.info('%s is migrated!', item["key"])
                 except Exception as e:
-                    logging.error(f'Error migrating {item["key"]} --> {e}')
+                    logging.error('Error migrating %s --> %s', item["key"], e)
                     raise e
         return
 

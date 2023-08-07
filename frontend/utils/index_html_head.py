@@ -22,7 +22,7 @@ def index_html_add_to_head(context: str, add_head: str, add_body: str = ''):
                             '<body>', f'<body>{add_body}', data)
                         ff.write(newdata_body)
                     logging.info(
-                        f"{a} is updated with Google Adsense tracking code")
+                        "%s is updated with Google Adsense tracking code", a)
         elif context == "analytics":
             if "googletagmanager" in data:
                 logging.warning("Google Analytics is already set")
@@ -31,7 +31,7 @@ def index_html_add_to_head(context: str, add_head: str, add_body: str = ''):
                     newdata = re.sub('<head>', f'<head>{add_head}', data)
                     ff.write(newdata)
                     logging.info(
-                        f"{a} is updated with Google Analytics tracking code")
+                        "%s is updated with Google Analytics tracking code", a)
         elif context == "impact":
             if "ir-site-verification-token" in data:
                 logging.warning("Google Adsense is already set")
@@ -39,5 +39,5 @@ def index_html_add_to_head(context: str, add_head: str, add_body: str = ''):
                 with open(a, 'w') as ff:
                     newdata_head = re.sub('<head>', f'<head>{add_head}', data)
                     ff.write(newdata_head)
-                    logging.info(f"{a} is updated with Impact Id")
+                    logging.info("%s is updated with Impact Id", a)
     return

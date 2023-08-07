@@ -43,7 +43,7 @@ def subscribe(email: str):
     except ValueError as e:
         return 'error', "Invalid email address!"
     except Exception as e:
-        logging.error(f'Error trying to subscribe {e}')
+        logging.error('Error trying to subscribe %s', e)
         return 'error', f'Error trying to subscribe {e}'
 
 
@@ -64,5 +64,5 @@ def unsubscribe(email: str):
     except ValueError as e:
         return 'error', "Invalid email address!"
     except Exception as e:
-        logging.error(f'Error trying to unsubscribe {e}')
+        logging.error('Error trying to unsubscribe %s', e)
         return 'error', f'Error trying to unsubscribe {e}'

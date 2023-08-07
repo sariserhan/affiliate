@@ -34,11 +34,11 @@ def ask_ai_page(name: str = None):
                 'AI_ASK').format(name)).split('\n')
             get_progress_bar(my_bar, progress_text)
 
-            logging.info(f'--------> AI ANSWER:{answer}')
+            logging.info('--------> AI ANSWER:%s', answer)
             buy_paragraph, dont_buy_paragraph = answer[0], answer[2]
 
-            logging.info(f'--------> AI ANSWER BUY:{buy_paragraph}')
-            logging.info(f'--------> AI ANSWER DONT BUY:{dont_buy_paragraph}')
+            logging.info('--------> AI ANSWER BUY:%s', buy_paragraph)
+            logging.info('--------> AI ANSWER DONT BUY:%s', dont_buy_paragraph)
 
             st.subheader("You should consider because ✅")
             st.write(buy_paragraph)
@@ -99,7 +99,11 @@ def ask_ai_page(name: str = None):
                     counter_text.markdown(
                         f'**:red[{item["clicked"]+item["f_clicked"]+1}]** times visited :white_check_mark:')
                     logging.info(
-                        f"{item['name']} is clicked by {st.experimental_user.email} --> {item['affiliate_link']}")
+                        "%s is clicked by %s --> %s",
+                        item['name'],
+                        st.experimental_user.email,
+                        item['affiliate_link']
+                    )
 
                 questions_list = [
                     f'Should I buy this product:{selected_item}',
@@ -128,5 +132,5 @@ def ask_ai_page(name: str = None):
 
                     answer = ask_ai(message_to_ask=selected_question)
                     get_progress_bar(my_bar, progress_text)
-                    logging.info(f'--------> AI ANSWER:{answer}')
+                    logging.info('--------> AI ANSWER:%s', answer)
                     st.write(answer)

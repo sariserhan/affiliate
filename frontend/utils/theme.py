@@ -36,7 +36,9 @@ def set_theme(dark_mode: bool):
 
     if dark_mode:
         logging.info(
-            f"----- Dark Mode Selected ----- session state before:{st.session_state['backgroundColor']} ---- current background:{st.get_option('theme.backgroundColor')}"
+            "----- Dark Mode Selected ----- session state before:%s ---- current background:%s",
+            st.session_state['backgroundColor'],
+            st.get_option('theme.backgroundColor')
         )
         set_color('backgroundColor', theme['dark']['backgroundColor'])
         set_color('primaryColor', theme['dark']['primaryColor'])
@@ -46,7 +48,9 @@ def set_theme(dark_mode: bool):
 
     else:
         logging.info(
-            f"----- Light Mode Selected ----- session state before:{st.session_state['backgroundColor']} ---- current background:{st.get_option('theme.backgroundColor')}"
+            "----- Light Mode Selected ----- session state before:%s ---- current background:%s",
+            st.session_state['backgroundColor'],
+            st.get_option('theme.backgroundColor')
         )
         set_color('backgroundColor', theme['light']['backgroundColor'])
         set_color('primaryColor', theme['light']['primaryColor'])

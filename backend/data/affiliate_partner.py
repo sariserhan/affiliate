@@ -18,8 +18,8 @@ class Affiliate_Partner(DETA):
         }
         try:
             self.db.insert(data)
-            logging.info(f"{name} is successfully added.")
+            logging.info("%s is successfully added.", name)
             return f"{name} is successfully added."
         except Exception:
-            logging.warning(f"{name} is already in the database.")
+            logging.warning("%s is already in the database.", name)
         return

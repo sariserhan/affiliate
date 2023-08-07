@@ -24,10 +24,10 @@ class Catalog(DETA):
         }
         try:
             self.db.insert(data)
-            logging.info(f"{self.name} is successfully added.")
+            logging.info("%s is successfully added.", self.name)
             return f"{self.name} is successfully added."
         except Exception:
-            logging.warning(f"{self.name} is already in the database.")
+            logging.warning("%s is already in the database.", self.name)
         return
 
     def add_item(self, items: list):
@@ -38,7 +38,7 @@ class Catalog(DETA):
                 catalog = self.db.get(self.key)
             catalog['item_list'].extend(items)  # type: ignore
             self.db.put(catalog)  # type: ignore
-            logging.info(f"{items} are added to {self.name} catalog.")
+            logging.info("%s are added to %s catalog.", items, self.name)
             return f"{items} are added to {self.name} catalog."
         else:
             logging.warning("catalog name required.")

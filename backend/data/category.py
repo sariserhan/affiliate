@@ -24,10 +24,10 @@ class Category(DETA):
         }
         try:
             self.db.insert(data)
-            logging.info(f"{self.name} is successfully added.")
+            logging.info("%s is successfully added.", self.name)
             return f"{self.name} is successfully added."
         except Exception:
-            logging.warning(f"{self.name} is already in the database.")
+            logging.warning("%s is already in the database.", self.name)
         return
 
     def add_catalog(self, catalogs: list):
@@ -38,7 +38,7 @@ class Category(DETA):
                 category = self.db.get(self.key)
             category['catalog_list'].extend(catalogs)  # type: ignore
             self.db.put(category)  # type: ignore
-            logging.info(f"{catalogs} is added to {self.name} category.")
+            logging.info("%s is added to %s category.", catalogs, self.name)
             return f"{catalogs} is added to {self.name} category."
         else:
             logging.warning("category name required.")

@@ -18,12 +18,12 @@ class Subscription(DETA):
 
     def subscribe(self) -> str:
         self.db.put({'key': self.key, 'is_subscribed': self.is_subscribed})
-        logging.info(f"{self.key} is successfully subscribed.")
+        logging.info("%s is successfully subscribed.", self.key)
         return f"{self.key} is successfully subscribed."
 
     def unsubscribe(self) -> str:
         self.db.update({'is_subscribed': False}, self.key)
-        logging.info(f"{self.key} is successfully unsubscribed.")
+        logging.info("%s is successfully unsubscribed.", self.key)
         return f"{self.key} is successfully unsubscribed."
 
     def _validate_email(self, email):

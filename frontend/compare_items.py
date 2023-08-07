@@ -105,7 +105,11 @@ def compare_items(compare: bool = False):
                             counter_text.markdown(
                                 f'**:red[{item_left["clicked"]+item_left["f_clicked"]+1}]** times visited :white_check_mark:')
                             logging.info(
-                                f"{item_left['name']} is clicked by {st.experimental_user.email} --> {item_left['affiliate_link']}")
+                                "%s is clicked by %s --> %s",
+                                item_left['name'],
+                                st.experimental_user.email,
+                                item_left['affiliate_link']
+                            )
 
         with col2:
             selected_item_right = selectbox(
@@ -187,7 +191,11 @@ def compare_items(compare: bool = False):
                             counter_text.markdown(
                                 f'**:red[{item_right["clicked"]+item_right["f_clicked"]+1}]** times visited :white_check_mark:')
                             logging.info(
-                                f"{item_right['name']} is clicked by {st.experimental_user.email} --> {item_right['affiliate_link']}")
+                                "%s is clicked by %s --> %s",
+                                item_right['name'],
+                                st.experimental_user.email,
+                                item_right['affiliate_link']
+                            )
 
         if compare and (selected_item_left and selected_item_right):
             with compare_form_container.form("Compare_with_AI"):
@@ -203,5 +211,5 @@ def compare_items(compare: bool = False):
                         answer = ask_ai(message_to_ask=os.getenv("AI_COMPARE").format(
                             item_left['name'], item_right['name']))
                         get_progress_bar(my_bar, progress_text)
-                        logging.info(f'--------> AI ANSWER:{answer}')
+                        logging.info('--------> AI ANSWER:%s', answer)
                         st.write(answer)

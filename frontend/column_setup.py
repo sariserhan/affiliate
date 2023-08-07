@@ -70,7 +70,7 @@ def set_form(items: dict, col_name: str, selected_catalog: str):
                 image = get_image(image_name, selected_catalog)
                 st.image(image=image, caption=name, use_column_width=True)
             except Exception as e:
-                logging.error(f'Error for item: {name} ---> {e}')
+                logging.error('Error for item: %s ---> %s', name, e)
 
             # --- DESCRIPTION
             st.markdown(description)
@@ -94,4 +94,4 @@ def set_form(items: dict, col_name: str, selected_catalog: str):
                 counter_text.markdown(
                     f"**:red[{viewed+1}]** times visited :white_check_mark:")
                 logging.info(
-                    f"{name} is clicked by {st.experimental_user.email} --> {url}")
+                    "%s is clicked by %s --> %s", name, st.experimental_user.email, url)
