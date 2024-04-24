@@ -34,17 +34,16 @@ from frontend.utils.utils import disable_secondary_sidebar, local_css
 load_dotenv()
 
 logging.basicConfig(level=logging.DEBUG)
-logging.getLogger('PIL.PngImagePlugin').setLevel(logging.WARNING)
-logging.getLogger('fsevents').setLevel(logging.WARNING)
+logging.getLogger("PIL.PngImagePlugin").setLevel(logging.WARNING)
+logging.getLogger("fsevents").setLevel(logging.WARNING)
 
 
 def init():
     # --- PATH SETTINGS
-    current_dir = Path(
-        __file__).parent if "__file__" in locals() else Path.cwd()
-    icon_file = current_dir / 'assets' / 'icon.png'
-    logo_file = current_dir / 'assets' / 'logo.png'
-    css_file = current_dir / 'styles' / 'main.css'
+    current_dir = Path(__file__).parent if "__file__" in locals() else Path.cwd()
+    icon_file = current_dir / "assets" / "icon.png"
+    logo_file = current_dir / "assets" / "logo.png"
+    css_file = current_dir / "styles" / "main.css"
 
     # --- ICON
     icon = Image.open(icon_file)
@@ -53,11 +52,7 @@ def init():
         st.session_state.state_dict = {}
 
     # --- NAVIGATION BAR
-    st.set_page_config(
-        layout='wide',
-        page_icon=icon,
-        page_title="AIBestGoods"
-    )
+    st.set_page_config(layout="wide", page_icon=icon, page_title="AIBestGoods")
 
     # --- IMPACT.COM SETUP
     # impact_setup()
@@ -75,11 +70,20 @@ def init():
             Page("pages/unsubscribe.py", "unsubscribe"),
             Page("pages/admin.py", "admin"),
             Page("pages/privacy.py", "privacy"),
-            Page("pages/terms-conditions.py", "terms and conditions")
+            Page("pages/terms-conditions.py", "terms and conditions"),
         ]
     )
-    hide_pages(["admin", "home", "unsubscribe", "privacy",
-               "terms and conditions", "app", "terms-conditions"])
+    hide_pages(
+        [
+            "admin",
+            "home",
+            "unsubscribe",
+            "privacy",
+            "terms and conditions",
+            "app",
+            "terms-conditions",
+        ]
+    )
 
     # --- CSS
     local_css(css_file)
@@ -107,18 +111,21 @@ def init():
 
     # --- HEADER
     colored_header(
-        label='AI-Powered :mechanical_arm: Picks: Unleashing the Future of Smart Shopping :zap:',
+        label="AI-Powered :mechanical_arm: Picks: Unleashing the Future of Smart Shopping :zap:",
         description="""
                         Our recommendation engine analyzes data and trends for informed choices. Experience the future of intelligent shopping with AI-BestGoods.
                     """,
-        color_name="red-70"
+        color_name="red-70",
     )
 
     # Create the floating button
-    st.markdown("<a href='#linkto_top' class='floating-button-right'>:arrow_up:</a>",
-                unsafe_allow_html=True)
-    st.markdown("<a class='floating-button-left'>:nazar_amulet:</a>",
-                unsafe_allow_html=True)
+    st.markdown(
+        "<a href='#linkto_top' class='floating-button-right'>:arrow_up:</a>",
+        unsafe_allow_html=True,
+    )
+    st.markdown(
+        "<a class='floating-button-left'>:nazar_amulet:</a>", unsafe_allow_html=True
+    )
 
 
 def main():
@@ -140,7 +147,8 @@ def main():
         disable_secondary_sidebar()
         ask_ai_page()
         logging.info("-------- ASK AI SELECTED ----------")
-        st.write("""
+        st.write(
+            """
                  <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4959375849193463"
                     crossorigin="anonymous"></script>
                 <ins class="adsbygoogle"
@@ -152,7 +160,9 @@ def main():
                 <script>
                     (adsbygoogle = window.adsbygoogle || []).push({});
                 </script>
-                 """, unsafe_allow_html=True)
+                 """,
+            unsafe_allow_html=True,
+        )
 
     elif selected_category == "Pros & Cons":
         disable_secondary_sidebar()
@@ -164,7 +174,7 @@ def main():
         all_and_best_items(is_best_pick=True)
         logging.info("-------- BEST PICKS SELECTED ----------")
 
-    elif selected_category == 'Most Viewed':
+    elif selected_category == "Most Viewed":
         disable_secondary_sidebar()
         all_and_best_items(is_most_viewed=True)
         logging.info("-------- MOST VIEWED SELECTED ----------")
@@ -175,22 +185,18 @@ def main():
 
         # --- CATALOG SECONDARY SUB-SIDEBAR
         with col1:
-            selected_catalog = option_menu(
-                menu_title=None,
-                options=catalog_list
-            )
+            selected_catalog = option_menu(menu_title=None, options=catalog_list)
 
         if selected_catalog:
             items = Item().get_record_by_catalog(catalog=selected_catalog)
             logging.info(
-                "-------- CATALOG - %s - SELECTED ----------", selected_catalog)
+                "-------- CATALOG - %s - SELECTED ----------", selected_catalog
+            )
 
             # --- POST LIST
             with col2:
                 set_form(
-                    items=items,
-                    col_name='col2',
-                    selected_catalog=selected_catalog
+                    items=items, col_name="col2", selected_catalog=selected_catalog
                 )
 
     st.divider()
@@ -206,7 +212,8 @@ def main():
     #     button(username=os.getenv('buy_me_coffee'), floating=True, width=220)
 
     streamlit_analytics.stop_tracking(
-        unsafe_password=os.getenv("STREAMLIT_ANALYTICS"))  # type: ignore
+        unsafe_password=os.getenv("STREAMLIT_ANALYTICS")
+    )  # type: ignore
 
 
 if __name__ == "__main__":
