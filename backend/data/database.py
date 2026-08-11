@@ -1,16 +1,37 @@
 import logging
 import os
-import ssl
+from dataclasses import dataclass
+from pathlib import Path
 
-from deta import Deta
+import psycopg
 from dotenv import load_dotenv
-
-ssl._create_default_https_context = ssl._create_unverified_context
+from psycopg.types.json import Jsonb
 
 logging.basicConfig(level=logging.DEBUG)
 
 # Load environment variables from .env file
 load_dotenv()
+
+
+def ensure_schema(conn: psycopg.Connection) -> None:
+    with conn.cursor() as cur:
+        cur.execute(
+            """
+            CREATE TABLE IF NOT EXISTS kv_store (
+                collection text NOT NULL,
+                key text NOT NULL,
+                data jsonb NOT NULL,
+                updated_at timestamptz DEFAULT now(),
+                PRIMARY KEY (collection, key)
+            )
+            """
+        )
+
+
+def get_connection() -> psycopg.Connection:
+    conn = psycopg.connect(os.getenv("DATABASE_URL"), autocommit=True)
+    ensure_schema(conn)
+    return conn
 
 
 class DETA:
