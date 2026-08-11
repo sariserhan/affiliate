@@ -34,6 +34,70 @@ def get_connection() -> psycopg.Connection:
     return conn
 
 
+@dataclass
+class FetchResult:
+    items: list
+
+
+class KVTable:
+    def __init__(self, collection: str, conn: psycopg.Connection):
+        self.collection = collection
+        self.conn = conn
+
+    def insert(self, data: dict) -> dict:
+        with self.conn.cursor() as cur:
+            cur.execute(
+                "INSERT INTO kv_store (collection, key, data) VALUES (%s, %s, %s)",
+                (self.collection, data["key"], Jsonb(data)),
+            )
+        return data
+
+    def put(self, data: dict) -> dict:
+        with self.conn.cursor() as cur:
+            cur.execute(
+                """
+                INSERT INTO kv_store (collection, key, data, updated_at)
+                VALUES (%s, %s, %s, now())
+                ON CONFLICT (collection, key)
+                DO UPDATE SET data = EXCLUDED.data, updated_at = now()
+                """,
+                (self.collection, data["key"], Jsonb(data)),
+            )
+        return data
+
+    def get(self, key: str):
+        with self.conn.cursor() as cur:
+            cur.execute(
+                "SELECT data FROM kv_store WHERE collection = %s AND key = %s",
+                (self.collection, key),
+            )
+            row = cur.fetchone()
+        return row[0] if row else None
+
+    def update(self, updates: dict, key: str):
+        record = self.get(key)
+        if record is None:
+            return None
+        record.update(updates)
+        return self.put(record)
+
+    def delete(self, key: str) -> None:
+        with self.conn.cursor() as cur:
+            cur.execute(
+                "DELETE FROM kv_store WHERE collection = %s AND key = %s",
+                (self.collection, key),
+            )
+
+    def fetch(self) -> FetchResult:
+        with self.conn.cursor() as cur:
+            cur.execute(
+                "SELECT data FROM kv_store WHERE collection = %s",
+                (self.collection,),
+            )
+            rows = cur.fetchall()
+        return FetchResult(items=[row[0] for row in rows])
+
+
 class DETA:
 
     def __init__(self, db: str) -> None:
