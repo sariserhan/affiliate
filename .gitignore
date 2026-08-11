@@ -184,3 +184,6 @@ backend/email_service/
 app_test.py
 
 keep
+
+# superpowers subagent-driven-development scratch workspace
+.superpowers/
