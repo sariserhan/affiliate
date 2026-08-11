@@ -43,12 +43,12 @@ def add_item(item_obj, catalog_list, category_list):
 
     affiliate_partner_list.append("Add New Partner")
 
-    regex = re.compile('[@_!#$%^&*()<>?/\|}{~:]')
+    regex = re.compile(r'[@_!#$%^&*()<>?/\|}{~:]')
 
     name = st.text_input(label='Item Name', key='item_name',
                          placeholder='Name', label_visibility='collapsed')
 
-    if regex.search(name) != None:
+    if regex.search(name) is not None:
         st.warning(
             f"Special characters are not allowed in the name section: {name}")
 

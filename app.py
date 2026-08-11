@@ -8,12 +8,10 @@ from dotenv import load_dotenv
 from PIL import Image
 from st_pages import Page, hide_pages, show_pages
 from streamlit_extras.app_logo import add_logo
-from streamlit_extras.buy_me_a_coffee import button
 from streamlit_extras.colored_header import colored_header
 from streamlit_option_menu import option_menu
 from streamlit_toggle import st_toggle_switch
 
-from backend.data.category import Category
 from backend.data.item import Item
 from frontend.all_and_best_items import all_and_best_items
 from frontend.ask_ai import ask_ai_page
@@ -22,10 +20,8 @@ from frontend.compare_items import compare_items
 from frontend.footer import get_footer
 from frontend.sidebar import get_catalog_sidebar, get_sidebar
 from frontend.subscription import subscription
-from frontend.utils.ads import get_ads
 from frontend.utils.google_adsense import google_adsense_setup
 from frontend.utils.google_analytics import google_analytics_setup
-from frontend.utils.impact_com import impact_setup
 from frontend.utils.settings import disable_theme_switch
 from frontend.utils.theme import set_theme
 from frontend.utils.utils import disable_secondary_sidebar, local_css

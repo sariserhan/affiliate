@@ -1,6 +1,5 @@
 import logging
 import os
-import time
 
 import openai
 import streamlit as st
@@ -87,7 +86,7 @@ def ask_ai_page(name: str = None):
                 counter_text.markdown(
                     f'**:green[{item["clicked"]+item["f_clicked"]}]** times visited :boom:', unsafe_allow_html=True)
 
-                if check_price_button := st.form_submit_button(
+                if st.form_submit_button(
                     ":heavy_dollar_sign: Check Price",
                     on_click=open_page,
                     args=(item['affiliate_link'],),

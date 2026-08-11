@@ -31,7 +31,7 @@ def auth():
     user_name, authentication_status, username = authenticator.login(
         'Login', 'main')
 
-    if authentication_status == False:
+    if authentication_status is False:
         st.error("Username/password combination incorrect. Please try again.")
         return False
     if authentication_status is None:

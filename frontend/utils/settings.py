@@ -35,7 +35,7 @@ def get_db_backup():
             Catalog().migrate_database('catalog_db_backup')
             st.info('Backup Complete:catalog_db_backup')
         except Exception as e:
-            st.error('Error attempting :to backup:catalog_db_backup')
+            st.error(f'Error attempting to backup catalog_db_backup: {e}')
 
     if st.checkbox('Backup --> Category_DB'):
         from backend.data.category import Category
@@ -43,7 +43,7 @@ def get_db_backup():
             Category().migrate_database('category_db_backup')
             st.info('Backup Complete:category_db_backup')
         except Exception as e:
-            st.error('Error attempting :to backup:category_db_backup')
+            st.error(f'Error attempting to backup category_db_backup: {e}')
 
     if st.checkbox('Backup --> Subscription_DB'):
         from backend.data.subscribe import Subscription
@@ -51,7 +51,7 @@ def get_db_backup():
             Subscription().migrate_database('subscription_db_backup')
             st.info('Backup Complete:subscription_db_backup')
         except Exception as e:
-            st.error('Error attempting :to backup:subscription_db_backup')
+            st.error(f'Error attempting to backup subscription_db_backup: {e}')
 
     if st.checkbox('Backup --> Items_DB2'):
         from backend.data.item import Item
@@ -59,7 +59,7 @@ def get_db_backup():
             Item().migrate_database('items_db2_backup')
             st.info('Backup Complete:items_db2_backup')
         except Exception as e:
-            st.error('Error attempting :to backup:items_db2_backup')
+            st.error(f'Error attempting to backup items_db2_backup: {e}')
 
     if st.checkbox('Backup --> Affiliate_Partner_DB'):
         from backend.data.affiliate_partner import Affiliate_Partner
@@ -67,7 +67,7 @@ def get_db_backup():
             Affiliate_Partner().migrate_database('affiliate_partner_db_backup')
             st.info('Backup Complete:affiliate_partner_db_backup')
         except Exception as e:
-            st.error('Error attempting :to backup:affiliate_partner_db_backup')
+            st.error(f'Error attempting to backup affiliate_partner_db_backup: {e}')
 
     if st.checkbox('Backup --> Admin_DB'):
         from backend.data.admin import Admin
@@ -75,4 +75,4 @@ def get_db_backup():
             Admin().migrate_database('admin_db_backup')
             st.info('Backup Complete:admin_db_backup')
         except Exception as e:
-            st.error('Error attempting :to backup:admin_db_backup')
+            st.error(f'Error attempting to backup admin_db_backup: {e}')

@@ -4,7 +4,6 @@ import ssl
 
 from deta import Deta
 from dotenv import load_dotenv
-from streamlit import secrets
 
 ssl._create_default_https_context = ssl._create_unverified_context
 

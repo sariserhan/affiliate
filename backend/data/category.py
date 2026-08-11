@@ -32,21 +32,18 @@ class Category(DETA):
 
     def add_catalog(self, catalogs: list):
         if self.name != '':
-            try:
-                category = self.get_record(key=self.key)
-            except:
+            category = self.get_record(key=self.key)
+            if not category:
                 self.create_category(name=self.name)
                 category = self.get_record(key=self.key)
 
-            for catalog in catalogs['catalog_list']:
-                if catalog in category:
-                    catalogs.remove(catalog)
-            if catalogs:
-                category['catalog_list'].extend(catalogs)  # type: ignore
+            new_catalogs = [c for c in catalogs if c not in category['catalog_list']]
+            if new_catalogs:
+                category['catalog_list'].extend(new_catalogs)  # type: ignore
                 self.db.put(category)  # type: ignore
                 logging.info("%s is added to %s category.",
-                             catalogs, self.name)
-                return f"{catalogs} is added to {self.name} category."
+                             new_catalogs, self.name)
+                return f"{new_catalogs} is added to {self.name} category."
         else:
             logging.warning("catalog name required.")
             return

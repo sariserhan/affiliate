@@ -40,7 +40,7 @@ def subscribe(email: str):
         email_service.send_email(recipient_email='serhan.sari@yahoo.com',
                                  subscription_event=f"New subscription --> {email}")
         return 'success', f'{email} is subscribed'
-    except ValueError as e:
+    except ValueError:
         return 'error', "Invalid email address!"
     except Exception as e:
         logging.error('Error trying to subscribe %s', e)
@@ -61,7 +61,7 @@ def unsubscribe(email: str):
                 return 'warning', f'{email} is not subscribed!'
         else:
             return 'warning', f'{email} not previously subscribed!'
-    except ValueError as e:
+    except ValueError:
         return 'error', "Invalid email address!"
     except Exception as e:
         logging.error('Error trying to unsubscribe %s', e)
