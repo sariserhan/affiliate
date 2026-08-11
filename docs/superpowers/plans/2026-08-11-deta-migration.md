@@ -167,7 +167,7 @@ import pytest
 
 from backend.data.database import KVTable, get_connection
 
-pytestmark = pytest.mark.skipif(
+requires_postgres = pytest.mark.skipif(
     not os.getenv("DATABASE_URL"),
     reason="requires a live Postgres reachable via DATABASE_URL",
 )
@@ -178,17 +178,20 @@ def _table() -> KVTable:
     return KVTable(collection=f"test_{uuid.uuid4().hex}", conn=get_connection())
 
 
+@requires_postgres
 def test_insert_then_get_returns_the_record():
     table = _table()
     table.insert({"key": "widget", "name": "Widget"})
     assert table.get("widget") == {"key": "widget", "name": "Widget"}
 
 
+@requires_postgres
 def test_get_missing_key_returns_none():
     table = _table()
     assert table.get("does-not-exist") is None
 
 
+@requires_postgres
 def test_insert_duplicate_key_raises():
     table = _table()
     table.insert({"key": "widget", "name": "Widget"})
@@ -196,6 +199,7 @@ def test_insert_duplicate_key_raises():
         table.insert({"key": "widget", "name": "Widget Again"})
 
 
+@requires_postgres
 def test_insert_duplicate_key_does_not_break_the_connection():
     table = _table()
     table.insert({"key": "widget", "name": "Widget"})
@@ -208,12 +212,14 @@ def test_insert_duplicate_key_does_not_break_the_connection():
     assert table.get("other") == {"key": "other", "name": "Other"}
 
 
+@requires_postgres
 def test_put_creates_when_missing():
     table = _table()
     table.put({"key": "widget", "name": "Widget"})
     assert table.get("widget") == {"key": "widget", "name": "Widget"}
 
 
+@requires_postgres
 def test_put_overwrites_when_present():
     table = _table()
     table.put({"key": "widget", "name": "Widget"})
@@ -221,6 +227,7 @@ def test_put_overwrites_when_present():
     assert table.get("widget") == {"key": "widget", "name": "Widget V2"}
 
 
+@requires_postgres
 def test_update_merges_fields_into_existing_record():
     table = _table()
     table.put({"key": "widget", "name": "Widget", "clicked": 0})
@@ -228,11 +235,13 @@ def test_update_merges_fields_into_existing_record():
     assert table.get("widget") == {"key": "widget", "name": "Widget", "clicked": 5}
 
 
+@requires_postgres
 def test_update_missing_key_returns_none():
     table = _table()
     assert table.update({"clicked": 5}, "does-not-exist") is None
 
 
+@requires_postgres
 def test_delete_removes_the_record():
     table = _table()
     table.put({"key": "widget", "name": "Widget"})
@@ -240,6 +249,7 @@ def test_delete_removes_the_record():
     assert table.get("widget") is None
 
 
+@requires_postgres
 def test_fetch_returns_all_records_in_the_collection():
     table = _table()
     table.put({"key": "a", "name": "A"})
@@ -248,12 +258,15 @@ def test_fetch_returns_all_records_in_the_collection():
     assert names == ["A", "B"]
 
 
+@requires_postgres
 def test_fetch_does_not_see_other_collections():
     table_a = _table()
     table_b = _table()
     table_a.put({"key": "x", "name": "In A"})
     assert table_b.fetch().items == []
 ```
+
+Note: the `requires_postgres` marker is defined once here and reused (imported, not redefined) by later tasks' tests that also construct a `KVTable`/`DETA` instance (Task 4). Task 3's `LocalDrive` tests need no such marker — they never touch Postgres.
 
 - [ ] **Step 2: Run the tests to verify they fail**
 
@@ -466,7 +479,7 @@ def get_drive() -> LocalDrive:
 - [ ] **Step 4: Run the tests to verify they pass**
 
 Run: `pytest backend/data/test_database.py -v`
-Expected: all tests PASS, including the new `LocalDrive` ones and the earlier `KVTable` ones (skipped if `DATABASE_URL` isn't set in this shell — that's fine).
+Expected: the new `LocalDrive` tests PASS. The earlier `KVTable` tests show as SKIPPED if `DATABASE_URL` isn't set in this shell (each is individually decorated with `@requires_postgres`, not a module-wide marker, so this skip never touches the `LocalDrive` tests) — that's expected, not a failure. If `DATABASE_URL` is set, the `KVTable` tests PASS too.
 
 - [ ] **Step 5: Commit**
 
@@ -502,6 +515,7 @@ Append to `backend/data/test_database.py`:
 from backend.data.database import DETA
 
 
+@requires_postgres
 def test_deta_class_full_lifecycle_against_a_real_backend():
     db_name = f"test_{uuid.uuid4().hex}"
     backup_name = f"{db_name}_backup"
@@ -529,7 +543,10 @@ def test_deta_class_full_lifecycle_against_a_real_backend():
     assert deta.get_record("widget") is None
 
 
+@requires_postgres
 def test_deta_class_image_roundtrip(tmp_path, monkeypatch):
+    # DETA.__init__ always opens a real Postgres connection via get_connection(),
+    # even though this test only exercises the drive — so it needs the marker too.
     monkeypatch.setenv("IMAGE_STORAGE_PATH", str(tmp_path))
     deta = DETA(db=f"test_{uuid.uuid4().hex}")
 
@@ -543,7 +560,7 @@ def test_deta_class_image_roundtrip(tmp_path, monkeypatch):
 - [ ] **Step 2: Run the test to verify it fails**
 
 Run: `DATABASE_URL=postgresql://postgres:postgres@localhost:5432/postgres pytest backend/data/test_database.py -v -k test_deta_class`
-Expected: FAIL — `DETA.__init__` currently still constructs a real (nonexistent) `deta.Deta(...)` client and crashes with an import/connection error.
+Expected: FAIL — `DETA.__init__` still has its original body (`self.deta = Deta(os.getenv("DETA_KEY"))`), and Task 1 already removed the `from deta import Deta` import, so this raises `NameError: name 'Deta' is not defined`.
 
 - [ ] **Step 3: Rewrite `class DETA:`**
 
