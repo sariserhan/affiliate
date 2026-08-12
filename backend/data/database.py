@@ -28,10 +28,22 @@ def ensure_schema(conn: psycopg.Connection) -> None:
         )
 
 
+def _require_database_url() -> str:
+    url = os.getenv("DATABASE_URL")
+    if not url:
+        raise RuntimeError("DATABASE_URL is not set — see .env.example")
+    return url
+
+
+_connection = None
+
+
 def get_connection() -> psycopg.Connection:
-    conn = psycopg.connect(os.getenv("DATABASE_URL"), autocommit=True)
-    ensure_schema(conn)
-    return conn
+    global _connection
+    if _connection is None or _connection.closed:
+        _connection = psycopg.connect(_require_database_url(), autocommit=True)
+        ensure_schema(_connection)
+    return _connection
 
 
 @dataclass
@@ -104,7 +116,10 @@ class LocalDrive:
         self.root.mkdir(parents=True, exist_ok=True)
 
     def _resolve(self, path: str) -> Path:
-        return self.root / path.lstrip("/")
+        p = (self.root / path.lstrip("/")).resolve()
+        if not p.is_relative_to(self.root.resolve()):
+            raise ValueError(f"path escapes drive root: {path}")
+        return p
 
     def put(self, path: str, data: bytes) -> str:
         file_path = self._resolve(path)

@@ -163,26 +163,30 @@ def test_deta_class_full_lifecycle_against_a_real_backend():
         {"key": "widget", "name": "Widget", "catalog": "Tools"},
     ]
 
-    deta.update_record(key="widget", updates={"catalog": "Hardware"})
-    assert deta.get_record("widget")["catalog"] == "Hardware"
-
-    deta.migrate_database(backup_name)
-    backup = DETA(db=backup_name)
-    assert backup.get_record("widget")["catalog"] == "Hardware"
-
-    # delete_item looks up the catalog record in the shared "catalog_db"
-    # collection and removes the item from its item_list. It matches on
-    # item == name, where name is the original (unmodified) key argument
-    # passed to delete_item below, i.e. "widget".
+    catalog_key = f"test_cat_{uuid.uuid4().hex}"
     catalog_table = KVTable(collection="catalog_db", conn=deta.db.conn)
-    catalog_table.put({
-        "key": "Hardware", "name": "Hardware", "is_active": True,
-        "item_list": ["widget"],
-    })
+    try:
+        deta.update_record(key="widget", updates={"catalog": catalog_key})
+        assert deta.get_record("widget")["catalog"] == catalog_key
 
-    deta.delete_item(key="widget")
-    assert deta.get_record("widget") is None
-    assert catalog_table.get("Hardware")["item_list"] == []
+        deta.migrate_database(backup_name)
+        backup = DETA(db=backup_name)
+        assert backup.get_record("widget")["catalog"] == catalog_key
+
+        # delete_item looks up the catalog record in the shared "catalog_db"
+        # collection and removes the item from its item_list. It matches on
+        # item == name, where name is the original (unmodified) key argument
+        # passed to delete_item below, i.e. "widget".
+        catalog_table.put({
+            "key": catalog_key, "name": catalog_key, "is_active": True,
+            "item_list": ["widget"],
+        })
+
+        deta.delete_item(key="widget")
+        assert deta.get_record("widget") is None
+        assert catalog_table.get(catalog_key)["item_list"] == []
+    finally:
+        catalog_table.delete(catalog_key)
 
 
 @requires_postgres
