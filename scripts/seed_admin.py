@@ -4,6 +4,9 @@ Run once after deploying against a fresh database:
     DATABASE_URL=... python3 scripts/seed_admin.py <name> <username> <password>
 """
 import sys
+from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent.parent))
 
 from backend.data.admin import Admin
 
