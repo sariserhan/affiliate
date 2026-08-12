@@ -170,8 +170,19 @@ def test_deta_class_full_lifecycle_against_a_real_backend():
     backup = DETA(db=backup_name)
     assert backup.get_record("widget")["catalog"] == "Hardware"
 
+    # delete_item looks up the catalog record in the shared "catalog_db"
+    # collection and removes the item from its item_list. It matches on
+    # item == name, where name is the original (unmodified) key argument
+    # passed to delete_item below, i.e. "widget".
+    catalog_table = KVTable(collection="catalog_db", conn=deta.db.conn)
+    catalog_table.put({
+        "key": "Hardware", "name": "Hardware", "is_active": True,
+        "item_list": ["widget"],
+    })
+
     deta.delete_item(key="widget")
     assert deta.get_record("widget") is None
+    assert catalog_table.get("Hardware")["item_list"] == []
 
 
 @requires_postgres
