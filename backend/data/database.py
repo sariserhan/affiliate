@@ -147,20 +147,20 @@ def get_drive() -> LocalDrive:
 class DETA:
 
     def __init__(self, db: str) -> None:
-        self.deta = Deta(os.getenv("DETA_KEY"))  # type: ignore
-        self.db = self.deta.Base(db)
-        self.drive = self.deta.Drive('images_db')
+        self.db_name = db
+        self.db = KVTable(collection=db, conn=get_connection())
+        self.drive = get_drive()
 
     def fetch_records(self) -> list:
         return self.db.fetch().items
 
-    def get_record(self, key: str) -> str:
-        return self.db.get(key)  # type: ignore
+    def get_record(self, key: str):
+        return self.db.get(key)
 
-    def get_image_data(self, name: str, catalog: str) -> str:
-        return self.drive.get(f"/{catalog}/{name}").read()  # type: ignore
+    def get_image_data(self, name: str, catalog: str) -> bytes:
+        return self.drive.get(f"/{catalog}/{name}").read()
 
-    def del_image_data(self, name: str, catalog: str) -> str:
+    def del_image_data(self, name: str, catalog: str) -> None:
         return self.drive.delete(f"/{catalog}/{name}")
 
     def get_image_names(self):
@@ -170,33 +170,33 @@ class DETA:
         records = self.fetch_records()
         return [record for record in records if catalog == record['catalog']]
 
-    def update_record(self, key: str, updates: dict) -> str:  # type: ignore
+    def update_record(self, key: str, updates: dict):
         record = self.db.get(key)
         for k, v in updates.items():
             if k in record:
-                record[k] = v  # type: ignore
+                record[k] = v
         try:
             logging.info(f'Updated: {key}')
-            return self.db.put(record)  # type: ignore
+            return self.db.put(record)
         except Exception as e:
             logging.error(f'Error in Updating: {key} ---> {e}')
 
     def add_new_attribute(self, key: str, new_attr: dict):
-        attributes = self.db.get(key=key)
+        attributes = self.db.get(key)
         attributes.update(new_attr)
-        self.db.put(key=key, data=new_attr)
+        self.db.put(attributes)
 
     def change_record(self, key: str, updates: dict) -> str:
         record = self.db.get(key)
         for k, v in updates.items():
             if k in record:
-                record[k] = v  # type: ignore
+                record[k] = v
 
         self.delete_item(key)
-        if 'name' in record:  # type: ignore
-            record['key'] = record['name'].replace(' ', '_')  # type: ignore
+        if 'name' in record:
+            record['key'] = record['name'].replace(' ', '_')
 
-        self.db.put(record)  # type: ignore
+        self.db.put(record)
 
         logging.info(f"{key} successfully changed record.")
         return f"{key} successfully changed record."
@@ -205,14 +205,14 @@ class DETA:
         name = key
         key = key.replace(' ', '_')
         try:
-            catalog_name = self.get_record(key)['catalog']  # type: ignore
-            catalog_base = self.deta.Base("catalog_db")
-            catalog_record = catalog_base.get(key=catalog_name)
-            for item in catalog_record['item_list']:  # type: ignore
+            catalog_name = self.get_record(key)['catalog']
+            catalog_table = KVTable(collection="catalog_db", conn=self.db.conn)
+            catalog_record = catalog_table.get(catalog_name)
+            for item in catalog_record['item_list']:
                 if item == name:
-                    catalog_record['item_list'].remove(item)  # type: ignore
+                    catalog_record['item_list'].remove(item)
                     break
-            catalog_base.put(catalog_record)  # type: ignore
+            catalog_table.put(catalog_record)
             logging.info("%s successfully removed from catalog.", name)
         except Exception as e:
             logging.error('Error in removing %s from catalog ---> %s', name, e)
@@ -225,8 +225,7 @@ class DETA:
             return False
 
     def migrate_database(self, target_database: str):
-        target = self.deta.Base(target_database)
-
+        target = KVTable(collection=target_database, conn=self.db.conn)
         for item in self.db.fetch().items:
             if not item['key'].startswith('Corsair'):
                 try:

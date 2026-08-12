@@ -141,3 +141,48 @@ def test_list_returns_relative_paths_of_all_files(tmp_path):
     drive.put("Catalog B/two.png", b"2")
     names = sorted(drive.list()["names"])
     assert names == ["Catalog A/one.png", "Catalog B/two.png"]
+
+
+from backend.data.database import DETA
+
+
+@requires_postgres
+def test_deta_class_full_lifecycle_against_a_real_backend():
+    db_name = f"test_{uuid.uuid4().hex}"
+    backup_name = f"{db_name}_backup"
+    deta = DETA(db=db_name)
+
+    deta.db.insert({"key": "widget", "name": "Widget", "catalog": "Tools"})
+    assert deta.get_record("widget") == {
+        "key": "widget", "name": "Widget", "catalog": "Tools",
+    }
+    assert deta.fetch_records() == [
+        {"key": "widget", "name": "Widget", "catalog": "Tools"},
+    ]
+    assert deta.get_record_by_catalog("Tools") == [
+        {"key": "widget", "name": "Widget", "catalog": "Tools"},
+    ]
+
+    deta.update_record(key="widget", updates={"catalog": "Hardware"})
+    assert deta.get_record("widget")["catalog"] == "Hardware"
+
+    deta.migrate_database(backup_name)
+    backup = DETA(db=backup_name)
+    assert backup.get_record("widget")["catalog"] == "Hardware"
+
+    deta.delete_item(key="widget")
+    assert deta.get_record("widget") is None
+
+
+@requires_postgres
+def test_deta_class_image_roundtrip(tmp_path, monkeypatch):
+    # DETA.__init__ always opens a real Postgres connection via get_connection(),
+    # even though this test only exercises the drive — so it needs the marker too.
+    monkeypatch.setenv("IMAGE_STORAGE_PATH", str(tmp_path))
+    deta = DETA(db=f"test_{uuid.uuid4().hex}")
+
+    deta.drive.put("Tools/widget.png", b"image-bytes")
+    assert deta.get_image_data("widget.png", "Tools") == b"image-bytes"
+
+    deta.del_image_data("widget.png", "Tools")
+    assert deta.drive.get("Tools/widget.png") is None
