@@ -8,9 +8,9 @@ from email.mime.text import MIMEText
 from email.utils import formataddr
 from pathlib import Path
 
-from deta import Deta
 from dotenv import load_dotenv
 
+from backend.data.database import KVTable, get_connection, get_drive
 from frontend.utils.utils import get_img_with_href
 
 ssl._create_default_https_context = ssl._create_unverified_context
@@ -19,14 +19,12 @@ logging.basicConfig(level=logging.DEBUG)
 # Load environment variables from .env file
 load_dotenv()
 
-DETA = Deta(os.getenv("DETA_KEY"))
-
 
 class EmailService():
 
     @staticmethod
     def connect_db(db: str):
-        return DETA.Base(db)
+        return KVTable(collection=db, conn=get_connection())
 
     @classmethod
     def get_subscription_list(cls) -> list:
@@ -45,7 +43,7 @@ class EmailService():
 
     @staticmethod
     def get_image(catalog: str, name: str):
-        return DETA.Drive('images_db').get(f"/{catalog}/{name}").read()
+        return get_drive().get(f"/{catalog}/{name}").read()
 
     # Function to send the email
 
