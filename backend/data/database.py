@@ -98,6 +98,52 @@ class KVTable:
         return FetchResult(items=[row[0] for row in rows])
 
 
+class LocalDrive:
+    def __init__(self, root: str):
+        self.root = Path(root)
+        self.root.mkdir(parents=True, exist_ok=True)
+
+    def _resolve(self, path: str) -> Path:
+        return self.root / path.lstrip("/")
+
+    def put(self, path: str, data: bytes) -> str:
+        file_path = self._resolve(path)
+        file_path.parent.mkdir(parents=True, exist_ok=True)
+        file_path.write_bytes(data)
+        return path
+
+    def get(self, path: str):
+        file_path = self._resolve(path)
+        if not file_path.exists():
+            return None
+        return _DriveFile(file_path)
+
+    def delete(self, path: str) -> None:
+        file_path = self._resolve(path)
+        if file_path.exists():
+            file_path.unlink()
+
+    def list(self) -> dict:
+        names = [
+            str(p.relative_to(self.root))
+            for p in self.root.rglob("*")
+            if p.is_file()
+        ]
+        return {"names": names}
+
+
+class _DriveFile:
+    def __init__(self, path: Path):
+        self._path = path
+
+    def read(self) -> bytes:
+        return self._path.read_bytes()
+
+
+def get_drive() -> LocalDrive:
+    return LocalDrive(root=os.getenv("IMAGE_STORAGE_PATH", "./local_images"))
+
+
 class DETA:
 
     def __init__(self, db: str) -> None:

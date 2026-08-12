@@ -102,3 +102,42 @@ def test_fetch_does_not_see_other_collections():
     table_b = _table()
     table_a.put({"key": "x", "name": "In A"})
     assert table_b.fetch().items == []
+
+
+from backend.data.database import LocalDrive
+
+
+def _drive(tmp_path) -> LocalDrive:
+    return LocalDrive(root=str(tmp_path))
+
+
+def test_put_then_get_returns_the_bytes(tmp_path):
+    drive = _drive(tmp_path)
+    drive.put("Catalog Name/photo.png", b"image-bytes")
+    assert drive.get("Catalog Name/photo.png").read() == b"image-bytes"
+
+
+def test_get_missing_path_returns_none(tmp_path):
+    drive = _drive(tmp_path)
+    assert drive.get("nope.png") is None
+
+
+def test_put_without_leading_slash_is_readable_with_leading_slash(tmp_path):
+    drive = _drive(tmp_path)
+    drive.put("Catalog/photo.png", b"image-bytes")
+    assert drive.get("/Catalog/photo.png").read() == b"image-bytes"
+
+
+def test_delete_removes_the_file(tmp_path):
+    drive = _drive(tmp_path)
+    drive.put("Catalog/photo.png", b"image-bytes")
+    drive.delete("/Catalog/photo.png")
+    assert drive.get("Catalog/photo.png") is None
+
+
+def test_list_returns_relative_paths_of_all_files(tmp_path):
+    drive = _drive(tmp_path)
+    drive.put("Catalog A/one.png", b"1")
+    drive.put("Catalog B/two.png", b"2")
+    names = sorted(drive.list()["names"])
+    assert names == ["Catalog A/one.png", "Catalog B/two.png"]
