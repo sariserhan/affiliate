@@ -1,0 +1,28 @@
+version: 1
+application:
+  name: affiliate
+  repository: sariserhan/affiliate
+  defaultBranch: master
+approval:
+  requireHumanFor:
+    - critical
+  allowAutomaticMerge: false
+rules:
+  - id: application.docker_build
+    title: Container image remains buildable
+    description: The Dockerfile build must succeed.
+    severity: high
+    evidence:
+      - kind: command
+        command: docker build -t software-oath-build .
+        required: true
+        timeoutMs: 600000
+  - id: workflow.python-app_test
+    title: GitHub Workflow (python-app) test step remains green
+    description: "Discovered workflow command: pytest"
+    severity: high
+    evidence:
+      - kind: test
+        command: pytest
+        required: true
+        timeoutMs: 600000
